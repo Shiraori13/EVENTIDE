@@ -1,0 +1,78 @@
+import { test, expect, type Page } from '@playwright/test';
+import type { DebugAPI } from '../../src/game/debug/DebugController';
+declare global { interface Window { __eventide?: DebugAPI } }
+const open = async (page: Page): Promise<void> => { await page.goto('./?e2e=1'); await expect(page.getByRole('button', { name: 'Khởi hành' })).toBeVisible(); };
+const start = async (page: Page): Promise<void> => { await page.getByRole('button', { name: 'Khởi hành' }).click(); await expect(page.locator('#ship-hp')).toBeVisible(); };
+test('menu, hướng dẫn, điều khiển thật, nâng cấp, pause/tab và chơi lại', async ({ page }) => {
+  const errors: string[] = []; page.on('pageerror', e => errors.push(e.message)); page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
+  page.on('response', r => { if (r.status() >= 400) errors.push(`${r.status()} ${r.url()}`); });
+  await open(page); await page.getByRole('button', { name: 'Hướng dẫn', exact: true }).click(); await expect(page.getByRole('heading', { name: 'Giữ hải đăng qua đêm dài.' })).toBeVisible();
+  await page.getByRole('button', { name: 'Trở về' }).click(); await start(page);
+  const before = await page.evaluate(() => window.__eventide!.snapshot()!.player.x);
+  await page.keyboard.down('d');
+  await expect.poll(() => page.evaluate(() => window.__eventide!.snapshot()!.player.x)).toBeGreaterThan(before + 60);
+  await page.keyboard.up('d');
+  expect(await page.evaluate(() => window.__eventide!.snapshot()!.player.x)).toBeGreaterThan(before + 60);
+  await page.evaluate(() => window.__eventide!.xp(12)); await expect(page.locator('.upgrade-card')).toHaveCount(3); await page.waitForTimeout(220);
+  const upgradeTime = await page.evaluate(() => window.__eventide!.snapshot()!.time);
+  await page.waitForTimeout(250); expect(await page.evaluate(() => window.__eventide!.snapshot()!.time)).toBe(upgradeTime);
+  await page.keyboard.press('Escape'); await page.getByRole('button', { name: 'Tiếp tục' }).click(); await expect(page.locator('.upgrade-card')).toHaveCount(3);
+  await page.waitForTimeout(220); const offered = await page.locator('.upgrade-card').first().getAttribute('data-upgrade'); await page.locator('.upgrade-card').first().click(); await expect(page.locator('#ship-hp')).toBeVisible();
+  const picked = await page.evaluate(() => window.__eventide!.snapshot()!); expect(picked.picks).toBe(1); expect(offered).toBeTruthy();
+  await page.keyboard.press('Escape'); const paused = await page.evaluate(() => window.__eventide!.snapshot()!);
+  await page.waitForTimeout(300); expect((await page.evaluate(() => window.__eventide!.snapshot()!)).time).toBe(paused.time);
+  await page.getByRole('button', { name: 'Tiếp tục' }).click();
+  await page.evaluate(() => window.dispatchEvent(new Event('blur'))); await expect(page.getByRole('button', { name: 'Tiếp tục' })).toBeVisible();
+  await page.getByRole('button', { name: 'Chơi lại' }).click(); expect(await page.evaluate(() => window.__eventide!.snapshot()!.level)).toBe(1);
+  await page.keyboard.press('Escape'); await page.getByRole('button', { name: 'Về menu' }).click();
+  expect(await page.evaluate(() => window.__eventide!.save().currency)).toBe(0); expect(errors).toEqual([]);
+});
+for (const target of ['player', 'beacon'] as const) test(`thua do ${target}, thưởng chỉ một lần`, async ({ page }) => {
+  await open(page); await start(page);
+  await page.evaluate(target => { const d = window.__eventide!, s = d.snapshot()!; d.patch({ time: 125, [target]: { ...s[target], hp: 0 } }); }, target);
+  await expect(page.getByRole('heading', { name: 'Một nguồn sáng đã tắt.' })).toBeVisible();
+  await expect(page.getByText(target === 'player' ? 'Tàu Nova đã bị phá hủy.' : 'Beacon đã tắt.', { exact: true })).toBeVisible();
+  expect(await page.evaluate(() => window.__eventide!.save().currency)).toBe(2);
+  await page.waitForTimeout(300); expect(await page.evaluate(() => window.__eventide!.save().currency)).toBe(2);
+  await page.getByRole('button', { name: 'Chơi lại' }).click(); expect(await page.evaluate(() => window.__eventide!.snapshot()!.corruption)).toBe(0);
+});
+test('thắng, mua Core, Echo/settings lưu qua reload và reset xác nhận', async ({ page }) => {
+  await open(page); await start(page);
+  await page.evaluate(() => window.__eventide!.patch({ time: 719.98 }));
+  await expect(page.getByRole('heading', { name: 'Ánh sáng đã trở về.' })).toBeVisible();
+  expect(await page.evaluate(() => window.__eventide!.save().currency)).toBe(17);
+  await page.getByRole('button', { name: 'Về menu' }).click(); await page.getByRole('button', { name: 'Beacon Core', exact: true }).click();
+  await page.getByRole('button', { name: 'Nâng cấp · 10' }).click(); expect(await page.evaluate(() => window.__eventide!.save().currency)).toBe(7);
+  await page.getByRole('button', { name: 'Trở về' }).click(); await page.getByRole('button', { name: 'Cài đặt', exact: true }).click();
+  await page.getByLabel('Tắt âm thanh').check(); await page.getByLabel('Giảm hiệu ứng').check();
+  await page.getByLabel('Chất lượng hình ảnh').selectOption('low');
+  await page.reload(); await expect(page.getByRole('button', { name: 'Khởi hành' })).toBeVisible();
+  const save = await page.evaluate(() => window.__eventide!.save()); expect(save.coreLevel).toBe(1); expect(save.currency).toBe(7); expect(save.echo).toBe(true); expect(save.settings.muted).toBe(true); expect(save.settings.reducedEffects).toBe(true);
+  expect(save.settings.quality).toBe('low');
+  await page.getByRole('button', { name: 'Echo', exact: true }).click(); await expect(page.locator('.echo')).toContainText('hạt giống');
+  await page.getByRole('button', { name: 'Trở về' }).click(); await start(page); expect(await page.evaluate(() => window.__eventide!.snapshot()!.beacon.maxHP)).toBe(330);
+  await page.keyboard.press('Escape'); await page.getByRole('button', { name: 'Về menu' }).click();
+  await page.getByRole('button', { name: 'Cài đặt', exact: true }).click(); await page.getByRole('button', { name: 'Xóa tiến triển…' }).click();
+  await expect(page.getByRole('heading', { name: 'Xóa tiến triển?' })).toBeVisible(); await page.getByRole('button', { name: 'Hủy', exact: true }).click();
+  expect(await page.evaluate(() => window.__eventide!.save().currency)).toBe(7);
+  await page.getByRole('button', { name: 'Xóa tiến triển…' }).click(); await page.getByRole('button', { name: 'Xác nhận xóa' }).click();
+  const reset = await page.evaluate(() => window.__eventide!.save()); expect(reset.currency).toBe(0); expect(reset.coreLevel).toBe(0); expect(reset.echo).toBe(false);
+  expect(reset.careerKills).toBe(0); expect(reset.unlockedAchievements).toEqual([]);
+});
+for (const viewport of [{ width: 1280, height: 720 }, { width: 1920, height: 1080 }]) test(`ảnh và layout ${viewport.width}×${viewport.height}`, async ({ page }, testInfo) => {
+  await page.setViewportSize(viewport); await open(page); await page.screenshot({ path: testInfo.outputPath('menu.png') }); await start(page);
+  await page.screenshot({ path: testInfo.outputPath('hud.png') });
+  const bounds = await page.locator('.hud-top').boundingBox(); expect(bounds!.x).toBeGreaterThanOrEqual(0); expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(viewport.width);
+  await page.evaluate(() => window.__eventide!.xp(12)); await expect(page.locator('.upgrade-panel')).toBeVisible();
+  const modal = await page.locator('.upgrade-panel').boundingBox(); expect(modal!.y).toBeGreaterThanOrEqual(0); expect(modal!.y + modal!.height).toBeLessThanOrEqual(viewport.height);
+  await page.screenshot({ path: testInfo.outputPath('upgrade.png') });
+});
+test('save hỏng, chặn storage và fallback asset vẫn vào game', async ({ page }) => {
+  await page.addInitScript(() => { localStorage.setItem('eventide.e2e.v1', '{bad'); });
+  await page.route('**/assets/images/player/nova.svg', route => route.abort()); await open(page); await start(page); await expect(page.locator('#ship-hp')).toContainText('100/100');
+  await page.reload(); await expect(page.getByRole('button', { name: 'Khởi hành' })).toBeVisible();
+  await page.addInitScript(() => { Object.defineProperty(window, 'localStorage', { get() { throw new Error('blocked'); } }); });
+  await page.reload(); await expect(page.getByRole('button', { name: 'Khởi hành' })).toBeVisible(); await start(page);
+  await page.evaluate(() => window.__eventide!.patch({ time: 125, beacon: { hp: 0, maxHP: 300, lastHit: 125 } }));
+  await expect(page.locator('.storage-warning')).toContainText('Không thể lưu');
+});

@@ -1,0 +1,163 @@
+import Phaser from 'phaser';
+import { BALANCE as B } from '../config/balance';
+import { PRESENTATION as P } from '../config/presentation';
+import { seededRandom } from '../core/math';
+import type { RunState, Vec, Settings, Gravity } from '../core/types';
+import { DRONES } from '../config/content';
+import { SpritePool } from './SpritePool';
+import { cellAxis, LEDGER_SIDE, pickupRadius } from '../systems/PickupSystem';
+import { renderX, renderY } from './interpolation';
+/** Chỉ trình bày; simulation sở hữu vị trí va chạm, thời gian, lực hút và damage. */
+export class WorldRenderer {
+  private graphics: Phaser.GameObjects.Graphics;
+  private staticWorld: Phaser.GameObjects.Graphics;
+  private pool: SpritePool;
+  private stars: Phaser.GameObjects.TileSprite;
+  private ruins: Phaser.GameObjects.Image[] = [];
+  private quality: Settings['quality'] = 'high';
+  private bounds = { left: 0, right: 0, top: 0, bottom: 0 };
+  private pickupVisuals = 0; private particles = 0;
+  private lastState?: RunState; private lastTime = -1; private lastPhase = ''; private lastWidth = 0; private lastHeight = 0;
+  private previousGravity?: Gravity; private fade?: { x: number; y: number; end: number };
+  constructor(private scene: Phaser.Scene) {
+    this.pool = new SpritePool(scene);
+    // TileSprite có backing canvas bằng size truyền vào cả khi WebGL: chỉ cấp theo viewport.
+    this.stars = scene.add.tileSprite(0, 0, scene.scale.width, scene.scale.height, 'stars-high').setOrigin(0).setScrollFactor(0).setDepth(-10);
+    const rng = seededRandom(777);
+    for (let i = 0; i < P.high.ruins; i++) {
+      const a = rng() * Math.PI * 2, r = 260 + rng() * 1500;
+      this.ruins.push(scene.add.image(Math.cos(a) * r, Math.sin(a) * r, 'world-atlas', 'ruin').setAlpha(0.55).setRotation(rng() * 7).setScale(0.6 + rng()).setDepth(-9));
+    }
+    scene.add.image(0, 0, 'light-disc').setDisplaySize(B.lightRadius * 2, B.lightRadius * 2).setDepth(-8);
+    this.staticWorld = scene.add.graphics().setDepth(-7);
+    this.staticWorld.lineStyle(2, 0xa7739c, 0.5); this.staticWorld.strokeCircle(0, 0, B.arenaRadius);
+    for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; this.staticWorld.lineStyle(1, 0x658294, 0.18); this.staticWorld.lineBetween(Math.cos(a) * 70, Math.sin(a) * 70, Math.cos(a) * 130, Math.sin(a) * 130); }
+    this.graphics = scene.add.graphics().setDepth(2);
+  }
+  private visible(x: number, y: number, radius = 30): boolean {
+    return x + radius >= this.bounds.left && x - radius <= this.bounds.right && y + radius >= this.bounds.top && y - radius <= this.bounds.bottom;
+  }
+  private sprite(key: string, asset: string, x: number, y: number, size: number, rotation = 0, alpha = 1, tint = 0xffffff, depth = 1): void {
+    if (this.visible(x, y, size)) this.pool.draw(key, asset, x, y, size, rotation, alpha, tint, depth);
+  }
+  private applyQuality(quality: Settings['quality']): void {
+    if (quality === this.quality) return; this.quality = quality; this.stars.setTexture(`stars-${quality}`);
+    this.ruins.forEach((image, i) => image.setVisible(i < P[quality].ruins));
+    this.lastTime = -1;
+  }
+  /** Cùng alpha cho tàu/camera/quái/đạn, không lerp hai lần hoặc làm trễ input qua smoothing. */
+  draw(s: RunState, menu = false, reduced = false, quality: Settings['quality'] = 'high', alpha = 1): void {
+    this.applyQuality(quality);
+    const camera = this.scene.cameras.main;
+    if (s !== this.lastState) { this.previousGravity = undefined; this.fade = undefined; }
+    const frozen = menu || s.phase !== 'playing';
+    if (frozen && this.lastState === s && this.lastTime === s.time && this.lastPhase === s.phase && this.lastWidth === camera.width && this.lastHeight === camera.height) return;
+    this.lastState = s; this.lastTime = s.time; this.lastPhase = s.phase; this.lastWidth = camera.width; this.lastHeight = camera.height;
+    if (frozen) alpha = 1;
+    const px = menu ? -130 : renderX(s.player, alpha), py = menu ? 160 : renderY(s.player, alpha);
+    const time = menu ? 0 : s.phase === 'playing' ? Math.max(0, s.time - B.step * (1 - alpha)) : s.time;
+    camera.centerOn(menu ? -330 : px, menu ? -30 : py);
+    if (this.stars.width !== camera.width || this.stars.height !== camera.height) this.stars.setSize(camera.width, camera.height);
+    this.stars.tilePositionX = camera.scrollX; this.stars.tilePositionY = camera.scrollY;
+    const cx = menu ? -330 : px, cy = menu ? -30 : py, padding = P.visualCullPadding;
+    this.bounds.left = cx - camera.width / 2 - padding; this.bounds.right = cx + camera.width / 2 + padding;
+    this.bounds.top = cy - camera.height / 2 - padding; this.bounds.bottom = cy + camera.height / 2 + padding;
+    const g = this.graphics; g.clear(); this.pool.begin(); this.pickupVisuals = 0; this.particles = 0;
+    const budget = P[reduced ? 'low' : quality];
+    if (this.visible(0, 0, 150)) {
+      g.lineStyle(3, 0xffd281, 0.85); g.beginPath(); g.arc(0, 0, 63, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * (menu ? 0.76 : s.time / B.duration)); g.strokePath();
+      this.sprite('beacon', 'beacon', 0, 0, 92, time * 0.05);
+    }
+    if (!menu) {
+      this.drawPickups(s, time);
+      for (let i = 0; i < s.wells.length; i++) {
+        const w = s.wells[i]; if (!this.visible(w.x, w.y, w.radius)) continue;
+        this.drawGravity(w.x, w.y, w.radius, time, false, false, Math.max(0, Math.min(1, (s.time - (w.start ?? w.end - 2)) / (w.end - (w.start ?? w.end - 2)))), budget);
+        this.sprite(`well${i}`, 'well', w.x, w.y, 31, -time * 0.6, 0.95);
+      }
+      if (this.previousGravity && this.previousGravity !== s.gravity) this.fade = { x: this.previousGravity.x, y: this.previousGravity.y, end: s.time + 0.6 };
+      this.previousGravity = s.gravity;
+      if (s.gravity && this.visible(s.gravity.x, s.gravity.y, B.gravityRadius)) {
+        const v = s.gravity, warning = s.time < v.start;
+        this.drawGravity(v.x, v.y, B.gravityRadius, time, true, warning, warning ? 1 - (v.start - s.time) / B.gravityWarning : 1, budget);
+        this.sprite('environment', 'well', v.x, v.y, 42, -time * 0.2, warning ? 0.5 : 1, warning ? 0xffd097 : 0xe59ddd, -1);
+      }
+      if (this.fade && s.time < this.fade.end && this.visible(this.fade.x, this.fade.y, B.gravityRadius)) { g.lineStyle(2, 0xbc8bca, (this.fade.end - s.time) * 0.6); g.strokeCircle(this.fade.x, this.fade.y, B.gravityRadius); }
+      let bars = 0;
+      for (const e of s.enemies) {
+        const x = renderX(e, alpha), y = renderY(e, alpha); if (!this.visible(x, y, e.radius + 15)) continue;
+        const target = e.target === 'beacon' ? { x: 0, y: 0 } : s.player;
+        const facing = e.kind === 'elder' ? time * 0.15 : Math.atan2(target.y - e.y, target.x - e.x) + (e.kind === 'leech' && !reduced ? Math.sin(time * 7 + e.id) * 0.06 : 0);
+        this.sprite(`enemy${e.id}`, e.kind, x, y, e.radius * 2.6, facing);
+        if (e.target === 'beacon') { g.lineStyle(2, 0xffd28a); g.strokeTriangle(x, y - e.radius - 13, x - 5, y - e.radius - 6, x + 5, y - e.radius - 6); }
+        if (e.hp < e.maxHP && e.kind !== 'elder' && bars++ < budget.healthBars) {
+          g.fillStyle(0x392744); g.fillRect(x - 16, y + e.radius + 5, 32, 3); g.fillStyle(0xf9a1c9); g.fillRect(x - 16, y + e.radius + 5, 32 * Math.max(0, e.hp / e.maxHP), 3);
+        }
+      }
+      for (const p of s.projectiles) {
+        const x = renderX(p, alpha), y = renderY(p, alpha), asset = p.hostile ? 'enemyBolt' : p.blast > 100 ? 'shotSupernova' : p.blast ? 'shotSun' : 'shotPlasma';
+        this.sprite(`projectile${p.id}`, asset, x, y, p.hostile ? 17 : p.blast ? 26 : 20, Math.atan2(p.vy, p.vx), 1, 0xffffff, 3);
+      }
+      const droneLevel = s.modules.drones;
+      if (droneLevel) {
+        const d = DRONES[droneLevel - 1];
+        for (let i = 0; i < d.count; i++) { const angle = time * B.droneAngularSpeed + i * Math.PI * 2 / d.count; this.sprite(`drone${i}`, 'drones', px + Math.cos(angle) * d.radius, py + Math.sin(angle) * d.radius, 30, angle); }
+      }
+      if (s.beam) {
+        const b = s.beam, active = s.time >= b.fire;
+        g.lineStyle(active ? B.bossBeamWidth * 2 : 2, active ? 0xffd2cc : 0xef91b4, active ? 0.65 : 0.9);
+        g.lineBetween(b.x, b.y, b.x + Math.cos(b.angle) * B.beamLength, b.y + Math.sin(b.angle) * B.beamLength);
+      }
+      if (s.corruption >= 50) { g.lineStyle(2, 0xef86d6, 0.6); g.strokeCircle(px, py, 27); }
+      const moving = Math.hypot(s.player.x - (s.player.previousX ?? s.player.x), s.player.y - (s.player.previousY ?? s.player.y)) > 0.01;
+      if (moving && s.phase === 'playing' && !reduced) for (let i = 1; i <= budget.trail; i++) {
+        const length = 16 + i * 6, x = px - Math.cos(s.player.angle) * length, y = py - Math.sin(s.player.angle) * length;
+        g.fillStyle(i === 1 ? 0xffd79b : 0x8addeb, 0.6 / i); g.fillCircle(x, y, 3 - i * 0.4);
+      }
+      this.sprite('nova', 'nova', px, py, 43, s.player.angle, s.time < s.player.protectedUntil && !reduced ? 0.72 + Math.sin(time * 35) * 0.18 : 1, 0xffffff, 3);
+      if (s.player.leechUntil > s.time) { g.lineStyle(3, 0xf67fbd); g.strokeCircle(px, py, 22); }
+      if (!reduced) for (const e of s.effects) if (this.visible(e.x, e.y, e.radius)) {
+        const life = Math.max(0, (e.end - s.time) / 0.4); g.lineStyle(2, e.color, life * 0.7); g.strokeCircle(e.x, e.y, e.radius * (1 - life * 0.8));
+        if (e.radius > 60) { g.lineStyle(1, e.color, life * 0.25); g.strokeCircle(e.x, e.y, e.radius); }
+      }
+      if (s.phase === 'victory') { g.lineStyle(8, 0xffdc9e, 0.45); g.strokeCircle(0, 0, B.lightRadius); }
+    } else this.sprite('nova', 'nova', px, py, 43, -0.5);
+    this.pool.end();
+  }
+  /** Radius luôn là world unit từ gameplay; các hạt chỉ mô tả hướng, không làm damage/lực. */
+  private drawGravity(x: number, y: number, radius: number, time: number, environment: boolean, warning: boolean, progress: number, budget: typeof P.high | typeof P.low): void {
+    const g = this.graphics, color = environment ? warning ? 0xf2bf85 : 0xd48dc9 : 0x78e7e2;
+    g.lineStyle(warning ? 2 : 1.5, color, 0.7);
+    for (let i = 0; i < 16; i++) { const a = i * Math.PI / 8; g.beginPath(); g.arc(x, y, radius, a, a + Math.PI / 12); g.strokePath(); }
+    g.lineStyle(2, color, 0.85); g.beginPath(); g.arc(x, y, radius * (environment ? 0.14 : 0.22), -Math.PI / 2, -Math.PI / 2 + progress * Math.PI * 2); g.strokePath();
+    if (warning) { g.lineStyle(1, color, 0.5); g.strokeCircle(x, y, 18 + (1 - progress) * 38); return; }
+    g.fillStyle(0x030915, 0.9); g.fillCircle(x, y, environment ? 22 : 14);
+    g.lineStyle(2, color, 0.75); g.strokeEllipse(x, y, environment ? 95 : 65, environment ? 40 : 27);
+    const count = Math.min(budget.perGravity, budget.suctionParticles - this.particles);
+    for (let i = 0; i < count; i++) {
+      const phase = (time * 0.42 + i / Math.max(1, count)) % 1, r = radius * (1 - phase), a = i * 2.399 + time * 0.7 + phase * 4;
+      const nextR = Math.max(10, r - 10), nextA = a + 0.09;
+      g.lineStyle(1.3, color, 0.25 + phase * 0.55); g.lineBetween(x + Math.cos(a) * r, y + Math.sin(a) * r, x + Math.cos(nextA) * nextR, y + Math.sin(nextA) * nextR);
+    }
+    this.particles += count;
+  }
+  private drawPickups(s: RunState, time: number): void {
+    const max = P.maxActivePickupVisuals - 1, radius = pickupRadius(s) + 70, r2 = radius * radius;
+    let overflow = 0;
+    const draw = (key: string, p: Vec, value: number): void => {
+      if (!this.visible(p.x, p.y, 20)) return;
+      if (this.pickupVisuals >= max) { if ((p.x - s.player.x) ** 2 + (p.y - s.player.y) ** 2 <= r2) overflow += value; return; }
+      this.sprite(key, value >= 15 ? 'stardustCluster' : 'stardust', p.x, p.y, value >= 60 ? 24 : value >= 15 ? 18 : 12, Math.PI / 6, 0.9 + Math.sin(time * 2 + p.x) * 0.06); this.pickupVisuals++;
+    };
+    // Ưu tiên marker ledger gần tàu trước orb xa; logic thu thập không phụ thuộc culling/budget.
+    if (s.loot?.ledgerCount) {
+      const x0 = cellAxis(this.bounds.left), x1 = cellAxis(this.bounds.right), y0 = cellAxis(this.bounds.top), y1 = cellAxis(this.bounds.bottom);
+      for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) { const index = y * LEDGER_SIDE + x, cell = s.loot.cells[index]; if (cell) draw(`cell${index}`, cell, cell.value); }
+    }
+    for (const p of s.pickups) if ((p.x - s.player.x) ** 2 + (p.y - s.player.y) ** 2 <= r2) draw(`xp${p.id}`, p, p.value);
+    for (const p of s.pickups) if ((p.x - s.player.x) ** 2 + (p.y - s.player.y) ** 2 > r2) draw(`xp${p.id}`, p, p.value);
+    if (overflow) { this.sprite('nearby-xp', 'stardustCluster', s.player.x + 25, s.player.y + 25, 22); this.pickupVisuals++; }
+  }
+  debugCounts(): Record<string, number> { return { pickupVisuals: this.pickupVisuals, spriteCapacity: this.pool.capacity, spriteActive: this.pool.active, suctionParticles: this.particles, starCanvasWidth: this.stars.canvas?.width ?? 0, starCanvasHeight: this.stars.canvas?.height ?? 0 }; }
+  dispose(): void { this.pool.dispose(); this.graphics.destroy(); this.staticWorld.destroy(); this.stars.destroy(); for (const image of this.ruins) image.destroy(); this.ruins.length = 0; }
+}

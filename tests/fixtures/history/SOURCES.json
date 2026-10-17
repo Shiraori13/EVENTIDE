@@ -1,0 +1,773 @@
+{
+  "description": "Frozen game source needed by historical regression tests; copied byte-for-byte from local baseline-source/src. vnext=MVP; v12=1.1; v13=1.2; v14=1.3; v141=1.4. No builds, assets, screenshots or personal data.",
+  "files": [
+    {
+      "path": "tests/fixtures/history/v12/src/assets/bakeTextures.ts",
+      "sha256": "28299249c03460928f1bbfc7cdaf8199004e84ec0f2bbeb620106e924ef85978"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/assets/manifest.ts",
+      "sha256": "6b439915567781a4afaa917669d64c39c987dd14390363ec6b3ed6e1c2e06b5f"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/assets/proceduralTextures.ts",
+      "sha256": "4c25ef9dea6e8d79996671f0f01d94aa899d9505dbf8c3190de58ed54bc00ea6"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/config/balance.ts",
+      "sha256": "fb269f7983c696d31b266adf63cf5fae5a6882260063657ea438ff29de1032e5"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/config/content.ts",
+      "sha256": "31c66801360964e5d151b39330d234336792f4a17cccf73d49058f6f8983ec6d"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/config/presentation.ts",
+      "sha256": "38fd810c77b05f71707add998eff8681b0b27a387d5050544f63b0255f26a53c"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/core/GameClock.ts",
+      "sha256": "171bd035b9e4985c2fe7edff80813dae931fdb3b1984ba9a6879bfbf73cbd743"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/core/GameSession.ts",
+      "sha256": "384eea4d7d8d7bddc8ed3143580f472c82d05be71402dc687acbc7f8d5b624fd"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/core/math.ts",
+      "sha256": "56dcdf776833440a593d4ff5e2cb234ac7a56909c1db9b706527a7ee5d12241c"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/core/types.ts",
+      "sha256": "f30c8c42b38130fd7a78744cfca04a06967f6830b898ff1b78db13b3903bf4ea"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/createGame.ts",
+      "sha256": "596d23056cab8f0756ea2c7e628d6792b56036682916b969c3096d50f5198aee"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/debug/DebugController.ts",
+      "sha256": "9e242fca378871469dc12066946b6b8dd260cb0a8a0e515c9712e3756807cbd0"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/debug/PerfSampler.ts",
+      "sha256": "1163739e17b0d2ccedd72eee8c440dd2e73c2067f2b383d6fd399f45c5190f7b"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/presentation/interpolation.ts",
+      "sha256": "80d3804136c287b8a3e4d5acca94278e990b76335375df502c5fc099e1ed395c"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/presentation/SpritePool.ts",
+      "sha256": "25253be93bacf3fde39267ad2c90065613f4d90b8fa489d105c5051386238d61"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/presentation/WorldRenderer.ts",
+      "sha256": "417cb036e7fd073e348a1697e436bb68fd0a9631d18c44a10957192407b809b6"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/scenes/BootScene.ts",
+      "sha256": "9d0f30ef34402d9728375b6d16ab18c54f6939a5846d87f731f1ea2f96d06299"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/scenes/GameScene.ts",
+      "sha256": "5cf53e107051a58df7753ca80c216c503c1a697af48b079ebfcaa1d1d8a5d43d"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/services/AudioService.ts",
+      "sha256": "517b498a9a2b2e4e3a0ce7db687f5c95949714efa785655fc59f0612b239161f"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/services/FontService.ts",
+      "sha256": "8236ff17927f90061bf030e18356ea5e87b5965c7d00c48e1cce596a89a9d44d"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/services/SaveService.ts",
+      "sha256": "0bb7e8078c61adf0563690cd0a184302640350742d2a5029583b1d0735248617"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/systems/BossSystem.ts",
+      "sha256": "33a5aec1f0ea75266ea98d1fb13f7e4d1d25a7f5de34dcbeea74491820fbb778"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/systems/CombatSystem.ts",
+      "sha256": "5ec6eb4b98274f081c1ae05522f3bf42644584fa87ff9bdf9007955827cb8eed"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/systems/ExperienceSystem.ts",
+      "sha256": "6610964e7d9dcaebb2cf0391cdcd8aa93ed9a06f66e08360c7145c21ca995918"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/systems/MovementSystem.ts",
+      "sha256": "22885b584fd26af5796c94814d32d38377953417c4d68fd08585bdcc9dfd9ada"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/systems/PickupSystem.ts",
+      "sha256": "a3b7b2376a6ac291701b0a4ba88198cfc827bf53d16d3fa40f6c7e86842f7c9b"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/systems/SpawnSystem.ts",
+      "sha256": "2dcd946f0e7457b5f7c85d3b8613fcb5c90a5a82ffb598d290f956ceacdd822e"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/systems/WeaponSystem.ts",
+      "sha256": "493cdd8683b5370482ff73c39463f0e23b18b012756fc8ada13a624168c41cd9"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/game/ui/GameUI.ts",
+      "sha256": "df731c9edc42ae3af6d1faf2334e00f6fc32b77fc50c2eb74dd2130a7429a852"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/main.ts",
+      "sha256": "e0dc4f63e71bb31dfe0cd058a33fcd9d340a0cb2b67a150569c9354903adcca2"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/styles/tokens.css",
+      "sha256": "934edbc21cb8cbddf9f3c1632dd325af386db824ab2b56c7b6d678293cd2595f"
+    },
+    {
+      "path": "tests/fixtures/history/v12/src/styles/ui.css",
+      "sha256": "75d0328b87ab0a2b57bb4649621d958137549b7c99ce5df04eef50a2d741146c"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/assets/bakeTextures.ts",
+      "sha256": "28299249c03460928f1bbfc7cdaf8199004e84ec0f2bbeb620106e924ef85978"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/assets/manifest.ts",
+      "sha256": "a3a7a28c5d7450042c13758d01dfca24300067192b8148625e0cd44b886683c7"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/assets/proceduralTextures.ts",
+      "sha256": "4c25ef9dea6e8d79996671f0f01d94aa899d9505dbf8c3190de58ed54bc00ea6"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/config/balance.ts",
+      "sha256": "fa2fe428305b5f7a8695dc89a1fb7e0738cfb0a32d23debb5408b5a09a783073"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/config/content.ts",
+      "sha256": "dfb2f84a84ee85b41f880a0eb07ab5572cf0ab4cb581b60c388c5b50b53c314d"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/config/presentation.ts",
+      "sha256": "38fd810c77b05f71707add998eff8681b0b27a387d5050544f63b0255f26a53c"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/config/progression.ts",
+      "sha256": "13fe2f268b4ab9ab56ab5ab32aaea83b180b783739cab6d62fb87c66ae7ce55f"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/core/GameClock.ts",
+      "sha256": "171bd035b9e4985c2fe7edff80813dae931fdb3b1984ba9a6879bfbf73cbd743"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/core/GameSession.ts",
+      "sha256": "2bc1d584ad113766284cfd3e3fb19dbe6e0153b8b26944bb7102904b317ef518"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/core/math.ts",
+      "sha256": "56dcdf776833440a593d4ff5e2cb234ac7a56909c1db9b706527a7ee5d12241c"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/core/stats.ts",
+      "sha256": "5ca1922915612a74f36e4fdb1c834ca51887746f1b6689c9b68c283f3bcf5ca1"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/core/types.ts",
+      "sha256": "de751f610a34e3c1700b454c1ab49539ab0068b303b21ba770c106e9b54dc2a1"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/createGame.ts",
+      "sha256": "596d23056cab8f0756ea2c7e628d6792b56036682916b969c3096d50f5198aee"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/debug/Autoplay.ts",
+      "sha256": "131b362cdf2744d95b8f592bd30aeab727a4a866138d14ae37960a676c39c140"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/debug/DebugController.ts",
+      "sha256": "b873c5578e47f9768fd71fd41343514dcee81d24b1ea525eec7362620a8c6493"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/debug/PerfSampler.ts",
+      "sha256": "2901c9dcab7e8d4a661b313e97d4749a5c1a65e847ea44d0e86e819c9dbdb9ee"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/presentation/interpolation.ts",
+      "sha256": "80d3804136c287b8a3e4d5acca94278e990b76335375df502c5fc099e1ed395c"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/presentation/SpritePool.ts",
+      "sha256": "25253be93bacf3fde39267ad2c90065613f4d90b8fa489d105c5051386238d61"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/presentation/WorldRenderer.ts",
+      "sha256": "af2a6b53cdd2fc9638c8027d89ffab99735c8101899969663e483bd3796a4102"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/scenes/BootScene.ts",
+      "sha256": "9d0f30ef34402d9728375b6d16ab18c54f6939a5846d87f731f1ea2f96d06299"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/scenes/GameScene.ts",
+      "sha256": "3b5eebb2cb2e2419b6053c08dd30d2e9b9c7ea93ffea9327967e253086e013ce"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/services/AudioService.ts",
+      "sha256": "517b498a9a2b2e4e3a0ce7db687f5c95949714efa785655fc59f0612b239161f"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/services/FontService.ts",
+      "sha256": "8236ff17927f90061bf030e18356ea5e87b5965c7d00c48e1cce596a89a9d44d"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/services/ProfileService.ts",
+      "sha256": "adb30d20ecf4ec81fbf3d3d6c51ebf54c361e4eef2105904f44e3eb6eb78b16f"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/services/SaveService.ts",
+      "sha256": "647e9ba501b50757994ac0aa17575ad0711dcc8da34e50ad7cd704fe6da01006"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/systems/BossLifecycle.ts",
+      "sha256": "8ed924dcae6188a7f9b2db0a8ff58e94199df6f4f7090b32076130c9fe739aa3"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/systems/BossSystem.ts",
+      "sha256": "03d05e30e33a05b6e5a2c7f041010466daade692339d3b834b092731c14b3679"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/systems/CombatSystem.ts",
+      "sha256": "16fae8c85dffb4b4218657085d71a3409600c7c1dbfd6511603da6f725857466"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/systems/ExperienceSystem.ts",
+      "sha256": "381a9bb895995b67453912ec8918d38611a21637e355010c3c7d3b4faf2cb76a"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/systems/MovementSystem.ts",
+      "sha256": "de33f5f08a004ca0350d6259d9cf42f6a024f0d9945259c15afbfd91f6ea616a"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/systems/PickupSystem.ts",
+      "sha256": "26d3f8be6d1cccf2cb1fdac496051877bd8681dfdc228f24e76e77487a9c3caf"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/systems/SpawnSystem.ts",
+      "sha256": "5031eddb8ca37ef8aaadbac9c38c18dd3f89e718fb0449dcc071422ba58116ca"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/systems/WeaponSystem.ts",
+      "sha256": "5b76f03dc226e632210293cb9083dc982d29c737acb565a6f800870f43b0db29"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/ui/GameUI.ts",
+      "sha256": "1ecd5e30c5b2460a599e7b9923e4cb7d01a099f78fee89ad5493d0c716af8bdd"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/game/ui/ProgressionView.ts",
+      "sha256": "1ca0b02e3c98d0fc06cf09d87461167fe4cbe3bb090f26ac54609aa77baffb3b"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/main.ts",
+      "sha256": "e0dc4f63e71bb31dfe0cd058a33fcd9d340a0cb2b67a150569c9354903adcca2"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/styles/tokens.css",
+      "sha256": "934edbc21cb8cbddf9f3c1632dd325af386db824ab2b56c7b6d678293cd2595f"
+    },
+    {
+      "path": "tests/fixtures/history/v13/src/styles/ui.css",
+      "sha256": "794c4edf1be60b5a0f43284a71de3987d6c3d8a2b7d1686eddeda08abe357990"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/assets/bakeTextures.ts",
+      "sha256": "28299249c03460928f1bbfc7cdaf8199004e84ec0f2bbeb620106e924ef85978"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/assets/manifest.ts",
+      "sha256": "072898d8292d5a100ec2ce2480bbc7d690da48b4e717357146201be900bbf06e"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/assets/proceduralTextures.ts",
+      "sha256": "4c25ef9dea6e8d79996671f0f01d94aa899d9505dbf8c3190de58ed54bc00ea6"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/config/achievements.ts",
+      "sha256": "8dbe46cb56d96354f08222c96ee6a4f4a9cc5d077913122559103e83b825baaa"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/config/balance.ts",
+      "sha256": "a98633457e7ad4268a604c154afaacdb3888cace5747dbc7aec3f949249cea58"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/config/beacon.ts",
+      "sha256": "a957ced85b80fa72813073036e160d367f77704cc2255d4cef6bf8eb489b9a32"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/config/content.ts",
+      "sha256": "0194e98f4b3d9c755c199865ea08488808bcb4f7d132ade2af07ccce6919db0a"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/config/presentation.ts",
+      "sha256": "38fd810c77b05f71707add998eff8681b0b27a387d5050544f63b0255f26a53c"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/config/progression.ts",
+      "sha256": "0a80b2eec3f453fb95583705a07d0b348670941bb901f7bf998226a4182a60fa"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/config/salvage.ts",
+      "sha256": "30671a721bad312ea7fb89fa1559ec7cf1ec9eb5ed08808bbea51222e946de4b"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/core/GameClock.ts",
+      "sha256": "171bd035b9e4985c2fe7edff80813dae931fdb3b1984ba9a6879bfbf73cbd743"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/core/GameSession.ts",
+      "sha256": "da092ea3425458cc45db4fc6edeedd8a66bfc9db48967d8c9273c8d14349650e"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/core/math.ts",
+      "sha256": "56dcdf776833440a593d4ff5e2cb234ac7a56909c1db9b706527a7ee5d12241c"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/core/stats.ts",
+      "sha256": "37a414728ddeec751e037e013cb6ae6ccb30ee9b147745ae93c58f5aa0d952d8"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/core/types.ts",
+      "sha256": "7fa7e51a557096f05b15b2336042708064f948b38a7879a4974e1de8397c8da5"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/createGame.ts",
+      "sha256": "596d23056cab8f0756ea2c7e628d6792b56036682916b969c3096d50f5198aee"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/debug/Autoplay.ts",
+      "sha256": "fa601b315d13a3b757ea429671c267a0673e6790da535231653f743657f20ac8"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/debug/DebugController.ts",
+      "sha256": "b873c5578e47f9768fd71fd41343514dcee81d24b1ea525eec7362620a8c6493"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/debug/PerfSampler.ts",
+      "sha256": "fa718c4b49c974427c2097bb879def9697735cd1b931f43080d807a5a4c12150"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/presentation/interpolation.ts",
+      "sha256": "80d3804136c287b8a3e4d5acca94278e990b76335375df502c5fc099e1ed395c"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/presentation/ShipPresentation.ts",
+      "sha256": "ae7e0e7dc29959a9f84ea57d6152754697f5fac8f4802a1cc929bf2d3b652387"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/presentation/SpritePool.ts",
+      "sha256": "25253be93bacf3fde39267ad2c90065613f4d90b8fa489d105c5051386238d61"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/presentation/WorldRenderer.ts",
+      "sha256": "bace8c6b6b6e14ac898330e0377c5fb7d027c8206f8cbb7ba7f3352d9feac6c6"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/scenes/BootScene.ts",
+      "sha256": "9d0f30ef34402d9728375b6d16ab18c54f6939a5846d87f731f1ea2f96d06299"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/scenes/GameScene.ts",
+      "sha256": "ec3bba27ab47213ad93c859558f012ed095dc56c8de9cd03d3ebed1227aaba7c"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/services/AudioService.ts",
+      "sha256": "517b498a9a2b2e4e3a0ce7db687f5c95949714efa785655fc59f0612b239161f"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/services/FontService.ts",
+      "sha256": "8236ff17927f90061bf030e18356ea5e87b5965c7d00c48e1cce596a89a9d44d"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/services/ProfileService.ts",
+      "sha256": "7699c22ddf1b80292d9817be27be1dc7ddab9e7af4daa4266439a956c26e834e"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/services/SaveService.ts",
+      "sha256": "a5cd6706fe89c8e9dc837fe9c439ce492ac0d206cafc7115fa1dce21f18ccbed"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/systems/AdvancedWeapons.ts",
+      "sha256": "0607ef8824f2079809d3cabe4858864daa4a9e94bbab0441cab37866ce9952c6"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/systems/BossLifecycle.ts",
+      "sha256": "366dd0d6b8dce35db26c30c59009a22089a2985a53a08afb2aef7fa895b9a687"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/systems/BossSystem.ts",
+      "sha256": "03d05e30e33a05b6e5a2c7f041010466daade692339d3b834b092731c14b3679"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/systems/CombatSystem.ts",
+      "sha256": "931585e9edaa9e5291a022696163bb4713a934a3eb53f83afef066df3c0b7d1f"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/systems/ExperienceSystem.ts",
+      "sha256": "eaade3b657adc22115b9e0e3b12bc2983e2e81baa6a71ce64da55fe6f4971be6"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/systems/ModuleLifecycle.ts",
+      "sha256": "5b97c8c2aa5c0474e205961dd47fb2b83918b2435196e10f25fe73220e3155ec"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/systems/MovementSystem.ts",
+      "sha256": "238c3e7f48503a27596fd6d571b4ebf86b63d79eb51b59f7cc758a1c37dbdb0a"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/systems/PickupSystem.ts",
+      "sha256": "26d3f8be6d1cccf2cb1fdac496051877bd8681dfdc228f24e76e77487a9c3caf"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/systems/SalvageSystem.ts",
+      "sha256": "a74ecc048a1d4cb9fdc8c0a224aa420048aa210dafb3d9fe6e99111f763f9cb3"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/systems/SpawnSystem.ts",
+      "sha256": "bdfcdc97f1f5522ddb8db470263a139dbf66c307c1726816ce0665ce2d601a38"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/systems/WeaponSystem.ts",
+      "sha256": "16f56d9553526d357b07142bb72c36a4fbbfc1f8992c9aaf0da86bc1b0bb91bc"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/ui/format.ts",
+      "sha256": "75c4e2cb1ba25cbc4e175369c223c79740a221b09d065bd1493248abf70b564b"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/ui/GameUI.ts",
+      "sha256": "f0398f109d25fc91dfdd4ec057481c40d94f3aa02a3a36437fde8b042eb041f7"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/game/ui/ProgressionView.ts",
+      "sha256": "ad648777b1e1a00a152c539ec0c57e742324bae158ed934d055611f9ab83e30c"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/main.ts",
+      "sha256": "e0dc4f63e71bb31dfe0cd058a33fcd9d340a0cb2b67a150569c9354903adcca2"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/styles/tokens.css",
+      "sha256": "934edbc21cb8cbddf9f3c1632dd325af386db824ab2b56c7b6d678293cd2595f"
+    },
+    {
+      "path": "tests/fixtures/history/v14/src/styles/ui.css",
+      "sha256": "6910db10169ad23226ca48bcb3443afef0f2c0525e5164dd4baf0bd6a392e90f"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/assets/bakeTextures.ts",
+      "sha256": "c76d42379e63d05d852fad503cfcc44c3cb72db0df0aa45921f38aba52921a84"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/assets/manifest.ts",
+      "sha256": "379540106f4fffe592b60f36cb53a7f2eb70d3a257ecb18f1666523eab3dd515"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/assets/proceduralTextures.ts",
+      "sha256": "4c25ef9dea6e8d79996671f0f01d94aa899d9505dbf8c3190de58ed54bc00ea6"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/config/achievements.ts",
+      "sha256": "8dbe46cb56d96354f08222c96ee6a4f4a9cc5d077913122559103e83b825baaa"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/config/balance.ts",
+      "sha256": "5fc211aa157b25a75b6b50534165c176a84a68aa11bbadd0a2bcfdb508e887fb"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/config/beacon.ts",
+      "sha256": "a957ced85b80fa72813073036e160d367f77704cc2255d4cef6bf8eb489b9a32"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/config/content.ts",
+      "sha256": "98aeae49084d55dfe1ca7cd144e15c940d0ca65d176af5e036b679687d244437"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/config/events.ts",
+      "sha256": "e735df0a79d0ec9a26623f87b62442613e2c7de67285ed104990cc60db23987e"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/config/mastery.ts",
+      "sha256": "cf34bd9d18d52d222b07d75ce2808070545527b66d372e4ecc09b0125515771d"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/config/presentation.ts",
+      "sha256": "a9c50c77df6d4212f560985e8ece6c8dbf883736d024c6d6750796dfe9554cde"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/config/progression.ts",
+      "sha256": "0a80b2eec3f453fb95583705a07d0b348670941bb901f7bf998226a4182a60fa"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/config/salvage.ts",
+      "sha256": "30671a721bad312ea7fb89fa1559ec7cf1ec9eb5ed08808bbea51222e946de4b"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/core/GameClock.ts",
+      "sha256": "171bd035b9e4985c2fe7edff80813dae931fdb3b1984ba9a6879bfbf73cbd743"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/core/GameSession.ts",
+      "sha256": "13fc87800da5be7296a18af7afd8ba0cc4f7558443ea83a554b793bc01529e55"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/core/math.ts",
+      "sha256": "56dcdf776833440a593d4ff5e2cb234ac7a56909c1db9b706527a7ee5d12241c"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/core/stats.ts",
+      "sha256": "c686ef26e7363fed1712fb6ade7d3c2151a72fac0f7dc2876cae8b0d8fc9e7db"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/core/types.ts",
+      "sha256": "22f8309a8c520593ed3b0e37b25addfbe5baacd721bf00f7761933270990e18e"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/createGame.ts",
+      "sha256": "596d23056cab8f0756ea2c7e628d6792b56036682916b969c3096d50f5198aee"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/debug/Autoplay.ts",
+      "sha256": "b0a05db8211e50bb6f3ed99d08b7b718cdf2797b272f6cb19174ae0a2b4a8ef9"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/debug/DebugController.ts",
+      "sha256": "b873c5578e47f9768fd71fd41343514dcee81d24b1ea525eec7362620a8c6493"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/debug/PerfSampler.ts",
+      "sha256": "1c8ea4e27126764a8fb7a4a12c02a59c92b8837db83bb91be86734f369e8cdfa"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/presentation/BeaconFeedback.ts",
+      "sha256": "d3226614ff2384b3f0bc11cc3b4167f4806808c18f2699f3c923a912c1571b58"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/presentation/interpolation.ts",
+      "sha256": "80d3804136c287b8a3e4d5acca94278e990b76335375df502c5fc099e1ed395c"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/presentation/ShipPresentation.ts",
+      "sha256": "ae7e0e7dc29959a9f84ea57d6152754697f5fac8f4802a1cc929bf2d3b652387"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/presentation/SpritePool.ts",
+      "sha256": "25253be93bacf3fde39267ad2c90065613f4d90b8fa489d105c5051386238d61"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/presentation/WorldRenderer.ts",
+      "sha256": "3fe692b85dfc0b5fff4c0bd4e8a0102bcd3c657ecd16ed3efd25abfb4507d6b3"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/scenes/BootScene.ts",
+      "sha256": "9d0f30ef34402d9728375b6d16ab18c54f6939a5846d87f731f1ea2f96d06299"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/scenes/GameScene.ts",
+      "sha256": "8795a61f2de3ac0ba628595a3ba40640289051d0f37bc975c8dee641710ad49c"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/services/AudioService.ts",
+      "sha256": "517b498a9a2b2e4e3a0ce7db687f5c95949714efa785655fc59f0612b239161f"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/services/FontService.ts",
+      "sha256": "8236ff17927f90061bf030e18356ea5e87b5965c7d00c48e1cce596a89a9d44d"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/services/ProfileService.ts",
+      "sha256": "7699c22ddf1b80292d9817be27be1dc7ddab9e7af4daa4266439a956c26e834e"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/services/SaveService.ts",
+      "sha256": "a5cd6706fe89c8e9dc837fe9c439ce492ac0d206cafc7115fa1dce21f18ccbed"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/systems/AdvancedWeapons.ts",
+      "sha256": "b3f7ecb068bd9c40b6e7161ebb66b5a6e6f175c3baa16adff45332c11f64d6e9"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/systems/AstronomySystem.ts",
+      "sha256": "af565cc8cb9465a2da578ce10ecd4133e62730e00b9ee5fb5adec6110fc1f3c5"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/systems/BossLifecycle.ts",
+      "sha256": "366dd0d6b8dce35db26c30c59009a22089a2985a53a08afb2aef7fa895b9a687"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/systems/BossSystem.ts",
+      "sha256": "dad6fbcb8b09766394d059f342c3d57704b046015476e91a31ae8ed358f3d0e4"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/systems/CombatSystem.ts",
+      "sha256": "f4640cd6cceabe6843638dcc8ffb1f37d283b0ba883d8a1fe1fd8e4178d2427c"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/systems/EvolutionSystem.ts",
+      "sha256": "f5a0b280d4935b9c379d952e129302b4da866e2510b5ab512d520f4d9f96b541"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/systems/ExperienceSystem.ts",
+      "sha256": "f18d59673e79ecaecdf68e053d85d3e8a3f0bd4df3d8633dedb0164b74e228b8"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/systems/ModuleLifecycle.ts",
+      "sha256": "d2e0f40b1c4bfb84f0975450a29156b588cc50c185462db16eae1970ad3fed55"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/systems/MovementSystem.ts",
+      "sha256": "dd43655aa9d967915d7c2f815a606e2161ae0e3ff8fdf4be5035b49509562844"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/systems/PickupSystem.ts",
+      "sha256": "26d3f8be6d1cccf2cb1fdac496051877bd8681dfdc228f24e76e77487a9c3caf"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/systems/SalvageSystem.ts",
+      "sha256": "a74ecc048a1d4cb9fdc8c0a224aa420048aa210dafb3d9fe6e99111f763f9cb3"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/systems/SpawnSystem.ts",
+      "sha256": "6a2b730d239133ae6150a810e2d3bee7377d1ece4f1b57efa5af27c8856c0aa7"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/systems/WeaponSystem.ts",
+      "sha256": "16f56d9553526d357b07142bb72c36a4fbbfc1f8992c9aaf0da86bc1b0bb91bc"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/ui/format.ts",
+      "sha256": "75c4e2cb1ba25cbc4e175369c223c79740a221b09d065bd1493248abf70b564b"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/ui/GameUI.ts",
+      "sha256": "daa1243da0a8897febd8752c1c64d5da150d31268d4bf5f1eb48f12faccd1f2d"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/game/ui/ProgressionView.ts",
+      "sha256": "70f03e49b2947eda2165bd442a0858c930696770a4ac4d25fced312167c3bef0"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/main.ts",
+      "sha256": "e0dc4f63e71bb31dfe0cd058a33fcd9d340a0cb2b67a150569c9354903adcca2"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/styles/tokens.css",
+      "sha256": "934edbc21cb8cbddf9f3c1632dd325af386db824ab2b56c7b6d678293cd2595f"
+    },
+    {
+      "path": "tests/fixtures/history/v141/src/styles/ui.css",
+      "sha256": "cfc508b6db346e88551848df09fa4f865e7c2022ca56c1cdc51a35880fa67e8a"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/assets/manifest.ts",
+      "sha256": "cccf1778d11f05ba0e608e71f3eaa536621af3886d9c80b06838af18e5f4c52a"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/assets/proceduralTextures.ts",
+      "sha256": "4c25ef9dea6e8d79996671f0f01d94aa899d9505dbf8c3190de58ed54bc00ea6"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/game/config/balance.ts",
+      "sha256": "fb269f7983c696d31b266adf63cf5fae5a6882260063657ea438ff29de1032e5"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/game/config/content.ts",
+      "sha256": "31c66801360964e5d151b39330d234336792f4a17cccf73d49058f6f8983ec6d"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/game/core/GameClock.ts",
+      "sha256": "b3ce59e0bb527774fd0bdbbe86a42e82c7139168a3743488d8d48601edb87bb5"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/game/core/GameSession.ts",
+      "sha256": "1863d95823df3bb43d40d8280bb6ac03b3b5bdbf72739ed955093c9e71fcc197"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/game/core/math.ts",
+      "sha256": "6d7552bb195aba20d4733c80878be40910b1ee702ca287779494e1ef7877b28d"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/game/core/types.ts",
+      "sha256": "1781c107577dfa490b552c56a559d25104484f69c928cef9165c39ac3c373d5b"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/game/createGame.ts",
+      "sha256": "596d23056cab8f0756ea2c7e628d6792b56036682916b969c3096d50f5198aee"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/game/debug/DebugController.ts",
+      "sha256": "9e242fca378871469dc12066946b6b8dd260cb0a8a0e515c9712e3756807cbd0"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/game/presentation/WorldRenderer.ts",
+      "sha256": "231368e95d7782af92d63625bff6a826c5bcd61e3b7d99a30810382b2fc82210"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/game/scenes/BootScene.ts",
+      "sha256": "badf08c79f462a256a5d1e68841d813e4db865ccb775dcb16b792444d3fa1267"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/game/scenes/GameScene.ts",
+      "sha256": "0ced9c9ec2f971519c4c7f284ee54acb185acd579c28206ab928a61c1ffeb0ba"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/game/services/AudioService.ts",
+      "sha256": "ee42e2a81952bf9895f96d4ef981f41f3bb06b23903d6371467f1b4093e8097a"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/game/services/SaveService.ts",
+      "sha256": "e9eebadfb7af03e1ac2a621cc7f86fa3b7fe2ac534ae0258ad6b07faf611d58b"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/game/systems/BossSystem.ts",
+      "sha256": "33a5aec1f0ea75266ea98d1fb13f7e4d1d25a7f5de34dcbeea74491820fbb778"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/game/systems/CombatSystem.ts",
+      "sha256": "fae6d432ec5ccbfc1bb93a34f4a76c641f8a15f7cd7f6fac099e9541f6701327"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/game/systems/ExperienceSystem.ts",
+      "sha256": "6610964e7d9dcaebb2cf0391cdcd8aa93ed9a06f66e08360c7145c21ca995918"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/game/systems/MovementSystem.ts",
+      "sha256": "5096ca5487bb95cc785a85e9e01b423d18a341d860ec60738129c705f202d9c5"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/game/systems/SpawnSystem.ts",
+      "sha256": "2dcd946f0e7457b5f7c85d3b8613fcb5c90a5a82ffb598d290f956ceacdd822e"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/game/systems/WeaponSystem.ts",
+      "sha256": "40eed0a9333459668d9ded60fadaf7014ca1a11d38c1136152983ab5da8d3f74"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/game/ui/GameUI.ts",
+      "sha256": "7f80d0148a8e43f71e22ef8eee13d325da459f1d2e40ce4b3458faffd2179e06"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/main.ts",
+      "sha256": "3596a89bcf6ef220a64a93263bdceb28bbfa5f7f058a9ce365d3e60dadaf51bf"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/styles/tokens.css",
+      "sha256": "b734a93505f3da278c1af2cff0fe8432bddb3d128b463bc2c22edb4ca04268d1"
+    },
+    {
+      "path": "tests/fixtures/history/vnext/src/styles/ui.css",
+      "sha256": "a7c560797d017a3bfb45314d5037d627b81064001bf90262fc04e8cefeee7dfb"
+    }
+  ]
+}

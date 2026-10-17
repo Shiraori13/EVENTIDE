@@ -1,0 +1,13 @@
+* text=auto
+*.ts text eol=lf
+*.mjs text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
+*.svg text eol=lf
+*.ttf binary
+*.docx binary
+# Snapshot regression giữ nguyên byte và SHA nguồn cũ, không đổi newline khi checkout Linux.
+tests/fixtures/history/** -text
