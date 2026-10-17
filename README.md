@@ -6,7 +6,7 @@ MVP local sinh tồn hành động 2D bằng Phaser 3 + TypeScript. Điều khi�
 
 ## Chơi trên web
 
-Repository: [Shiraori13/EVENTIDE](https://github.com/Shiraori13/EVENTIDE). URL Pages dự kiến: https://shiraori13.github.io/EVENTIDE/ — trạng thái xác minh thực tế ở [triển khai](docs/DEPLOYMENT.md). Push main tự kiểm tra/build/deploy qua Actions.
+Repository: [Shiraori13/EVENTIDE](https://github.com/Shiraori13/EVENTIDE). Chơi ngay: **https://shiraori13.github.io/EVENTIDE/** — Pages đã deploy và smoke browser công khai2/2; bằng chứng ở [triển khai](docs/DEPLOYMENT.md). Push main tự kiểm tra/build/deploy qua Actions.
 
 ## Chạy trên Windows
 

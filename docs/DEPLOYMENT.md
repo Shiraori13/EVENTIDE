@@ -1,7 +1,7 @@
 # Triển khai EVENTIDE · beta 1.0.0
 
 Repository: https://github.com/Shiraori13/EVENTIDE · production branch: main.
-URL dự kiến: https://shiraori13.github.io/EVENTIDE/ . Chưa coi URL này đã hoạt động trước khi Actions và browser trên trang công khai cùng được kiểm tra; kết quả cập nhật ở cuối tài liệu.
+URL chơi **đã xác minh bằng Chromium**: https://shiraori13.github.io/EVENTIDE/ . Kết quả Actions và kiểm tra công khai ở cuối tài liệu.
 
 ## Bản phát hành
 
@@ -95,4 +95,10 @@ Trước push: remote refs rỗng qua git ls-remote/fetch; workspace chưa có G
 
 Đã chạy npm ci (sau nhả khóa Vite/esbuild của workspace), strict/build,117/117unit trong48,55s và2/2production smoke trong28,5s. Bundle app index-DlFaRyTM.js110,73KB/gzip38,95; CSS14,97KB/gzip4,13; Phaser1208,06KB còn warning chunk>500KB. Không đổi gameplay/stat/save source. Network smoke không HTTP404 hoặc request bắt buộc về localhost khácorigin; font/SVG đều dưới prefix, offline vẫn chơi. Local Windows/headless SwiftShader; chưa nghe đánh giá audio hoặc đo GPU/FPS mới.
 
-Deployment công khai: đang chuẩn bị push; chưa xác nhận Actions/URL live. Kết quả thực tế sẽ được cập nhật sau khi theo dõi đúng commit và chạy smoke trên URL công khai.
+Deployment đầu: commit [fb6d9be](https://github.com/Shiraori13/EVENTIDE/commit/fb6d9be5b109b0da33e1c09e9447adfc1443c025), [workflow run39035972224](https://github.com/Shiraori13/EVENTIDE/actions/runs/39035972224) **success** cả build/deploy trên Linux. Pages tạo qua API201 với build_type workflow/HTTPS enforced; deployment7140126306 status success, environment_url https://shiraori13.github.io/EVENTIDE/. HTTP200 và script /EVENTIDE/assets/index-DlFaRyTM.js khớp local.
+
+Đã chạy cùng production smoke trên URL công khai: **2/2 pass,31,8s**; menu beta1.0.0/font/SVG/reload/nohooks/offline và movement/nhặtXP/chọnlevel/B/pause/resume/shotAudio/mute/save qua refresh. Đã xem screenshot menu và footer; WebAudio context running nhưng chưa nghe thử bằng tai. Raw riêng ở artifacts/deployment/public (local, không đưa profile test/screenshots lên repo).
+
+Đã audit cả378Gitobjects/192historicalsource: không output/.env/secretpattern và SHA fixture giữ. Lần scan Gitobjects đầu bị sandbox chặn spawn, đã chạy lại thành công bằng quyền phù hợp; không dùng lần lỗi làm bằng chứng. Whitespace check cho file hiện hành sạch; license/prompt/snapshot cũ giữ nguyên byte kể cả whitespace lịch sử. Repo không có lịch sử cũ, không force push.
+
+Commit tiếp theo chỉ cập nhật tài liệu xác nhận này, cùng source/bundle. Push main vẫn tự chạy lại CI/deploy. Xem [Actions mới nhất](https://github.com/Shiraori13/EVENTIDE/actions/workflows/deploy.yml) và SHA HEAD khi đối chiếu những lần cập nhật sau. Không còn bước bật Pages thủ công cần làm.

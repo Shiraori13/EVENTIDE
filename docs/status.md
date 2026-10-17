@@ -22,7 +22,11 @@ Raw local tại artifacts/deployment/local,publication-audit.json (không push).
 
 ## Deployment
 
-Đang chuẩn bị commit/push và cấu hình Pages. URL **dự kiến** https://shiraori13.github.io/EVENTIDE/; chưa coi push/buildlocal là deployment thành công. Theo dõi chi tiết và cách cập nhật ở [DEPLOYMENT](DEPLOYMENT.md).
+Đã push main commit [fb6d9be](https://github.com/Shiraori13/EVENTIDE/commit/fb6d9be5b109b0da33e1c09e9447adfc1443c025); [run39035972224](https://github.com/Shiraori13/EVENTIDE/actions/runs/39035972224) success cảbuild/deploy trênLinux. Bật Pages qua API201 với build_type workflow, HTTPS enforced. Deployment7140126306 status success/envURL **https://shiraori13.github.io/EVENTIDE/**; HTTP200 và entry index-DlFaRyTM.js khớp local.
+
+Browser công khai: **2/2 pass,31,8s**, gồm reload/font/ảnh/khôngHTTP404/nohooks/offline/movement/XPthật/choose/B/pause/resume/shotWebAudio/mute/save. Đã xem ảnh menu/nhãn beta1.0.0. Raw ở artifacts/deployment/public. Không có bước Settings Pages thủ công còn thiếu. Audit committedGitobjects378file/192fixtureHash không phát hiện secret/output hoặc mấtbyte. Scan Gitobjects đầu bị sandbox chặn spawn, đã thực thi lại pass; historical whitespace/license/snapshot được giữ nguyên.
+
+Commit tài liệu xác nhận này vẫn kích hoạt workflow main mới với cùng source/bundle; đối chiếu latestHEAD/Actions khi cập nhật. Chi tiết và cách cập nhật ở [DEPLOYMENT](DEPLOYMENT.md).
 
 ## Chạy và dữ liệu
 
