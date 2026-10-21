@@ -89,7 +89,7 @@ Theo dõi https://github.com/Shiraori13/EVENTIDE/actions đúng commit vừa pus
 - Asset404/màn trắng: mở Network/Console, so đường dẫn với `/EVENTIDE/` và chữ hoa/thường, kiểm tra dist/index.html/CSS/manifest. Tránh `/assets/...` chưa qua bundler, `/EVENTIDE/EVENTIDE/`, file:// hoặc localhost hardcode trong bundle.
 - Bản cũ: đối chiếu SHA workflow và asset hash trong HTML công khai, refresh/bỏ cache browser. Không thêm service worker để che lỗi cache.
 
-## Kiểm tra trước push và kết quả công khai
+## Lần phát hành đầu · 2026-10-17
 
 Trước push: remote refs rỗng qua git ls-remote/fetch; workspace chưa có Git, tạo main/origin đúng repo. Không có lịch sử để ghi đè. Dùng tài khoản Git có sẵn Shiraori13, commit identity noreply repo-local, không sửa Git global. Publication audit không thấy file bí mật/private key hoặc file lớn bất thường; chỉ source/asset/lock/config/docs/fixture cần thiết. node_modules/dist/artifacts/browser/testoutput/.env/VSCode bị ignore, không xóa dữ liệu local.
 
@@ -103,10 +103,18 @@ Deployment đầu: commit [fb6d9be](https://github.com/Shiraori13/EVENTIDE/commi
 
 Commit tiếp theo chỉ cập nhật tài liệu xác nhận này, cùng source/bundle. Push main vẫn tự chạy lại CI/deploy. Xem [Actions mới nhất](https://github.com/Shiraori13/EVENTIDE/actions/workflows/deploy.yml) và SHA HEAD khi đối chiếu những lần cập nhật sau. Không còn bước bật Pages thủ công cần làm.
 
-## Chuẩn bị cập nhật ngày2026-10-21
+## Bản cập nhật · 2026-10-21
 
 Người dùng yêu cầu push toàn bộ phần đã hoàn thành local: visual identity, UI/hazards/multi-boss, Next beta UX/stability và tổ chức thư mục. Vẫn beta1.0.0/package1.0.0-beta.1, base /EVENTIDE/, save schema3/key cũ; không đưa bundle QA hoặc dữ liệu test lên GitHub.
 
 Đã đọc status/diff/remote, `git ls-remote` và fetch: main trên GitHub vẫn5fbac8a, bằng HEAD trước commit mới, không có thay đổi remote cần gộp. Không force push. Audit file dự kiến commit không thấy secret pattern/private key hoặc file lớn bất thường; node_modules/dist/artifacts/browser/test-results/.env được ignore. Snapshot lịch sử giữ byte và hash.
 
-Kiểm tra lại Windows/Node24.21.0/npm11.19.0/Chromium156 SwiftShader: typecheck pass; unit149pass/4opt-in skip (63,38s); production build pass; production smoke local2/2pass (26,7s), raw riêng `artifacts/deployment/2026-10-21-local/`. Bundle app index-sBaUOfj7.js146,33KB/gzip51,14; CSS index-C3KVvyY1.css34,63KB/gzip7,95; chunk Phaser1208,06KB vẫn có warning. Các báo cáo trước giữ nguyên giới hạn về GPU vật lý/chơi tay; không chạy lại benchmark hoặc lượt720s cho tác vụ push. Kết quả CI/deploy và smoke công khai sẽ được bổ sung sau push thành công.
+Kiểm tra lại Windows/Node24.21.0/npm11.19.0/Chromium156 SwiftShader: typecheck pass; unit149pass/4opt-in skip (63,38s); production build pass; production smoke local2/2pass (26,7s), raw riêng `artifacts/deployment/2026-10-21-local/`. Bundle app index-sBaUOfj7.js146,33KB/gzip51,14; CSS index-C3KVvyY1.css34,63KB/gzip7,95; chunk Phaser1208,06KB vẫn có warning. Các báo cáo trước giữ nguyên giới hạn về GPU vật lý/chơi tay; không chạy lại benchmark hoặc lượt720s cho tác vụ push.
+
+Push thường thành công từ5fbac8a lên [42b6238](https://github.com/Shiraori13/EVENTIDE/commit/42b62386c8392c4093fa5e482c0c0af939f22626); remote main khớp, workspace sạch sau commit. Audit chính Git tree có508file và249fixture lịch sử đúng byte/hash. Whitespace code/tài liệu hiện hành sạch; prompt và snapshot nguồn giữ nguyên whitespace lịch sử để không sửa tài liệu đầu vào hoặc phá hash.
+
+[Workflow39598375773](https://github.com/Shiraori13/EVENTIDE/actions/runs/39598375773) **success** cả build/deploy trên Ubuntu24.04; npmci/typecheck/unit/build và production browser đều qua checkout sạch, xác nhận các đường dẫn mới dưới config/playwright cùng fixture cần thiết đã có trong repo. Deployment7225846009 **success**, environment github-pages, URL https://shiraori13.github.io/EVENTIDE/ . HTTP200 và JS/CSS khớp local.
+
+Đã chạy `EVENTIDE_SMOKE_URL=https://shiraori13.github.io/EVENTIDE/ npm run test:production`: **2/2pass trong26,1s**. Font/ảnh local/prefix/menu/version/reload/nohooks/offline; di chuyển/nhặtXP/chọncấp/Balo/pause/resume/bắn/WebAudio/mute/save qua refresh đều qua, không pageerror/HTTP404/request lệch prefix. Bằng chứng riêng tại `artifacts/deployment/2026-10-21-public/`; API run/jobs/deployment và audit tại `artifacts/deployment/2026-10-21-publication/`. Không đưa profile test/video/output lên repo.
+
+Commit tiếp theo chỉ cập nhật README/status/changelog/tài liệu triển khai xác nhận kết quả trên, cùng source/asset/bundle. Push main tự chạy CI/deploy lại; không đổi version hoặc dữ liệu người chơi.

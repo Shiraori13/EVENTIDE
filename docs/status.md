@@ -1,6 +1,6 @@
 # EVENTIDE beta1.0.0 · UX/UI/stability · 2026-10-21
 
-Thực hiện [prompt Next beta](../prompts/EVENTIDE_Next_Beta_UX_UI_Stability_Prompt.md) trên source hiện có. Chuẩn bị phát hành theo yêu cầu push của người dùng ngày2026-10-21; đã fetch và đối chiếu origin/main tại5fbac8a, không có lịch sử remote mới cần gộp. Kết quả push/deployment sẽ ghi tại [triển khai](DEPLOYMENT.md). Giữ mọi thay đổi trước và tiến triển người chơi. [Báo cáo thay đổi lớn](next-beta-ux-report.md), [CHANGELOG](../CHANGELOG.md), [status đợt trước](history/status/status-ui-hazards-multiboss.md).
+Thực hiện [prompt Next beta](../prompts/EVENTIDE_Next_Beta_UX_UI_Stability_Prompt.md) trên source hiện có. Đã push bản cập nhật [42b6238](https://github.com/Shiraori13/EVENTIDE/commit/42b62386c8392c4093fa5e482c0c0af939f22626) lên origin/main theo yêu cầu người dùng ngày2026-10-21; [Actions39598375773](https://github.com/Shiraori13/EVENTIDE/actions/runs/39598375773) build/deploy **success**. Trang [GitHub Pages](https://shiraori13.github.io/EVENTIDE/) đúng bundle production, smoke công khai **2/2pass**. Chi tiết tại [triển khai](DEPLOYMENT.md). Giữ mọi thay đổi trước và tiến triển người chơi. [Báo cáo thay đổi lớn](next-beta-ux-report.md), [CHANGELOG](../CHANGELOG.md), [status đợt trước](history/status/status-ui-hazards-multiboss.md).
 
 ## Đã triển khai
 
@@ -15,6 +15,8 @@ Thực hiện [prompt Next beta](../prompts/EVENTIDE_Next_Beta_UX_UI_Stability_P
 Windows/Node24.21.0/npm11.19.0; Chromium156.0.8078.4, WebGL SwiftShader. QA cuối **index-D3jAI-Sl.js**, production **index-sBaUOfj7.js**, CSS **index-C3KVvyY1.css**, base /EVENTIDE/.
 
 Kiểm tra lại trước push2026-10-21: `npm run typecheck` pass; `npm run test` **149pass/4opt-in skip** trong63,38s; `npm run build` pass, đúng bundle production trên; `npm run test:production` **2/2pass** trong26,7s. Smoke kiểm tra asset/font/offline/nohooks và input/XP/draft/Balo/pause/WebAudio/save qua refresh; raw riêng ở `artifacts/deployment/2026-10-21-local/`. Audit/report chạy lại xác nhận31file luật/render/lockfile,42asset public và249fixture giữ hash như bằng chứng UX; không chạy lại lượt720s vì không đổi source gameplay. Cảnh báo chunk Phaser>500kB vẫn còn.
+
+Sau push: CI checkout sạch trên Ubuntu24.04 qua npmci/typecheck/unit/build/production smoke và deploy. Deployment7225846009 success; HTTP200/index-sBaUOfj7.js/index-C3KVvyY1.css khớp local. Cùng production smoke chạy trên URL công khai **2/2pass trong26,1s**, không pageerror/HTTP404/request lệch prefix. Raw riêng `artifacts/deployment/2026-10-21-public/` và `2026-10-21-publication/`, không commit. Git tree có508file,249fixture lịch sử đúng byte/hash; không output/private path hoặc secret pattern. Whitespace hiện hành sạch; snapshot/prompt gốc giữ cả whitespace lịch sử. Commit tài liệu xác nhận sau đó không đổi source/asset/bundle.
 
 | Lệnh / luồng | Kết quả |
 |---|---|
@@ -39,6 +41,6 @@ Artifact hiện hành: `artifacts/next-beta/`, gồm before-source/before-build/
 
 ## Chạy local và giới hạn
 
-Game production hiện chạy **http://127.0.0.1:4173/EVENTIDE/**. Tự chạy: `npm run dev` →5173/EVENTIDE/; hoặc `npm run build` rồi `npm run preview` →4173/EVENTIDE/. Giữ origin/cổng cũ để thấy save; không file://. QA4301/keyeventide.e2e.v1 riêng, không dùng bundle QA để phát hành.
+Chơi bản đã deploy tại **https://shiraori13.github.io/EVENTIDE/**. Tự chạy local: `npm run dev` →5173/EVENTIDE/; hoặc `npm run build` rồi `npm run preview` →4173/EVENTIDE/. Giữ origin/cổng cũ để thấy save; localhost và github.io có vùng lưu riêng theo origin, không tự chuyển profile. Không file://. QA4301/keyeventide.e2e.v1 riêng, không dùng bundle QA để phát hành.
 
 Cân bằng người thật, GPU vật lý, input-to-photon/native zoom, nghe âm thanh bằng tai, Firefox/Safari và soak20–30phút chưa kiểm chứng. Viewport/DPR/clip/logic tự động không thay thế các việc đó. Bot cơ động có ca thua; không đổi luật để ép thắng. Không có bug sản phẩm đã biết bị chuyển thành ý tưởng backlog.

@@ -10,7 +10,7 @@ MVP local sinh tồn hành động 2D bằng Phaser 3 + TypeScript. Điều khi�
 
 ## Chơi trên web
 
-Repository: [Shiraori13/EVENTIDE](https://github.com/Shiraori13/EVENTIDE). Chơi ngay: **https://shiraori13.github.io/EVENTIDE/**. Push main tự kiểm tra/build/deploy qua Actions. Commit, deployment và kết quả kiểm tra công khai được ghi tại [triển khai](docs/DEPLOYMENT.md) và [trạng thái](docs/status.md).
+Repository: [Shiraori13/EVENTIDE](https://github.com/Shiraori13/EVENTIDE). Chơi ngay: **https://shiraori13.github.io/EVENTIDE/**. Bản cập nhật [42b6238](https://github.com/Shiraori13/EVENTIDE/commit/42b62386c8392c4093fa5e482c0c0af939f22626) đã build/deploy thành công ngày2026-10-21; smoke trên trang công khai **2/2pass**, đúng bundle production local. Push main tự kiểm tra/build/deploy qua Actions. Bằng chứng ở [triển khai](docs/DEPLOYMENT.md) và [trạng thái](docs/status.md).
 
 ## Chạy trên Windows
 

@@ -1,7 +1,7 @@
-# Chuẩn bị phát hành beta1.0.0 · 2026-10-21
+# Phát hành bản cập nhật beta1.0.0 · 2026-10-21
 
 - Gom các đợt visual identity, UI/hazards/multi-boss và UX/stability đã hoàn thành local vào lần cập nhật GitHub theo yêu cầu người dùng. Giữ version/base/save; không thêm thay đổi gameplay trong tác vụ push.
-- Kiểm tra lại remote main5fbac8a; typecheck/build pass, unit149pass/4opt-in skip và production smoke local2/2pass. Trạng thái CI/deployment công khai được ghi tại [triển khai](docs/DEPLOYMENT.md).
+- Kiểm tra remote main5fbac8a trước push; typecheck/build pass, unit149pass/4opt-in skip và production smoke local2/2pass. Đã push [42b6238](https://github.com/Shiraori13/EVENTIDE/commit/42b62386c8392c4093fa5e482c0c0af939f22626), Actions build/deploy success, smoke GitHub Pages2/2pass và đúng hash production. Bằng chứng tại [triển khai](docs/DEPLOYMENT.md).
 
 # Next beta UX/UI/stability · hoàn thành local trước phát hành · 2026-10-21
 
