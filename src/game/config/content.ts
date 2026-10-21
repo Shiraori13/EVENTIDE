@@ -1,15 +1,16 @@
-import { BALANCE as B } from './balance';
+import { BOSSES, type BossId } from './bosses';
 import { SUPPORTS, type SupportId } from './progression';
 export type { SupportId } from './progression';
 export type ModuleId = 'plasma' | 'drones' | 'well' | 'pulsar' | 'ion' | 'quasar';
 export type UpgradeId = ModuleId | SupportId;
 export type ChoiceId = UpgradeId | import('./mastery').MasteryId | 'recover';
-export type EnemyId = 'wisp' | 'drifter' | 'leech' | 'elder';
+export type EnemyId = 'wisp' | 'drifter' | 'leech' | BossId;
 export const ENEMIES = {
   wisp: { name: 'Static Wisp', hp: 28, speed: 70, damage: 6, xp: 2, radius: 13 },
   drifter: { name: 'Hollow Drifter', hp: 140, speed: 40, damage: 11, xp: 7, radius: 24 },
   leech: { name: 'Void Leech', hp: 44, speed: 112, damage: 7, xp: 4, radius: 16 },
-  elder: { name: 'Elder Star', hp: B.bossHP, speed: B.bossSpeed, damage: B.bossContactDamage, xp: B.bossXP, radius: B.bossRadius },
+  elder: BOSSES.elder,
+  gravemaw:BOSSES.gravemaw, helion:BOSSES.helion, harrier:BOSSES.harrier,
 } as const;
 export const UPGRADES: Record<UpgradeId, { name: string; max: number; kind: 'module' | 'support'; icon: string }> = {
   plasma: { name: 'Plasma Orb', max: 5, kind: 'module', icon: 'plasma' },
@@ -52,7 +53,7 @@ export const MODULE_IDS: readonly ModuleId[] = ['plasma', 'drones', 'well', 'pul
 export const MODULE_ROLES = { plasma: 'Vũ khí chính', pulsar: 'Vũ khí chính', ion: 'Vũ khí chính', quasar: 'Vũ khí chính', drones: 'Vũ khí phụ', well: 'Vũ khí bổ sung' } as const;
 export const moduleName = (id: ModuleId, level: number): string => id === 'plasma' ? plasmaName(level) : id === 'drones' && level >= 5 ? 'Orbital Bastion' : id === 'well' && level >= 5 ? 'Singularity Well' : UPGRADES[id].name;
 /** Một quạt quét 240°, mỗi target một hit; tối đa ba tia phụ chỉ từ điểm hit đầu. */
-export const QUASAR = { damage: 220, range: 510, duration: 0.45, cooldown: 1.6, sweep: Math.PI * 4 / 3, halfWidth: 9, chainTargets: 3, jumpRange: 215, chainFraction: 0.45, falloff: 0.8, traceCap: 4 } as const;
+export const QUASAR = { damage: 220, range: Math.round(510 * 0.78), duration: 0.45, cooldown: 1.6, sweep: Math.PI * 4 / 3, halfWidth: 9, chainTargets: 3, jumpRange: 215, chainFraction: 0.45, falloff: 0.8, traceCap: 4 } as const;
 export const PULSAR = [
   { damage: 42, range: 230, duration: 0.7, cooldown: 3.2 },
   { damage: 58, range: 255, duration: 0.7, cooldown: 2.9 },

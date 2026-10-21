@@ -35,7 +35,7 @@ export class AudioService {
   }
   cue(cue: Cue): void {
     const ctx = this.context; if (!ctx || !this.master || !this.active || ctx.state !== 'running') return;
-    const now = ctx.currentTime; if (now - (this.lastCue.get(cue) ?? -10) < (cue === 'shot' ? 0.12 : 0.08)) return;
+    const now = ctx.currentTime; if (now - (this.lastCue.get(cue) ?? -10) < (cue === 'shot' ? 0.12 : cue==='beacon' ? 1 : 0.08)) return;
     this.lastCue.set(cue, now);
     const frequencies: Record<Cue, number> = { shot: 420, hit: 90, pickup: 900, upgrade: 660, evolution: 880, beacon: 145, boss: 65, victory: 1046, defeat: 130 };
     try {

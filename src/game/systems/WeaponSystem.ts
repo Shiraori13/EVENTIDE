@@ -1,3 +1,4 @@
+import { reservedBullets } from './bosses/state';
 import { BALANCE as B } from '../config/balance';
 import { DRONES, PLASMA, WELLS } from '../config/content';
 import { distance } from '../core/math';
@@ -19,7 +20,7 @@ export function dronePositions(s: RunState): Vec[] {
 export function weaponStep(s: RunState, rng: () => number = Math.random): void {
   const stats = shipStats(s);
   const plasma = PLASMA[(s.modules.plasma ?? 0) - 1];
-  if (plasma && s.time + 1e-9 >= s.nextPlasma && s.projectiles.length < B.projectileCap) {
+  if (plasma && s.time + 1e-9 >= s.nextPlasma && s.projectiles.length + reservedBullets(s) < B.projectileCap) {
     const target = nearest(s, plasma.range);
     if (target) {
       const a = Math.atan2(target.y - s.player.y, target.x - s.player.x);

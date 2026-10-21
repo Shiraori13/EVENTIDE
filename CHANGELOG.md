@@ -1,3 +1,37 @@
+# Chuẩn bị phát hành beta1.0.0 · 2026-10-21
+
+- Gom các đợt visual identity, UI/hazards/multi-boss và UX/stability đã hoàn thành local vào lần cập nhật GitHub theo yêu cầu người dùng. Giữ version/base/save; không thêm thay đổi gameplay trong tác vụ push.
+- Kiểm tra lại remote main5fbac8a; typecheck/build pass, unit149pass/4opt-in skip và production smoke local2/2pass. Trạng thái CI/deployment công khai được ghi tại [triển khai](docs/DEPLOYMENT.md).
+
+# Next beta UX/UI/stability · hoàn thành local trước phát hành · 2026-10-21
+
+- HUD ba mức có hysteresis, chữ/icon HP thấp, Corruption cảnh báo trước ngưỡng và đúng cả lợi/hại; Beacon nhãn bị đánh2s/cue rate-limit1s/hướng nguy cấp. Không đọc lại HP/timer mỗi frame.
+- Balo tổng quan năm ô, recipe/CTA trong phần đầu, chỉ số gọn và nguồn mở rộng. Draft2–3so sánh từ calculator thật, chi tiết riêng, giữ slot/mastery/XP/reroll/atomic fusion. Focus trap/restore và scope phím tắt cho input/select.
+- Ba tutorial tình huống có queue, hoãn danger/modal, seen sau hiển thị, skip/tắt/xem lại riêng. Save schema3/key/meta cũ giữ, thêm hai trường default; không reset tiến triển.
+- Kết quả giữ build cuối, goal/achievement thật, incoming/outgoing HP thực sau giảm trừ/clamp overkill, fatal theo nguồn/owner/channel, cùng chết ghi cả hai. Snapshot/deep-freeze trước cleanup, reward một lần; tối đa một nhận xét từ damage Beacon ở xa.
+- Giữ hazard/scaling/Quasar/boss/pool/render/XP ledger/asset và balance đã tune. Không đổi dependency/concept hoặc thêm cứu hộ. Số đo >100ms và telemetry CPU riêng; playtest12cặp cùng seed trước/sau có kết quả giống nhau. Bằng chứng cuối/giới hạn ở [báo cáo](docs/next-beta-ux-report.md) và [status](docs/status.md).
+- Kiểm tra:153unit gồm opt-in pass,66ca E2E xác minh (63lượt đầu +3chạy lại sau đổi assertion layout), production2/2pass. Bot render720s thắng/không lỗi JS, vẫn còn boss cuối sống; chưa gọi là chơi tay.
+- Frame SwiftShader: dense p95 trước33,7–33,8ms → sau34,5–35,4ms; chưa đạt20ms/60FPS và chưa chứng minh tăng FPS. Giữ toàn bộ14lượt đo/AB–BA/Low/reduced cùng source hash, không dùng số lịch sử để chứng nhận build mới.
+
+# UI / hazards / multi-boss · local, chưa phát hành · 2026-10-18
+
+- Truy cung vàng tới hai pseudo tiêu đề và bỏ đúng phần trang trí không nhãn; giữ vòng Beacon/progress/focus. Ví Stardust lên header, nút Core có keyboard/focus, số thật và feedback giao dịch; responsive390px.
+- Radiation190u/7HP/s khóa warning theo tuyến tàu, timer nguồn độc lập contact; Tide440u/140u/s/falloff sqrt/cap78% tốc thật, hướng/cue/arrow từ simulation, Low/reduced giữ cảnh báo. Corruption và lịch thiên văn/final giữ.
+- Scaling tuyến tính HP/damage theo phút: Wisp10/7%, Drifter14/9%, Leech16/10%; giữ ratio/target/cooldown và Chaos một lần. Quasar510→398u đồng bộ beam/chain, damage/cadence/Ion độc lập giữ.
+- Lịch boss540/660 seeded không lặp; mọi phase/timer/beam/zone/reservation theo owner, slot ngoài cap thường, HUD hai hàng. Thêm Gravemaw/Helion/Harrier hai phase và ba SVG CC0. Dash swept/lock/từng chặng, solar zone hữu hạn, budget trước telegraph, transition/reward/cleanup độc lập.
+- Playtest vòng đầu cho TTK quá ngắn; chỉnh riêng nhóm HP boss10000/9800/9200/9000, boss660×0,8; giữ phase2ratio0,65. Raw khởi đầu/final, các build thất bại và giới hạn trong docs/ui-hazards-multiboss-report.md, không tuyên bố đã cân bằng người thật.
+- Gom source systems/bosses–hazards–enemies; scripts assets/performance/qa, config/playwright và docs/history; sửa đường dẫn. Canonical prompt/192fixture cũ/32SVG nền/save/clock/XP/evolution/lockfile giữ byte theo audit. Giữ beta1.0.0 và /EVENTIDE/, không push/deploy.
+
+# Visual identity · local, chưa phát hành · 2026-10-18
+
+- Thủy triều tinh vân bake/cache liền mạch, parallax/twinkle/dust hữu hạn; một tile opaque giữ tối ưu overdraw. Beacon lõi vàng/vòng đứt đoạn/tiến độ thật, critical shape và hit120ms; năm SVG Nova/Core cải tiến nguyên bản CC0, Beacon raster128 không đổi hitbox.
+- Đồng bộ menu/HUD/Balo/draft/Core/catalog/achievement/settings/results; gom thông báo tránh tâm giao tranh, toast trong flow, card/max/empty/recipe rõ, responsive390px và giữ keyboard/focus/scroll.
+- Tàu bank/engine/trail ngắn không trễ vị trí; hazards boss riêng layer, hai biên theo collider; Pulsar đúng halfWidth, Ion path thật, Quasar/Bastion/Singularity theo state. Không đổi số cân bằng/thuật toán gameplay.
+- Ba quality Cao/Vừa/Thấp, Giảm chuyển động/OS default và shake riêng; giữ profile cũ/schema3, chất lượng đã chọn/XP/bonus/queue/reroll/mastery. Adaptive chỉ giảm decoration với hysteresis và cleanup hữu hạn.
+- Baseline/ảnh/clip/benchmark local, regression/production và giới hạn thực tại docs/visual-identity-report.md, docs/status.md; design tokens/budget tại docs/design-system.md. Không commit/push/deploy theo yêu cầu.
+- Đo phát hiện cung đứt đoạn tạo nhiều vertex: thay ARC100đoạn bằng polyline sai số≤0,35u/cap128, giữ endpoint/radius; probe xác nhận vertex giảm, không phải tăng draw/program switch. Giảm phế tích khi dense, bỏ shadow HUD và guard tilePosition khi pause; số đo trước tinh chỉnh được giữ riêng, không ghi đè bằng chứng.
+- Dư ảnh boss hủy ngay nếu tia bị dọn sớm khi chết/chuyển phase; chỉ fade120ms sau kết thúc hợp lệ, không hiện lại theo end cũ. Regression chuyển phase thật và positive fade trong pause.
+
 # beta1.0.0 · bản phát hành GitHub Pages · 2026-10-17
 
 - Đổi nhãn public từ hotfix1.4.1 thành beta1.0.0 (package1.0.0-beta.1), không quay lại gameplay cũ hoặc đổi save schema.

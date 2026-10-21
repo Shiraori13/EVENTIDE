@@ -1,0 +1,23 @@
+import type { RunState,SaveData } from '../core/types';
+import type { DamageSource } from '../core/runReport';
+import { snapshotRunReport } from '../core/runReport';
+import { UPGRADES,ENEMIES,moduleName,type ModuleId,type SupportId } from '../config/content';
+import { ACHIEVEMENTS,achievementValue } from '../config/achievements';
+import { assetURL,type AssetId } from '../../assets/manifest';
+import { numberText as n } from './format';
+import { BALANCE as B } from '../config/balance';
+export const damageSourceText=(source:DamageSource):string=>`${source.kind==='radiation'?'Phóng xạ môi trường':source.kind==='unknown'?'Nguồn chưa xác định':ENEMIES[source.kind].name}${source.ownerId===undefined?'':' #'+source.ownerId} · ${({contact:'va chạm',projectile:'đạn',beam:'tia',radiation:'phóng xạ','solar-burst':'nổ Solar Scar'} as const)[source.channel]}`;
+export function resultPanel(s:RunState,save:SaveData,initialAchievements:readonly string[]):string {
+  const r=s.report??snapshotRunReport(s,s.phase==='victory'?'victory':'defeat'),t=r.telemetry;
+  const earned=ACHIEVEMENTS.find(a=>save.unlockedAchievements.includes(a.id)&&!initialAchievements.includes(a.id));
+  const nearest=ACHIEVEMENTS.filter(a=>!save.unlockedAchievements.includes(a.id)).sort((a,b)=>achievementValue(save,b.metric)/b.target-achievementValue(save,a.metric)/a.target)[0];
+  const goalScale=nearest?.metric==='salvageBudgetBP'?100:1;
+  const goal=earned?`Thành tựu vừa đạt: ${earned.name}`:nearest?`Mục tiêu tiếp theo · ${nearest.name}: ${n(Math.min(nearest.target,achievementValue(save,nearest.metric))/goalScale)} / ${n(nearest.target/goalScale)} ${nearest.unit}`:'Đã hoàn thành toàn bộ huy hiệu hiện có.';
+  const loadout=[...(Object.entries(r.modules) as [ModuleId,number][]).filter(([,lv])=>lv>0).map(([id,lv])=>[moduleName(id,lv),lv,UPGRADES[id].icon]),...(Object.entries(r.supports) as [SupportId,number][]).filter(([,lv])=>lv>0).map(([id,lv])=>[UPGRADES[id].name,lv,UPGRADES[id].icon])];
+  const incoming=(target:'ship'|'beacon'):string=>{const entries=Object.values(t.incoming[target]);return `<h4>${target==='ship'?'Tàu Nova':'Beacon'} · ${n(entries.reduce((sum,e)=>sum+e.hp,0))} HP đã mất</h4>${entries.length?'<ul>'+entries.map(e=>`<li>${damageSourceText(e.source)}: <strong>${n(e.hp)} HP</strong></li>`).join('')+'</ul>':'<p>Chưa ghi nhận sát thương thực nhận.</p>'}`;};
+  const fatal=([['ship','Tàu'],['beacon','Beacon']] as const).filter(([key])=>t.fatal[key]).map(([key,label])=>`${label}: ${damageSourceText(t.fatal[key]!)}`).join(' · ');
+  const beaconTotal=Object.values(t.incoming.beacon).reduce((sum,e)=>sum+e.hp,0);
+  const suggestion=beaconTotal>0&&t.beaconDamageFar/beaconTotal>.5?'<p class="result-insight">Beacon nhận phần lớn sát thương khi tàu ở ngoài vùng sáng. Dấu tam giác vàng giúp nhận biết quái nhắm Beacon.</p>':'';
+  const cause=r.cause==='both'?'Tàu Nova và Beacon cùng bị phá hủy trong một nhịp.':r.cause==='ship'?'Tàu Nova đã bị phá hủy.':r.cause==='beacon'?'Beacon đã tắt.':'Beacon hoàn tất sạc sau 12 phút.';
+  return `<div class="read-content"><p class="result-cause">${cause}</p>${fatal?'<p>Đòn chí mạng · '+fatal+'</p>':''}<div class="result-grid"><div><b>${Math.floor(r.time/60).toString().padStart(2,'0')}:${Math.floor(r.time%60+1e-6).toString().padStart(2,'0')}</b><small>Thời gian sống</small></div><div><b>${n(r.kills)}</b><small>Hollowborn tiêu diệt</small></div><div><b>${n(r.level)}</b><small>Cấp đạt được</small></div></div><p class="currency"><img src="${assetURL('pure')}" alt=""> +${r.reward} Stardust tinh khiết · Đã nhận một lần</p><h3>Build cuối lượt</h3><div class="result-loadout">${loadout.map(([name,lv,icon])=>`<span><img src="${assetURL(icon as AssetId)}" alt="">${name} · cấp ${lv}</span>`).join('')}${Object.keys(r.supports).length?'':'<span>Chưa lắp hỗ trợ</span>'}</div><p class="result-goal">${goal}</p>${suggestion}<details class="result-details"><summary>Chi tiết lượt chơi</summary><p>Tổng HP thực sự bị trừ sau giáp/miễn nhiễm, giới hạn ở HP còn lại; không phải DPS. Damage boss tính riêng từng phase.</p>${incoming('ship')}${incoming('beacon')}<h4>Sát thương gây theo nguồn</h4><ul>${Object.entries(t.outgoing).map(([id,hp])=>`<li>${id==='radiation'?'Môi trường (không phải vũ khí)':UPGRADES[id as ModuleId].name}: ${n(hp??0)} HP</li>`).join('')||'<li>Chưa ghi nhận hit.</li>'}</ul><p>Trong vùng gây hại hoặc chịu lực môi trường: ${n(t.hazardSeconds)} giây · Corruption ≥50: ${n(t.corruptionSeconds)} giây · Ngoài vùng sáng: ${n(t.farSeconds)} giây.</p><p>Beacon mất ${n(t.beaconDamageFar)} HP khi tàu ngoài vùng sáng (${B.lightRadius} u). Bộ đếm theo thời gian mô phỏng, pause không tăng.</p></details>${r.outcome==='victory'?'<p>Echo đã được bảo tồn. Đọc lại trong menu.</p>':''}</div>`;
+}

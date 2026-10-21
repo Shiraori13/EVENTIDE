@@ -54,7 +54,7 @@ Save dùng localStorage theo **origin**, không theo path. Đổi path trên cù
 
 ## GitHub Actions và cập nhật
 
-`.github/workflows/deploy.yml` chạy push main hoặc workflow_dispatch; không deploy từ PR/fork. Build job: checkout → Node24.21.0 → npm ci → typecheck → 117unit/integration → production build → cài Chromium → production smoke → upload **dist**. Deploy job needs build; environment github-pages, URL lấy từ deployment output; pages:write/id-token:write chỉ ở job deploy, contents:read. Concurrency pages xếp tuần tự, không deploy chồng nhau.
+`.github/workflows/deploy.yml` chạy push main hoặc workflow_dispatch; không deploy từ PR/fork. Build job: checkout → Node24.21.0 → npm ci → typecheck → `npm run test` (hiện149unit/integration,4bài cân bằng opt-in) → production build → cài Chromium → production smoke → upload **dist**. Deploy job needs build; environment github-pages, URL lấy từ deployment output; pages:write/id-token:write chỉ ở job deploy, contents:read. Concurrency pages xếp tuần tự, không deploy chồng nhau.
 
 Các action chính thức pin SHA đã đối chiếu refs tại GitHub ngày2026-10-17:
 
@@ -102,3 +102,11 @@ Deployment đầu: commit [fb6d9be](https://github.com/Shiraori13/EVENTIDE/commi
 Đã audit cả378Gitobjects/192historicalsource: không output/.env/secretpattern và SHA fixture giữ. Lần scan Gitobjects đầu bị sandbox chặn spawn, đã chạy lại thành công bằng quyền phù hợp; không dùng lần lỗi làm bằng chứng. Whitespace check cho file hiện hành sạch; license/prompt/snapshot cũ giữ nguyên byte kể cả whitespace lịch sử. Repo không có lịch sử cũ, không force push.
 
 Commit tiếp theo chỉ cập nhật tài liệu xác nhận này, cùng source/bundle. Push main vẫn tự chạy lại CI/deploy. Xem [Actions mới nhất](https://github.com/Shiraori13/EVENTIDE/actions/workflows/deploy.yml) và SHA HEAD khi đối chiếu những lần cập nhật sau. Không còn bước bật Pages thủ công cần làm.
+
+## Chuẩn bị cập nhật ngày2026-10-21
+
+Người dùng yêu cầu push toàn bộ phần đã hoàn thành local: visual identity, UI/hazards/multi-boss, Next beta UX/stability và tổ chức thư mục. Vẫn beta1.0.0/package1.0.0-beta.1, base /EVENTIDE/, save schema3/key cũ; không đưa bundle QA hoặc dữ liệu test lên GitHub.
+
+Đã đọc status/diff/remote, `git ls-remote` và fetch: main trên GitHub vẫn5fbac8a, bằng HEAD trước commit mới, không có thay đổi remote cần gộp. Không force push. Audit file dự kiến commit không thấy secret pattern/private key hoặc file lớn bất thường; node_modules/dist/artifacts/browser/test-results/.env được ignore. Snapshot lịch sử giữ byte và hash.
+
+Kiểm tra lại Windows/Node24.21.0/npm11.19.0/Chromium156 SwiftShader: typecheck pass; unit149pass/4opt-in skip (63,38s); production build pass; production smoke local2/2pass (26,7s), raw riêng `artifacts/deployment/2026-10-21-local/`. Bundle app index-sBaUOfj7.js146,33KB/gzip51,14; CSS index-C3KVvyY1.css34,63KB/gzip7,95; chunk Phaser1208,06KB vẫn có warning. Các báo cáo trước giữ nguyên giới hạn về GPU vật lý/chơi tay; không chạy lại benchmark hoặc lượt720s cho tác vụ push. Kết quả CI/deploy và smoke công khai sẽ được bổ sung sau push thành công.

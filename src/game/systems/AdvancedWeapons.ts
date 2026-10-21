@@ -4,9 +4,9 @@ import type { Enemy, RunState, Vec } from '../core/types';
 import { distanceSquared } from '../core/math';
 import { hitEnemy } from './CombatSystem';
 const TAU = Math.PI * 2;
-function nearestFrom(s: RunState, origin: Vec, range: number, visited?: Set<number>): Enemy | undefined {
+function nearestFrom(s: RunState, origin: Vec, range: number, visited?: Set<number>, envelope?: {origin:Vec;range:number}): Enemy | undefined {
   let target: Enemy | undefined, best = range * range;
-  for (const e of s.enemies) { if (e.hp <= 0 || e.bossPhase === 'transition' || visited?.has(e.id)) continue; const d = distanceSquared(e, origin); if (d <= best) { best = d; target = e; } }
+  for (const e of s.enemies) { if (e.hp <= 0 || e.bossPhase === 'transition' || visited?.has(e.id)) continue; if(envelope&&distanceSquared(e,envelope.origin)>envelope.range**2)continue; const d = distanceSquared(e, origin); if (d <= best) { best = d; target = e; } }
   return target;
 }
 /** Quét cả sector giữa hai tick; hit ID một lần/pulse, không phụ thuộc góc render/FPS. */
@@ -31,7 +31,7 @@ export function advancedWeaponStep(s: RunState, rng: () => number): void {
     for (const e of s.enemies) {
       if (e.hp <= 0 || e.bossPhase === 'transition' || pulse.hitIds.has(e.id)) continue;
       const dx = e.x - s.player.x, dy = e.y - s.player.y, radius = Math.hypot(dx, dy);
-      if (radius > pulse.range + e.radius) continue;
+      if (radius > pulse.range + (pulse.source==='quasar'?0:e.radius)) continue;
       const angle = ((Math.atan2(dy, dx) - pulse.startAngle) % TAU + TAU) % TAU;
       const margin = Math.asin(Math.min(1, (e.radius + (pulse.source === 'quasar' ? QUASAR.halfWidth : WEAPON_VISUALS.pulsarHalfWidth)) / Math.max(1, radius)));
       if (radius <= e.radius || [angle, angle - TAU, angle + TAU].some(a => a + margin >= from && a - margin <= to)) {
@@ -40,7 +40,7 @@ export function advancedWeaponStep(s: RunState, rng: () => number): void {
         if (pulse.source === 'quasar' && !pulse.chainDone) {
           pulse.chainDone = true; const points: Vec[] = [{ x: e.x, y: e.y }]; let origin: Vec = e;
           for (let index = 0; index < QUASAR.chainTargets; index++) {
-            const next = nearestFrom(s, origin, QUASAR.jumpRange, pulse.hitIds); if (!next) break;
+            const next = nearestFrom(s, origin, QUASAR.jumpRange, pulse.hitIds,{origin:s.player,range:pulse.range}); if (!next) break;
             pulse.hitIds.add(next.id); points.push({ x: next.x, y: next.y });
             hitEnemy(s, next, pulse.damage * QUASAR.chainFraction * QUASAR.falloff ** index, 'quasar', rng); origin = next;
           }

@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { mkdirSync, writeFileSync } from 'node:fs';
 const folder = 'artifacts/v14/regression/visual/regression';
-const open = async (page: Page, perf = false): Promise<void> => { await page.goto(perf ? '/?perf=1' : '/?e2e=1'); await expect(page.getByRole('button', { name: 'Khởi hành' })).toBeVisible(); };
+const open = async (page: Page, perf = false): Promise<void> => { await page.goto(perf ? './?perf=1' : './?e2e=1'); await expect(page.getByRole('button', { name: 'Khởi hành' })).toBeVisible(); };
 const photo = async (page: Page, path: string): Promise<void> => { await page.screenshot({ path: `${folder}/${path}.png` }); };
 for (const view of [
   { width: 1280, height: 720, zoom: 1, dpr: 1 }, { width: 1280, height: 720, zoom: 1.25, dpr: 1 },

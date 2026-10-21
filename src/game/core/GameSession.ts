@@ -7,13 +7,15 @@ import { movementStep, environmentStep } from '../systems/MovementSystem';
 import { spawnStep, eventStep } from '../systems/SpawnSystem';
 import { weaponStep } from '../systems/WeaponSystem';
 import { combatStep } from '../systems/CombatSystem';
-import { bossStep } from '../systems/BossSystem';
+import { bossStep } from '../systems/bosses/BossSystem';
 import { createLootState, dropXP } from '../systems/PickupSystem';
 import { emptySalvage } from '../config/salvage';
 import { emptyCareerMetrics } from '../config/achievements';
 import { ASTRONOMY } from '../config/events';
-import { radiationStep, cancelAstronomy } from '../systems/AstronomySystem';
+import { radiationStep, cancelAstronomy } from '../systems/hazards/AstronomySystem';
 import { tryFuseQuasar, type EvolutionResult } from '../systems/EvolutionSystem';
+import { BOSS_RULES } from '../config/bosses';
+import { emptyRunTelemetry, sampleRunTelemetry, snapshotRunReport } from './runReport';
 import { coreHP } from '../config/beacon';
 import { beginReplacement, cancelSwap, confirmSwap } from '../systems/ExperienceSystem';
 export const beaconHP = coreHP;
@@ -21,6 +23,8 @@ export function createRun(core: number, characterId: CharacterId = 'nova'): RunS
   const maxHP = beaconHP(core);
   const stats = calculateStats(characterId);
   const s: RunState = {
+    telemetry:emptyRunTelemetry(),
+    bossEvents:BOSS_RULES.schedule.map(e=>({...e,spawned:false})),bossZones:[],environmentHits:{},
     phase: 'playing', beforePause: 'playing', time: 0,
     characterId, draftId: 0, rerollsRemaining: 0, picks: 0,
     weaponMasteryReached: false, buildRevision: 0, masteryBonus: emptySalvage(), swapSelecting: false, nextQuasar: 0, enemyEventFactor: 1, astronomy: ASTRONOMY.schedule.map(e => ({ id: e.id, phase: 'scheduled', start: e.start, end: e.start + e.duration, nextTick: e.start })),
@@ -30,7 +34,7 @@ export function createRun(core: number, characterId: CharacterId = 'nova'): RunS
     player: { x: 0, y: 110, hp: stats.maxHP, maxHP: stats.maxHP, angle: -Math.PI / 2, protectedUntil: 0, leechUntil: 0 },
     beacon: { hp: maxHP, maxHP, lastHit: -100 }, corruption: 0, level: 1, xp: 0, pending: 0, choices: [],
     modules: { plasma: 1 }, supports: {}, enemies: [], projectiles: [], pickups: [], loot: createLootState(), wells: [], effects: [],
-    bossSpawned: false, bossDefeated: false, bossRing: Infinity, bossBeam: Infinity, finalGravity: false,
+    bossSpawned: false, bossDefeated: false, finalGravity: false,
     nextGravity: B.gravityFirst, nextSpawn: B.firstSpawn, nextPlasma: 0, nextWell: 0, kills: 0, nextId: 1,
     reward: 0, settled: false, reason: '', notice: 'Nova · Mang ánh sáng trở về', noticeUntil: 4, cues: [],
   };
@@ -45,12 +49,13 @@ export function finishRun(s: RunState, outcome: 'victory' | 'defeat', reason: st
   if (s.settled) return;
   s.settled = true; s.phase = outcome; s.reason = reason;
   s.reward = Math.floor((s.time + 1e-7) / 60) + (outcome === 'victory' ? 5 : 0);
-  s.enemies = []; s.projectiles = []; s.wells = []; s.pulses = []; s.ionTraces = []; s.salvage.items = []; s.swapCandidate = undefined; s.beam = undefined; s.gravity = undefined;
-  cancelAstronomy(s); s.swapSelecting = false; s.cues.push(outcome);
+  s.report = snapshotRunReport(s, outcome);
+  s.enemies = []; s.projectiles = []; s.wells = []; s.pulses = []; s.ionTraces = []; s.salvage.items = []; s.swapCandidate = undefined; s.gravity = undefined;
+  s.bossZones=[]; for(const e of s.bossEvents)e.spawned=true; cancelAstronomy(s); s.swapSelecting = false; s.cues.push(outcome);
 }
 export function resolveOutcome(s: RunState): boolean {
   // Kiểm tra chết trước: hit chí mạng ở tick cuối phải được tính thua.
-  if (s.player.hp <= 0 || s.beacon.hp <= 0) { finishRun(s, 'defeat', s.player.hp <= 0 ? 'Tàu Nova đã bị phá hủy.' : 'Beacon đã tắt.'); return true; }
+  if (s.player.hp <= 0 || s.beacon.hp <= 0) { finishRun(s, 'defeat', s.player.hp <= 0 && s.beacon.hp <= 0 ? 'Tàu Nova và Beacon cùng bị phá hủy trong một nhịp.' : s.player.hp <= 0 ? 'Tàu Nova đã bị phá hủy.' : 'Beacon đã tắt.'); return true; }
   if (s.time + 1e-7 >= B.duration) { s.time = B.duration; finishRun(s, 'victory', 'Beacon đã khôi phục vùng không gian này.'); return true; }
   return false;
 }
@@ -72,6 +77,7 @@ export class GameSession {
     eventStep(s, this.rng); spawnStep(s, this.rng); this.probe?.mark('spawnCPU');
     movementStep(s, input, dt); this.probe?.mark('movementGravityCPU'); environmentStep(s, dt); this.probe?.mark('pickupCPU');
     radiationStep(s, this.rng); weaponStep(s, this.rng); bossStep(s); this.probe?.mark('weaponsBossCPU'); combatStep(s, dt, this.rng); this.probe?.mark('combatCPU');
+    sampleRunTelemetry(s, dt); this.probe?.mark('telemetryCPU');
     if (resolveOutcome(s)) return;
     if (s.pending) { s.cues.push('upgrade'); prepareChoices(s, this.rng); }
   }

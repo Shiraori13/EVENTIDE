@@ -1,8 +1,18 @@
 # EVENTIDE Thủy Triều Hư Không
 
+## Cập nhật UX/stability local · 2026-10-21
+
+Bản beta1.0.0 bổ sung các hành vi dưới đây, giữ luật nền/cân bằng của bản UI/hazards/multi-boss. Không phát hành lại Pages. [Báo cáo thay đổi](docs/next-beta-ux-report.md), [kiểm tra thực tế](docs/status.md).
+
+- **UX-WARNING** HUD có normal/warning/critical theo HP: critical vào≤25%/thoát≥32%, warning vào≤50%/thoát≥58%; Beacon bị đánh có nhãn2s. Corruption cảnh báo từ40/thoát<35, còn buff luôn đúng ngưỡng50. Có chữ/icon và hướng quay về khi Beacon nguy cấp ngoài màn hình. Cảnh báo/timer dùng simulation clock; cue Beacon tối đa1lần/s âm thanh. Không đọc HP/timer liên tục bằng aria-live.
+- **UX-BUILD/DRAFT** Balo theo thứ tự tổng quan3+2ô → recipe/hành động → chỉ số hiệu lực → bảng nguồn mở rộng có scroll. Progress và điều kiện thiếu tính theo build thật. Thẻ draft có loại/cấp/2–3giá trị trước-sau/câu tác dụng, details kỹ thuật riêng; calculator dùng cùng content/stats/attackInterval với gameplay, không ghi DPS suy đoán. Reroll có lý do đọc được; focus trap bao gồm summary, phím tắt không chạy trong input/select, đóng khôi phục focus và đúng draft/pause.
+- **UX-TUTORIAL** Ba gợi ý một lần theo profile: rời sáng, Beacon thực sự bị đánh, đủ Pulsar5+Ion5. Queue hoãn khi nguy hiểm/telegraph/modal/draft; trigger chưa hiển thị không mất. Gợi ý không pause, tối đa10s simulation/lần và cách3s; có Bỏ qua. Cài đặt tắt hoặc xem lại chỉ đổi tutorial, giữ mọi meta. Seen chỉ ghi khi nội dung thật sự hiển thị. Notification thành tựu tối đa4nhóm/gộp trùng, nhường dialog/nguy hiểm.
+- **UX-REPORT** Snapshot build và thống kê trước cleanup, deep-freeze sau settlement. Incoming là HP thực mất sau giáp/invuln, clamp overkill; tách tàu/Beacon, loại/owner boss và contact/projectile/beam/radiation/Solar. Fatal ở đòn thật làm HP dương về≤0; cả hai chết cùng tick nói rõ cả hai, vẫn defeat ưu tiên tại720s. Outgoing theo vũ khí/môi trường là tổng HP, không phải DPS; phase1 không cộng overkill sang phase2. Details có giây chịu hazard/lực, Corruption≥50 và ngoài sáng. Final weapons/hình thái/hỗ trợ, một achievement thực hoặc mục tiêu gần nhất. Tối đa một nhận xét nếu >50% damage Beacon xảy ra khi tàu ngoài sáng, không suy “build yếu”. Reward/kinh tế giữ.
+- **SAVE-TUTORIAL** Schema3/key cũ giữ; thêm optional-default `tutorialSeen: []`, `settings.tutorial: true`; save1/2/3 giữ progress/settings cũ, false tutorial đã lưu được tôn trọng. Report chỉ thuộc lượt, không checkpoint hoặc ghi storage mỗi hit.
+
 ## 1 Thông tin và cách dùng
 
-- Phiên bản đặc tả: beta 1.0.0 (nhãn phát hành Pages, giữ luật hotfix1.4.1), ngày 2026-10-17 theo múi giờ Việt Nam. Giữ thành quả1.1; thay đổi cân bằng có chủ đích được ghi trong [balance](docs/balance.md). Bằng chứng và giới hạn kiểm chứng ở [status](docs/status.md).
+- Phiên bản đặc tả: beta 1.0.0 (kế thừa progression/save hotfix1.4.1 và visual, thay luật đúng phạm vi cập nhật), cập nhật UX/stability local ngày 2026-10-21, kế thừa UI/hazards/multi-boss 2026-10-18 theo múi giờ Việt Nam; chưa push/deploy. Giữ thành quả1.1; thay đổi cân bằng có chủ đích được ghi trong [balance](docs/balance.md). Bằng chứng và giới hạn kiểm chứng ở [status](docs/status.md).
 - Mục tiêu hiện tại: Game chơi đơn trên trình duyệt máy tính, chạy local hoặc GitHub Pages dưới /EVENTIDE/.
 - Nguồn: concept `EVENTIDE_Concept_Web.docx` đã thống nhất; các chi tiết triển khai bổ sung từ prompt MVP được phân biệt trong [quyết định thiết kế](docs/design-decisions.md).
 - Đây là core thiết kế dài hạn. Nó định nghĩa game phải hoạt động thế nào, không khẳng định đã có mã nguồn hoặc đã kiểm chứng cân bằng. Trạng thái thực tế ở [status.md](docs/status.md).
@@ -35,7 +45,7 @@ Bốn trụ cột cần giữ khi mở rộng:
 | Trang bị | Pickup run-only, năm stat, tổng ngân sách 20% |
 | Hỗ trợ | Sáu loại: damage, rate, HP, tốc độ bay, nhặt và giáp; chọn tối đa hai loại/run |
 | Quái thường | Static Wisps, Hollow Drifters, Void Leeches |
-| Boss | Elder Star |
+| Boss | Pool Elder Star, Gravemaw, Helion Remnant, Void Harrier; hai mốc 09:00/11:00 |
 | Cơ chế | Beacon, vùng sáng, Corruption, trọng lực môi trường, mastery, tiến hóa/hợp nhất và ba sự kiện thiên văn |
 | Tiến triển | Stardust tinh khiết, ba cấp HP Beacon Core, một Echo |
 | Trải nghiệm | Menu, hướng dẫn, HUD, nâng cấp, pause, kết quả, âm thanh, lưu trình duyệt |
@@ -104,7 +114,7 @@ Ví dụ: từ 0 ở ngoài 15 giây đạt 60; trở lại trong vùng hơn 1,2
 
 **LOOT-01 (1.3)** Mảnh trang bị thu hồi khác EXP, tự lắp khi nhặt; run-only, không chiếm ô, không inventory/shop. Mỗi mảnh một stat damage/rate/HP/pickup/speed, rolled50 hoặc100bp (0,5%/1%) xác suất50/50. Trần riêng2000bp, speed1000bp; tổng cả năm stat≤2000bp. Không giáp. Collect validate lại pool/cap/budget, clamp phần thực nhận; maxHP cộng current đúng delta. Không lãi kép hoặc ghi thành profile buff.
 
-**LOOT-02** Chỉ final death roll một lần, XP giữ nguyên: Wisp5%; Drifter min(14%,8%+0,5 điểm%×phút); Leech min(12%,7%+0,4 điểm%×phút); Elder phase2 final bảo đảm nếu còn stat/budget. Phase1/despawn/recycle/restart không roll. Item TTL30s simulation,5s cuối nhấp; pause dừng TTL. Active/visual cap32; nếu đầy bỏ drop mới và đếm capHits, không queue/đổi XP; playtest phải báo có chạm cap. Hết budget dừng drop và thu hồi pending, không giữ item vô dụng. EXP không có TTL này.
+**LOOT-02** Chỉ final death roll một lần, XP giữ nguyên: Wisp5%; Drifter min(14%,8%+0,5 điểm%×phút); Leech min(12%,7%+0,4 điểm%×phút); Mọi boss phase2 final bảo đảm nếu còn stat/budget. Phase1/despawn/recycle/restart không roll. Item TTL30s simulation,5s cuối nhấp; pause dừng TTL. Active/visual cap32; nếu đầy bỏ drop mới và đếm capHits, không queue/đổi XP; playtest phải báo có chạm cap. Hết budget dừng drop và thu hồi pending, không giữ item vô dụng. EXP không có TTL này.
 
 **UPG-04 Mastery (beta1.4.1, thay thế luật beta1.4)** Chỉ đủ ba module hợp lệ đạt max registry VÀ đủ hai hỗ trợ đã chọn đạt max SUPPORTS mới có mastery. Không yêu cầu cả sáu loại hỗ trợ. Ô thiếu/null/ID hoặc level sai không hoàn tất; tên hình thái tiến hóa dùng cùng ID thật. Điều kiện luôn tính từ build hiện hành, không latch theo lịch sử hoặc bonus đã dùng. Ba module5 nhưng hỗ trợ thiếu/chưa max tiếp tục nhận/nâng hỗ trợ cơ sở. Hợp nhất làm trống ô hoặc swap về1 trở lại nâng cơ sở, giữ nguyên Quasar/ô khác, support, salvage và mastery đã kiếm. Hoàn thiện lại tiếp tục ngân sách còn lại. Mỗi pick +200bp (2%), riêng damage/rate/HP/pickup≤2000bp, speed≤1000bp, tổng≤2000bp; không giáp/crit/lifesteal, không compound/persist. Nâng ô cuối lên max chỉ mở mastery ở draft sau, không tự tặng thêm bonus. Cạn budget có phục hồi/Tiếp tục. Build hiện số ô đã lắp/đạt trần và điều kiện còn thiếu.
 
@@ -124,7 +134,7 @@ Ví dụ: từ 0 ở ngoài 15 giây đạt 60; trở lại trong vùng hơn 1,2
 
 **WPN-07 Swap** Replacement bị loại khỏi draft/reroll thường của1.3. Nút Thay vũ khí trong draft mở danh sách loại mới rồi chọn ô cũ; chỉ xác nhận mới tiêu một lựa chọn. Hiện cũ cấpN→mới cấp1 và cảnh báo mất tiến hóa/mở lại progression nếu mastery. Hủy/Esc giữ draft/XP/reroll/pending. Dọn attack đúng owner, module mới chờ cadence đầu. Giữ thứ tự ô khác, hỗ trợ/salvage/mastery và ngân sách đã dùng. Catalog/Build không đổi miễn phí. Quasar chỉ nhận bằng recipe, không draft/swap vào trực tiếp; không tách lấy lại nguồn.
 
-**WPN-08 Quasar Cannon** Recipe concept Pulsar5+Ion5, nút chủ động trong Build với điều kiện và xác nhận đổi hai module thành một. Balo mở từ playing, pause hoặc draft đều cho quản lý recipe khi mô phỏng dừng; xác nhận phải ở trong vùng nhìn thấy và có focus. UI/action cùng predicate, không phụ thuộc mastery/support. Chuẩn bị definition/behavior/asset local hoặc fallback và output trước consume; lỗi trả lý do/giữ nguồn. Không tick/unpause để commit; state/UI/ảnh nguồn cập nhật ngay bằng revision. Đóng panel trở đúng pause/draft và Quasar hoạt động thật khi resume. Không mất level-up/XP/draft/reroll; consume atomic, Quasar5 ở ô nguồn đầu, giải phóng ô còn lại, không duplicate/doubleclick. Cleanup pulse/chain/cooldown nguồn, giữ damage đã resolve/loot/achievement. Sau fusion luôn tính lại năm ô: ô trống cần được lấp/nâng lại bằng module hợp lệ, chỉ giữ bonus/budget mastery đã kiếm. Đang trang bị Quasar không đề nghị Pulsar/Ion. Hành vi một quạt240°/0,45s, range510u/damage220/cadence1,6s; một hit/ID/pulse, từ hit đầu tối đa3tia phụ trong215u, damage×0,45 và falloff×0,8, visited chung với beam để không hit lại. Tối đa4 trace, không bật hai behavior cũ cùng lúc. Buff theo STAT-01.
+**WPN-08 Quasar Cannon** Recipe concept Pulsar5+Ion5, nút chủ động trong Build với điều kiện và xác nhận đổi hai module thành một. Balo mở từ playing, pause hoặc draft đều cho quản lý recipe khi mô phỏng dừng; xác nhận phải ở trong vùng nhìn thấy và có focus. UI/action cùng predicate, không phụ thuộc mastery/support. Chuẩn bị definition/behavior/asset local hoặc fallback và output trước consume; lỗi trả lý do/giữ nguồn. Không tick/unpause để commit; state/UI/ảnh nguồn cập nhật ngay bằng revision. Đóng panel trở đúng pause/draft và Quasar hoạt động thật khi resume. Không mất level-up/XP/draft/reroll; consume atomic, Quasar5 ở ô nguồn đầu, giải phóng ô còn lại, không duplicate/doubleclick. Cleanup pulse/chain/cooldown nguồn, giữ damage đã resolve/loot/achievement. Sau fusion luôn tính lại năm ô: ô trống cần được lấp/nâng lại bằng module hợp lệ, chỉ giữ bonus/budget mastery đã kiếm. Đang trang bị Quasar không đề nghị Pulsar/Ion. Hành vi một quạt240°/0,45s, range398u (510×0,78 làm tròn, một lần)/damage220/cadence1,6s; một hit/ID/pulse, từ hit đầu tối đa3tia phụ trong215u, damage×0,45 và falloff×0,8, visited chung với beam để không hit lại. Beam/chain đều giới hạn tâm mục tiêu trong398u từ tàu hiện tại của tick và jump≤215u; origin beam theo tàu giống renderer, trace giữ tọa độ lúc hit. Ion độc lập giữ tầm cũ. Tối đa4 trace, không bật hai behavior cũ cùng lúc. Buff theo STAT-01.
 
 **WPN-09 Vai trò** Chính: Plasma/Pulsar/Ion/Quasar; phụ: Drones/Bastion; bổ sung: Well/Singularity. Badge/nhóm/tooltip, giữ tối đa3module, không ép một ô mỗi vai trò; hai ô hỗ trợ chỉ số riêng.
 
@@ -136,17 +146,17 @@ Ví dụ: từ 0 ở ngoài 15 giây đạt 60; trở lại trong vùng hơn 1,2
 
 **ENEMY-03** Damage tiếp xúc theo cooldown, độc lập FPS. Tàu có khoảng bảo vệ va chạm ngắn; Beacon có thể bị nhiều quái đánh theo nhịp từng quái. Các cửa sổ cooldown và damage nằm trong config, cần playtest.
 
-**ENEMY-04 (1.3)** minuteIndex=min(floor(time/60),11). HP=baseHP×(1+hpRate×minute)×eventEnemyFactor; damage=baseDamage×(1+damageRate×minute)×eventEnemyFactor. Wisp5%/5%, Drifter8%/7%, Leech10%/8%. Recompute từ base khi phút hoặc event thay đổi, giữ HP ratio và cooldown/target, không hồi sinh dead; spawn mới cùng công thức. Chaos factor1,5 chỉ quái thường. Speed/spawn/XP/cap không thay. Boss dùng bảng phase riêng.
+**ENEMY-04 (1.3)** minuteIndex=min(floor(time/60),11). HP=baseHP×(1+hpRate×minute)×eventEnemyFactor; damage=baseDamage×(1+damageRate×minute)×eventEnemyFactor. Wisp10%/7%, Drifter14%/9%, Leech16%/10%. Recompute từ base khi phút hoặc event thay đổi, giữ HP ratio và cooldown/target, không hồi sinh dead; spawn mới cùng công thức. Chaos factor1,5 chỉ quái thường. Speed/spawn/XP/cap không thay. Boss dùng bảng phase riêng.
 
-**EVENT-01 Lịch beta** Radiation warning207/active210–255s; chaos327/330–420s; tide462/465–510s. Warning3s riêng duration. Scheduler scheduled→warning→active→ending→completed/cancelled, resolve theo time hiện tại, không replay event đã hết khi nhảy giờ. Chỉ một major warning/active, thu hồi/skip gravity thường ở mốc bị chiếm, không queue bù. Gravity cuối630s vẫn warning, active632 tới cuối. Pause/draft/Build/tab đóng băng mọi lực/tick/modifier; result/restart cleanup.
+**EVENT-01 Lịch beta** Radiation warning207/active210–255s; chaos327/330–420s; tide462/465–510s. Warning3s riêng duration. Scheduler scheduled→warning→active→completed/cancelled, cleanup ngay khi hết clock, resolve theo time hiện tại, không replay event đã hết khi nhảy giờ. Chỉ một major warning/active, thu hồi/skip gravity thường ở mốc bị chiếm, không queue bù. Gravity cuối630s vẫn warning, active632 tới cuối. Pause/draft/Build/tab đóng băng mọi lực/tick/modifier; result/restart cleanup.
 
-**EVENT-02 Radiation** Hai vùng tròn cố định (900,300), (−900,−300), radius180u ngoài lõi600u, viền/hatch/telegraph giữ ở Low. Tick1s, tàu4HP trước pipeline giáp/Corruption/cửa bảo vệ chung; quái thường2%maxHP/tick cap10HP, không multiplier tàu. Boss/Beacon miễn. Environmental final hit tag radiation qua cùng dead guard, XP/drop/kill credit một lần, không bonus thưởng/drop mới.
+**EVENT-02 Radiation** Chốt tối đa hai vùng radius190u khi vào warning207s, dựa tuyến tàu lúc đó; giữ nguyên trong active210–255s. Chừa lõi Beacon/lối thoát, không bám tàu. Warning không gây damage. Viền/hatch/triangle và nhãn trong vùng giữ ở Low/reducedMotion. Tick1s, tàu7HP trước giáp/Corruption; timer radiation độc lập contact và vẫn tôn trọng invulnerableUntil. Vùng chồng chỉ lấy DPS radiation mạnh nhất, không cộng với Solar Scar cùng loại. Quái thường2%maxHP/tick cap10HP, không multiplier tàu; mọi boss và Beacon miễn phần trăm. Final hit qua dead guard, XP/drop/kill credit một lần.
 
 **EVENT-03 Chaos** Quái thường đang sống/mới HP/damage×1,5, tàu outgoing×1,15 tạm thời. Recompute base×minute×event giữ ratio khi vào/ra/phút; không chia ngược/current×1,5 mỗi frame. Không tăng speed/spawn/contact rate hoặc buff boss. Hết90s gỡ đúng nguồn, HUD/Build trở về modifier còn lại.
 
-**EVENT-04 Tide** Chiếm một field môi trường tâm(950,0),radius420u, lực90×sin(2πelapsed/6)u/s, hút rồi đẩy đổi dấu qua0; arrow/streamline theo hướng thật. Chỉ tàu/quái, không loot/Beacon/đạn/damage lõi. Tâm0 chốngNaN, boundary/cap155 và Well riêng giữ; tàu cơ bản200u/s thoát được. Không thêm lực môi trường song song.
+**EVENT-04 Tide** Chốt tâm theo tuyến tàu ở warning462s, giữ fixed active465–510s. Radius440u, lực140×sin(2πelapsed/6)u/s, falloff sqrt(1−distance/radius), về0 ở mép và tâm an toàn. Tổng lực môi trường+Maw lên tàu≤78% tốc độ hiện tại; quái cap155u/s, boss nhận35% lực trước cap. Không tác động loot/Beacon/đạn. Hút/đẩy có arrow, vệt chuyển động đổi hướng liên tục, nhãn/đếm đổi nhịp và cue trước0,7s; Low/reduced giữ biên/hướng. Vị trí warning của radiation/tide giữ cách lõi44u ít nhất100u ngoài radius để không phủ Beacon; không đổi Corruption hoặc sinh hố đen từ Corruption.
 
-**BEACON-05 Presentation beta** Charge ring theo time/720, pulse0,9Hz theo simulation; pause dừng. HP loss hợp lệ mới set lastHit; flash đỏ0,2s và HUD cảnh báo, đỏ ưu tiên rồi tint trắng trả palette ảnh Core tương ứng. Không tween/hitbox/stat/shield mới. Nền tinh vân/ngân hà/sao gộp vào một tile opaque1024², bake một lần cho High/Low256/112chấm mờ≤1,3px; không ba lớp ảnh alpha lớn; EXP12–24u và salvage25u giữ khác hình/độ sáng. Low giảm decor, giữ hazard/telegraph/beam.
+**BEACON-05 Presentation local** Charge ring theo time/720, pulse0,2Hz theo simulation; pause dừng. HP loss hợp lệ mới set lastHit; flash đỏ0,12s và HUD cảnh báo, đỏ ưu tiên rồi tint trắng trả palette ảnh Core tương ứng. HP≤25% có ba tam giác và chữ Nguy cấp. Vòng đứt đoạn/dòng năng lượng vào lõi là trang trí; không tween HP/hitbox/stat/shield mới. Nền tinh vân/ngân hà/sao gộp vào một tile opaque1024², bake một lần mỗi Cao/Vừa/Thấp256/176/112chấm mờ≤1,3px; không ba lớp ảnh alpha lớn; EXP12–24u và salvage25u giữ khác hình/độ sáng. Low giảm decor, giữ hazard/telegraph/beam. Xem [design system](docs/design-system.md).
 
 ## 11 WAVE và BOSS Nhịp màn
 
@@ -155,23 +165,26 @@ Ví dụ: từ 0 ở ngoài 15 giây đạt 60; trở lại trong vùng hơn 1,2
 | 0–180 giây | Chủ yếu Wisps, làm quen và lấy nâng cấp |
 | 180–360 | Thêm Drifters |
 | 360–540 | Thêm Leeches, tăng áp lực dần |
-| 540 | Elder Star xuất hiện một lần; quái thường tiếp tục sinh |
+| 537 / 540 | Cảnh báo / boss thứ nhất từ pool; quái thường tiếp tục sinh |
 | 630 | Hố đen môi trường cuối màn bắt đầu cảnh báo |
+| 657 / 660 | Cảnh báo / boss thứ hai, không lặp loại và không chờ boss đầu chết |
 | 720 | Xét kết quả theo RUN-02 |
 
-**BOSS-01** Elder Star sinh một lần540s: phase1 6900HP → transition1,25s → phase2 4485HP → finalDeath. HP +15% so1.3; damage contact15,4/bullet13,2/beam27,5 (+10%); attack rate nền×1,05 (interval÷1,05), speed32 giữ. Phase2 vẫn ratio0,65, speed×1,18/rate×1,18/damage×1,08; ring18 bỏ4/fan5, telegraph1,8s/lock0,25s/active0,5s. Transition miễn damage/contact, không overkill/kill/XP/drop; final chỉ thưởng một lần. Không cần giết boss để thắng720s.
+**BOSS-01** Mỗi mốc540/660s có đúng một boss từ seeded pool bốn loại, không lặp nếu pool đủ; chọn một lần ở warning3s. Hai boss sống đồng thời hợp lệ. HP phase1 Elder10000/Gravemaw9800/Helion9200/Harrier9000, boss660s nhân0,8; phase2 có pool riêng65% phase1 đã scale. Transition1,25s miễn hit/contact, không xuyên overkill/thưởng; phase2 final mới tính một kill/120XP/roll gear. Không cần hạ boss để thắng720s. Mỗi instance giữ phase/readyAt/attack/aim/beam riêng; cờ tổng bossDefeated không điều khiển boss khác.
 
 **BOSS-02** Đạn/tia boss chỉ đánh tàu; quái thường vẫn đe dọa Beacon. Final death mới tính một kill/120XP, không tiền riêng và không respawn. Tia/projectile có ownerId; chuyển phase/final death dọn đúng owned attack, không xóa XP/đạn tàu. Kết thúc lượt dọn toàn bộ. Event dùng cờ và>=, không bỏ mốc hoặc lặp thưởng.
 
 **BOSS-03** Aim theo tàu trong windup, khóa0.25s cuối trước fire. Origin là vị trí boss hiện tại cộng local muzzle30u theo hướng; active giữ góc khóa nhưng nguồn vẫn đi cùng boss. Collider/VFX dùng cùng world geometry; trình bày nội suy origin cùng boss. Projectile chụp nguồn/hướng lúc bắn rồi bay độc lập. Recover xóa beam, không damage vô hình. Toàn bộ phase/aim/lock/fire/damage dùng simulation clock.
 
-**BOSS-04** Khi điểm spawn mặc định cách tàu dưới400u, boss dùng phía đối diện tàu trên bán kính quỹ đạo850u, không spawn chồng tàu/Beacon. Contact có grace bằng delay đợt đạn đầu3s. Không đổi lịch540s hoặc teleport boss sau khi đã xuất hiện.
+**BOSS-04** Spawn tìm tối đa18 vị trí cách tàu480u, cách tâm≥680u và tách boss sống; fallback quỹ đạo850u phía đối diện. Contact chờ3s, spawnGrace1,2s, skill đầu sau3s; boss sau lệch0,4s. Boss tiếp cận standoff260u, chịu kháng lực35%, không ăn scaling/percent radiation. Boss có slot riêng khỏi110 quái thường. Tổng projectile160, chừa12 cho tàu; reserve đủ pattern trước telegraph, thiếu thì hoãn. Zone toàn run≤6, mỗi owner≤2; không tạo vùng ẩn hoặc cắt đạn đã báo. Dash khóa path, swept collision tương đối, tránh lõi Beacon.
+
+**BOSS-05** Elder giữ ring/beam; Gravemaw luân phiên Maw/ring/Maw (hút phase1, đẩy phase2 đã báo); Helion Scar/fan (hai vùng so le phase2); Harrier dash/fan (hai chặng phase2, mỗi chặng warning riêng/ngắt0,35s). Cadence khởi tạo phase1/2: Elder/Gravemaw2,8/1,9s, Helion2,5/1,7s, Harrier2,4/1,6s; phải hoàn tất attack+recovery trước skill sau, không catch-up. Warning ring/fan1s, zone1,1s, dash0,95s; lock0,25s. Phase2 ring/fan hai loạt cách0,65s, loạt sau lệch0,08rad giữ giao khe an toàn. Mọi telegraph đọc đúng pattern được admit. Chi tiết [catalog boss](docs/boss-catalog.md).
 
 **WAVE-01** Config chứa nhịp sinh và giới hạn quái/đạn/pickup/hạt. Đạt cap thì hoãn spawn, không bỏ damage rules. Dành slot hoặc cơ chế bảo đảm boss không bị mất do cap quái thường. Gộp XP phải giữ tổng giá trị.
 
 ## 12 GRAV Trọng lực môi trường
 
-**GRAV-01** Tối đa một vùng môi trường đang cảnh báo/hoạt động. Gravity Well của tàu không tính trong cap này. Vị trí chọn từ vài điểm ngoài vùng sáng; vùng hút không phủ Beacon, không khóa mọi đường về.
+**GRAV-01** Tối đa một trường môi trường tự nhiên đang cảnh báo/hoạt động. Gravity Well của tàu và zone thuộc boss có cap/owner riêng, không tính trong cap này. Vị trí chọn từ vài điểm ngoài vùng sáng; vùng hút không phủ Beacon, không khóa mọi đường về.
 
 **GRAV-02** Cảnh báo 2 giây, sau đó hút nhẹ tàu/quái; không hút đạn, XP hay Beacon. Lực có cap và xử lý tâm vùng an toàn; tàu cơ bản bay thoát được. Chưa có damage riêng khi chạm tâm.
 
@@ -193,7 +206,7 @@ Ví dụ: từ 0 ở ngoài 15 giây đạt 60; trở lại trong vùng hơn 1,2
 
 ## 14 UX Hình ảnh âm thanh và màn hình
 
-**UX-01** Pixel art hoặc sprite đơn giản nhất quán: nền xanh đen/tím sâu; cyan cho tàu/đạn ta; vàng cho Beacon; tím hồng cho địch. Phải phân biệt silhouette Wisps/Drifters/Leeches, tàu có hướng/động cơ và boss có hình sao chết. Đạn địch có viền/hình rõ, không chỉ dựa màu.
+**UX-01** Pixel art hoặc sprite đơn giản nhất quán: nền xanh đen/tím sâu; cyan cho tàu/đạn ta; vàng cho Beacon; tím hồng cho địch. Phải phân biệt silhouette Wisps/Drifters/Leeches, tàu có hướng/động cơ và boss có silhouette Hollowborn riêng: Elder sao chết, Gravemaw hai hàm, Helion sao vỡ, Harrier thân dài. Đạn địch có viền/hình rõ, không chỉ dựa màu.
 
 **UX-02** Có sao nền tiết chế, phế tích, phản hồi damage/pickup/level/evolution, cảnh báo Beacon và hiệu ứng Beacon hồi sinh vùng không gian khi thắng. Không dùng bloom, tối màn hoặc rung che đường né. Có giảm hiệu ứng/rung.
 
@@ -201,7 +214,11 @@ Ví dụ: từ 0 ở ngoài 15 giây đạt 60; trở lại trong vùng hơn 1,2
 
 **UX-04** Tiếng Việt đúng dấu, tên riêng giữ tiếng Anh kèm giải thích. Kiểm tra layout 1280×720 và 1920×1080, giữ tỷ lệ không che HUD. Màn quá nhỏ có hướng dẫn desktop; chưa làm cảm ứng.
 
-**UX-05 (VNext)** Font Noto Sans/Noto Serif có glyph Việt và giấy phép được bundle local. Giảm tracking tiếng Việt, chuẩn hóa NFC tại UI, boot font có timeout/fallback. Các màn dùng chung tokens; kiểm tra thêm 1366×768, emulation zoom125% và DPR2. Quality Cao/Thấp chỉ đổi trình bày, lưu cùng settings; saveVersion1 thiếu field này mặc định Cao và giữ tiền/core/Echo/settings cũ.
+**UX-05** Font Noto Sans/Noto Serif có glyph Việt và giấy phép được bundle local. Giảm tracking tiếng Việt, chuẩn hóa NFC tại UI, boot font có timeout/fallback. Các màn dùng chung tokens; kiểm tra1280×720/1366×768/1920×1080 và390×844, cùng emulation zoom125%/DPR2. Quality Cao/Vừa/Thấp và Giảm chuyển động chỉ đổi trình bày, lưu cùng settings; profile mới mặc định Vừa, OS motion chỉ mặc định khi chưa có profile. Save cũ giữ tiền/core/Echo/settings/Low/High, thiếu quality vẫn Cao, thiếu motion fallback từ reducedEffects. Bố cục hẹp cuộn được; cần bàn phím, chưa hỗ trợ touch-play.
+
+**UX-08 Tài nguyên và hazard** Ví Stardust tinh khiết ở header phải sảnh (màn hẹp hàng kế), icon32px/số26px/nhãn12px desktop, số tabular định dạng vi-VN; button mở Core qua click/Enter có focus. Đọc trực tiếp SaveService, không tween số; giao dịch/nhận thưởng có feedback ngắn, Core giữ ví cạnh giá. Bỏ đúng pseudo-element cung vàng không nhãn ở tiêu đề; giữ Beacon/progress/focus thật. HUD có tối đa hai hàng boss và rail trạng thái hazard/vector lực; không phủ tâm tàu.
+
+**UX-07 Visual identity local** Beacon ấm/vòng đứt đoạn/thủy triều cong là motif thống nhất menu/HUD/Build/Core/draft/các panel. HUD gom thời gian/charge/HP Beacon, rail thông báo tránh tâm giao tranh; toast panel/menu ở flow. World FX dùng simulation clock, menu dùng clock hình ảnh riêng clamp100ms/ẩn tab; không tick gameplay trong Balo. Tàu chỉ smooth góc/bank hữu hạn, giữ vị trí nội suy. Boss aim/lock/fire và bề rộng tia theo collider, Low không mất cảnh báo; background decoration tự giảm với hysteresis, không đổi simulation. Bản local này chưa push/deploy.
 
 **UX-06 (VNext)** Tàu/quái/đạn có sprite riêng và atlas local; hiển thị vị trí float nội suy một bước fixed-step cùng camera, không đổi collision. Well cyan và môi trường magenta/amber có viền radius đúng world unit, streak xoắn vào tâm, warning môi trường2s, Well nổ và môi trường fade. Low vẫn giữ viền/hướng hút/đạn địch/cảnh báo quan trọng.
 

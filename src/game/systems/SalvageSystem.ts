@@ -1,3 +1,4 @@
+import { isBoss } from '../config/bosses';
 import { SALVAGE as C, type SalvageStat } from '../config/salvage';
 import type { Enemy, RunState } from '../core/types';
 import { shipStats } from '../core/stats';
@@ -8,7 +9,7 @@ export const salvagePool = (s: RunState): SalvageStat[] => salvageUsed(s) >= C.b
 /** Chỉ gọi sau final death; cap32 bỏ drop mới và đếm rõ, không queue vô hạn/đổi thành XP. */
 export function dropSalvage(s: RunState, e: Enemy, rng: () => number): void {
   const pool = salvagePool(s); if (!pool.length) return;
-  const rate = C.drops[e.kind], chance = Math.min(rate.cap, rate.base + rate.perMinute * s.minuteIndex);
+  const rate = C.drops[isBoss(e.kind)?'elder':e.kind], chance = Math.min(rate.cap, rate.base + rate.perMinute * s.minuteIndex);
   s.salvage.rolls++;
   if (rng() >= chance) return;
   s.salvage.rolled++;

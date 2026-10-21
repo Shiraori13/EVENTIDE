@@ -1,3 +1,5 @@
+import { isBoss } from '../config/bosses';
+import { bossRuntime, reservedBullets } from '../systems/bosses/state';
 import { canFuseQuasar } from '../systems/EvolutionSystem';
 import { botInput as autoplayInput, chooseBotUpgrade } from './Autoplay';
 import Phaser from 'phaser';
@@ -9,12 +11,12 @@ import { dropXP } from '../systems/CombatSystem';
 import type { Vec } from '../core/types';
 import { clearGroundXP } from '../systems/PickupSystem';
 import { canvasTextStyle, loadFonts, normalizeText, VIETNAMESE_SAMPLE } from '../services/FontService';
-export type Scenario = 'light' | 'dense' | 'xp' | 'endgame' | 'storm' | 'quasar' | 'radiation' | 'chaos' | 'tide';
-const SCENARIOS = { quasar: {enemies:110,bullets:120,drops:140,time:635}, radiation: {enemies:110,bullets:120,drops:140,time:211}, chaos: {enemies:110,bullets:120,drops:140,time:350}, tide: {enemies:110,bullets:120,drops:140,time:466}, light: { enemies: 8, bullets: 12, drops: 18, time: 20 }, dense: { enemies: 110, bullets: 120, drops: 100, time: 400 }, xp: { enemies: 80, bullets: 80, drops: 2400, time: 400 }, endgame: { enemies: 110, bullets: 120, drops: 140, time: 635 }, storm: { enemies: 110, bullets: 120, drops: 140, time: 635 } } as const;
-interface Measure { median: number; p95: number; p99: number; max: number; over33: number; over50: number; samples: number }
+export type Scenario = 'duo' | 'light' | 'dense' | 'xp' | 'endgame' | 'storm' | 'quasar' | 'radiation' | 'chaos' | 'tide';
+const SCENARIOS = { duo:{enemies:112,bullets:120,drops:140,time:665}, quasar: {enemies:110,bullets:120,drops:140,time:635}, radiation: {enemies:110,bullets:120,drops:140,time:211}, chaos: {enemies:110,bullets:120,drops:140,time:350}, tide: {enemies:110,bullets:120,drops:140,time:466}, light: { enemies: 8, bullets: 12, drops: 18, time: 20 }, dense: { enemies: 110, bullets: 120, drops: 100, time: 400 }, xp: { enemies: 80, bullets: 80, drops: 2400, time: 400 }, endgame: { enemies: 110, bullets: 120, drops: 140, time: 635 }, storm: { enemies: 110, bullets: 120, drops: 140, time: 635 } } as const;
+interface Measure { median: number; p95: number; p99: number; max: number; over33: number; over50: number; over100:number; samples: number }
 function summary(values: number[]): Measure {
   const data = [...values].sort((a, b) => a - b), at = (p: number): number => +(data[Math.min(data.length - 1, Math.floor(data.length * p))] ?? 0).toFixed(3);
-  return { median: at(0.5), p95: at(0.95), p99: at(0.99), max: at(1), over33: data.filter(x => x > 33.3).length, over50: data.filter(x => x > 50).length, samples: data.length };
+  return { median: at(0.5), p95: at(0.95), p99: at(0.99), max: at(1), over33: data.filter(x => x > 33.3).length, over50: data.filter(x => x > 50).length, over100:data.filter(x=>x>100).length, samples: data.length };
 }
 export interface PerfAPI { scenario(name: Scenario): void; longRun(seed?: number, fusion?: boolean): void; reset(): void; report(): ReturnType<PerfSampler['report']>; counters(): Record<string, number>; typography(): Promise<void>; clearTypography(): void; }
 declare global { interface Window { __eventidePerf?: PerfAPI } }
@@ -52,7 +54,7 @@ export class PerfSampler {
   private readCounts(): Record<string, number> {
     const s = this.getSession()?.state;
     const timerEvents: unknown = Reflect.get(this.scene.time, '_active');
-    return { enemies: s?.enemies.length ?? 0, projectiles: s?.projectiles.length ?? 0, pickupLogic: (s?.pickups.length ?? 0) + (s?.loot.ledgerCount ?? 0), pickupActive: s?.pickups.length ?? 0, ledgerCells: s?.loot.ledgerCount ?? 0, groundXP: (s?.pickups.reduce((n, p) => n + p.value, 0) ?? 0) + (s?.loot.ledgerXP ?? 0), lootCreated: s?.loot.created ?? 0, lootCollected: s?.loot.collected ?? 0, effects: s?.effects.length ?? 0, salvage: s?.salvage.items.length ?? 0, salvageCapHits: s?.salvage.capHits ?? 0, astronomyActive: s?.astronomy.filter(e => e.phase === 'active').length ?? 0, masteryBP: s ? Object.values(s.masteryBonus).reduce((a,b)=>a+b,0) : 0, pulses: s?.pulses.length ?? 0, ionTraces: s?.ionTraces.length ?? 0, physicsBodies: 0, children: this.scene.children.length, textures: this.scene.textures.getTextureKeys().length, tweens: this.scene.tweens.getTweens().length, timers: Array.isArray(timerEvents) ? timerEvents.length : -1, sceneListeners: this.scene.events.eventNames().reduce((n, event) => n + this.scene.events.listenerCount(event), 0), ...this.rendererCounts() };
+    return { enemies: s?.enemies.length ?? 0, bossCount:s?.enemies.filter(e=>isBoss(e.kind)).length??0, reservedBullets:s?reservedBullets(s):0, bossZones:s?.bossZones.length??0, bossBeams:s?.enemies.filter(e=>!!e.boss?.beam).length??0, projectiles: s?.projectiles.length ?? 0, pickupLogic: (s?.pickups.length ?? 0) + (s?.loot.ledgerCount ?? 0), pickupActive: s?.pickups.length ?? 0, ledgerCells: s?.loot.ledgerCount ?? 0, groundXP: (s?.pickups.reduce((n, p) => n + p.value, 0) ?? 0) + (s?.loot.ledgerXP ?? 0), lootCreated: s?.loot.created ?? 0, lootCollected: s?.loot.collected ?? 0, effects: s?.effects.length ?? 0, salvage: s?.salvage.items.length ?? 0, salvageCapHits: s?.salvage.capHits ?? 0, astronomyActive: s?.astronomy.filter(e => e.phase === 'active').length ?? 0, masteryBP: s ? Object.values(s.masteryBonus).reduce((a,b)=>a+b,0) : 0, pulses: s?.pulses.length ?? 0, ionTraces: s?.ionTraces.length ?? 0, physicsBodies: 0, children: this.scene.children.length, textures: this.scene.textures.getTextureKeys().length, tweens: this.scene.tweens.getTweens().length, timers: Array.isArray(timerEvents) ? timerEvents.length : -1, sceneListeners: this.scene.events.eventNames().reduce((n, event) => n + this.scene.events.listenerCount(event), 0), ...this.rendererCounts() };
   }
   report() {
     const renderer = this.scene.game.renderer, canvas = this.scene.game.canvas;
@@ -63,13 +65,13 @@ export class PerfSampler {
   }
   loadScenario(name: Scenario): void {
     this.autoRun = false; this.fixture = name; const session = this.newSession(), s = session.state, data = SCENARIOS[name], rng = seededRandom(20261016);
-    s.time = data.time; s.minuteIndex = minuteAt(s.time); this.fixtureStart = s.time; s.player.x = (name === 'endgame' || name === 'storm' || name === 'quasar') ? 1050 : 0; s.player.y = (name === 'endgame' || name === 'storm') ? 350 : 110;
+    s.time = data.time; s.minuteIndex = minuteAt(s.time); this.fixtureStart = s.time; s.player.x = (name === 'duo' || name === 'endgame' || name === 'storm' || name === 'quasar') ? 1050 : 0; s.player.y = (name === 'duo' || name === 'endgame' || name === 'storm') ? 350 : 110;
     s.player.hp = s.player.maxHP = 1e8; s.beacon.hp = s.beacon.maxHP = 1e8;
     s.modules = { plasma: 5, drones: 5, well: 5 }; s.supports = { power: 5, haste: 5 }; clearGroundXP(s);
     if (name === 'storm') { s.modules = { plasma: 5, pulsar: 5, ion: 5 }; s.salvage.bonuses.rate = 2000; }
     if (['quasar','radiation','chaos','tide'].includes(name)) { s.modules = {plasma:5,quasar:5}; s.salvage.bonuses.rate=2000; s.masteryBonus.damage=1000; s.masteryBonus.rate=1000; s.player.x=1050; s.player.y=name==='radiation'?300:0; }
-    s.nextSpawn = Infinity; s.bossSpawned = true; s.finalGravity = (name === 'endgame' || name === 'storm'); s.nextGravity = Infinity;
-    if ((name === 'endgame' || name === 'storm')) { const boss = makeEnemy(s, 'elder', { x: 1400, y: 220 }, 'player'); boss.bossPhase = 'phase2'; boss.speed = B.bossSpeed * BOSS_PHASES.speedMultiplier; boss.hp = boss.maxHP = 1e8; s.gravity = { ...B.finalGravityPosition, start: s.time + 2, end: 10000, final: true }; s.bossRing = s.time + 2; s.bossBeam = s.time + 3; }
+    s.nextSpawn = Infinity; s.bossSpawned = true; s.bossEvents.forEach(e=>e.spawned=true); s.finalGravity = (name === 'duo' || name === 'endgame' || name === 'storm'); s.nextGravity = Infinity;
+    if ((name === 'duo' || name === 'endgame' || name === 'storm')) { const boss = makeEnemy(s, 'elder', { x: 1400, y: 220 }, 'player'); boss.bossPhase = 'phase2'; boss.speed = B.bossSpeed * BOSS_PHASES.speedMultiplier; boss.hp = boss.maxHP = 1e8; s.gravity = { ...B.finalGravityPosition, start: s.time + 2, end: 10000, final: true }; Object.assign(bossRuntime(boss),{readyAt:s.time+2,spawnUntil:s.time+1.2}); if(name==='duo'){const other=makeEnemy(s,'helion',{x:800,y:500},'player');other.bossPhase='phase2';other.hp=other.maxHP=1e8;Object.assign(bossRuntime(other),{readyAt:s.time+2.4,spawnUntil:s.time+1.2});} }
     for (let i = 0; i < data.drops; i++) {
       const a = rng() * Math.PI * 2, r = 400 + rng() * 1200;
       dropXP(s, { x: Math.cos(a) * r, y: Math.sin(a) * r }, 5);
@@ -96,9 +98,9 @@ export class PerfSampler {
     while (s.enemies.length < data.enemies) {
       const i = s.enemies.length, a = i * 2.399, r = 170 + (i % 7) * 48;
       const e = makeEnemy(s, i % 4 === 0 ? 'drifter' : i % 5 === 0 ? 'leech' : 'wisp', { x: s.player.x + Math.cos(a) * r, y: s.player.y + Math.sin(a) * r }, i % 4 === 0 ? 'beacon' : 'player'); e.hp = e.maxHP = 1e8;
-      if (e.kind !== 'elder') e.baseHP = 1e8 / (1 + ENEMY_SCALING[e.kind].hp * minuteAt(s.time));
+      if (!isBoss(e.kind)) e.baseHP = 1e8 / (1 + ENEMY_SCALING[e.kind].hp * minuteAt(s.time));
     }
-    while (s.projectiles.length < data.bullets) {
+    while (s.projectiles.length < Math.min(data.bullets,B.projectileCap-reservedBullets(s))) {
       const i = s.projectiles.length, a = i * 2.399, r = 180 + (i % 11) * 30;
       s.projectiles.push({ id: s.nextId++, x: s.player.x + Math.cos(a) * r, y: s.player.y + Math.sin(a) * r, vx: Math.sin(a) * 80, vy: Math.cos(a) * 80, ttl: 10, damage: 12, blast: 0, hostile: i % 2 === 0, radius: 7 });
     }

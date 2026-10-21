@@ -22,7 +22,7 @@ export class GameScene extends Phaser.Scene {
   private disposeDebug?: () => void;
   private paid = false;
   private menuState: RunState = createRun(0);
-  private uiElapsed = 0;
+  private uiElapsed = 0;private presentationSeconds=0;
   private perf?: PerfSampler;
   private profile!: ProfileService;
   constructor() { super('World'); }
@@ -66,13 +66,15 @@ export class GameScene extends Phaser.Scene {
   private commitProfile = (): void => { if (this.session) this.profile.sync(this.session.state); this.profile?.flush(); };
   private pauseRun = (): void => { this.keys.clear(); this.clock.reset(); this.session?.pause(); this.commitProfile(); if (this.session) this.ui.render(this.session.state); this.audio.sync(this.save.data.settings, false, 0); };
   update(_time: number, delta: number): void {
+    // Clock hình ảnh clamp delta/ẩn tab, không được đưa thời gian này vào GameSession.
+    if(!document.hidden)this.presentationSeconds+=Math.min(delta/1000,.1);
     this.perf?.beginFrame();
     const s = this.session?.state;
     if (!s) {
       this.uiElapsed += delta;
       if (this.uiElapsed >= 80) { this.ui.updateTransientUI(); this.uiElapsed = 0; }
       if (this.menuState.coreLevel !== this.save.data.coreLevel) this.menuState = createRun(this.save.data.coreLevel);
-      this.worldView.draw(this.menuState, true, this.save.data.settings.reducedEffects, this.save.data.settings.quality); this.audio.sync(this.save.data.settings, false, 0); return;
+      this.worldView.draw(this.menuState, true, this.save.data.settings.reducedEffects, this.save.data.settings.quality,1,this.presentationSeconds,this.save.data.settings.reducedMotion); this.audio.sync(this.save.data.settings, false, 0); return;
     }
     const input = { x: Number(this.keys.has('KeyD') || this.keys.has('ArrowRight')) - Number(this.keys.has('KeyA') || this.keys.has('ArrowLeft')), y: Number(this.keys.has('KeyS') || this.keys.has('ArrowDown')) - Number(this.keys.has('KeyW') || this.keys.has('ArrowUp')) };
     const simStart = this.perf ? performance.now() : 0;
@@ -81,17 +83,17 @@ export class GameScene extends Phaser.Scene {
     this.perf?.measure('simulationCPU', simStart); this.perf?.afterSimulation();
     this.profile.sync(s);
     if (s.settled && !this.paid) {
-      this.paid = true; this.save.data.currency += s.reward;
+      this.paid = true; this.save.data.currency += s.reward;this.ui.notifyWalletChanged();
       if (s.phase === 'victory') this.save.data.echo = true;
       this.save.write();
     }
     this.audio.sync(this.save.data.settings, s.phase !== 'paused', s.time, s.phase === 'playing');
     for (const cue of s.cues.splice(0)) {
       this.audio.cue(cue);
-      if ((cue === 'hit' || cue === 'beacon') && this.save.data.settings.shake && !this.save.data.settings.reducedEffects) this.cameras.main.shake(80, 0.002);
+      if ((cue === 'hit' || cue === 'beacon') && this.save.data.settings.shake && !this.save.data.settings.reducedEffects && !this.save.data.settings.reducedMotion) this.cameras.main.shake(80, 0.002);
     }
     const renderStart = this.perf ? performance.now() : 0;
-    this.worldView.draw(s, false, this.save.data.settings.reducedEffects, this.save.data.settings.quality, this.clock.alpha);
+    this.worldView.draw(s, false, this.save.data.settings.reducedEffects, this.save.data.settings.quality,this.clock.alpha,this.presentationSeconds,this.save.data.settings.reducedMotion);
     this.perf?.measure('renderPreparationCPU', renderStart);
     const uiStart = this.perf ? performance.now() : 0;
     this.uiElapsed += delta;

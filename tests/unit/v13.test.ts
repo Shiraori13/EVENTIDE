@@ -30,13 +30,13 @@ describe('Minute scaling từ base, event idempotent', () => {
       const s = createRun(0); s.time = time; const e = makeEnemy(s, kind, { x: 1000, y: 0 }, 'beacon'), rate = ENEMY_SCALING[kind];
       expect(e.maxHP).toBeCloseTo(ENEMIES[kind].hp * (1 + rate.hp * minuteAt(time))); expect(e.damage).toBeCloseTo(ENEMIES[kind].damage * (1 + rate.damage * minuteAt(time))); expect(e.speed).toBe(ENEMIES[kind].speed);
     }
-    const s = createRun(0); s.time = 300; const d = makeEnemy(s, 'drifter', s.player, 'beacon'); expect(d.maxHP).toBeCloseTo(140 * 1.4); expect(d.damage).toBeCloseTo(11 * 1.35);
+    const s = createRun(0); s.time = 300; const d = makeEnemy(s, 'drifter', s.player, 'beacon'); expect(d.maxHP).toBeCloseTo(140 * 1.7); expect(d.damage).toBeCloseTo(11 * 1.45);
   });
   it('HP ratio/target/cooldown giữ, dead không hồi sinh, skip nhiều mốc không lãi kép', () => {
     const s = createRun(0), e = makeEnemy(s, 'wisp', s.player, 'beacon'), dead = makeEnemy(s, 'leech', s.player, 'player'), boss = makeEnemy(s, 'elder', { x: 900, y: 0 }, 'player');
     e.hp = e.maxHP * 0.3; e.nextHit = 88; e.nextDroneHit = 90; dead.hp = 0;
     s.time = 60; minuteScalingStep(s); expect(e.hp / e.maxHP).toBeCloseTo(0.3); const hp = e.hp; minuteScalingStep(s); expect(e.hp).toBe(hp);
-    s.time = 660; minuteScalingStep(s); expect(e.maxHP).toBeCloseTo(28 * 1.55); expect(e.hp / e.maxHP).toBeCloseTo(0.3); expect(e.target).toBe('beacon'); expect(e.nextHit).toBe(88); expect(e.nextDroneHit).toBe(90); expect(dead.hp).toBe(0); expect(boss.maxHP).toBe(B.bossHP);
+    s.time = 660; minuteScalingStep(s); expect(e.maxHP).toBeCloseTo(28 * 2.10); expect(e.hp / e.maxHP).toBeCloseTo(0.3); expect(e.target).toBe('beacon'); expect(e.nextHit).toBe(88); expect(e.nextDroneHit).toBe(90); expect(dead.hp).toBe(0); expect(boss.maxHP).toBe(B.bossHP);
   });
   it('pause dừng minute/TTL/Corruption/survival và không buff phút12', () => {
     const g = new GameSession(); g.state.time = 59.99; pickup(g.state, 'damage'); g.pause(); const old = structuredClone(g.state); g.step(180); expect(g.state).toEqual(old); g.resume(); g.step(1 / 60); expect(g.state.minuteIndex).toBe(1);

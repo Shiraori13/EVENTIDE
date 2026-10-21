@@ -4,7 +4,7 @@ test('mốc540 có spawn an toàn khi tàu đang đứng ở điểm boss mặc 
   await open(page); await page.getByRole('button', { name: 'Khởi hành' }).click();
   await page.evaluate(() => { const d = window.__eventide!, s = d.snapshot()!; d.patch({ time: 539.99, nextSpawn: Infinity, nextPlasma: Infinity, player: { ...s.player, x: 850, y: -650 } }); });
   await expect.poll(() => page.evaluate(() => window.__eventide!.snapshot()!.bossSpawned)).toBe(true);
-  const s = await page.evaluate(() => window.__eventide!.snapshot()!), boss = s.enemies.find(e => e.kind === 'elder')!;
+  const s = await page.evaluate(() => window.__eventide!.snapshot()!), boss = s.enemies.find(e => e.boss)!;
   expect(Math.hypot(boss.x - s.player.x, boss.y - s.player.y)).toBeGreaterThan(400); expect(s.player.hp).toBe(100); expect(boss.nextHit).toBeGreaterThan(s.time);
 });
 for (const viewport of [{ width: 1280, height: 720 }, { width: 1366, height: 768 }, { width: 1920, height: 1080 }]) test(`1.2 menu/profile/catalog/build ${viewport.width}`, async ({ page }) => {

@@ -80,7 +80,7 @@ describe('Presentation giữ luật và save cũ', () => {
   it('saveVersion1 không có quality giữ nguyên tiền/core/Echo/settings', () => {
     const old = { saveVersion: 1, currency: 47, coreLevel: 2, echo: true, settings: { muted: true, volume: 0.7, reducedEffects: true, shake: false } };
     const saved = validateSave(old); expect(saved.currency).toBe(47); expect(saved.coreLevel).toBe(2); expect(saved.echo).toBe(true);
-    expect(saved.settings).toEqual({ ...old.settings, quality: 'high' }); expect(validateSave({ ...old, settings: { ...old.settings, quality: 'low' } }).settings.quality).toBe('low');
+    expect(saved.settings).toEqual({ ...old.settings, reducedMotion:true, quality: 'high', tutorial:true }); expect(validateSave({ ...old, settings: { ...old.settings, quality: 'low' } }).settings.quality).toBe('low');
   });
   it('alpha nội suy hình ảnh, không sửa world position hoặc tạo bù thời gian', () => {
     const p = { x: 10, y: 20, previousX: 6, previousY: 16 }; expect(renderX(p, 0.5)).toBe(8); expect(renderY(p, 0.5)).toBe(18); expect(p.x).toBe(10);

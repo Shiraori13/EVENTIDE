@@ -1,0 +1,9 @@
+import { readFileSync, writeFileSync } from 'node:fs';
+const root='artifacts/visual-identity',before=JSON.parse(readFileSync(`${root}/before/results.json`,'utf8')),after=JSON.parse(readFileSync(`${root}/after/results.json`,'utf8'));
+const rows=[];for(const scenario of['dense','endgame'])for(const [label,data]of[['before',before],['after',after]]){
+ const samples=data.filter(r=>r.scenario===scenario);for(const r of samples)rows.push({scenario,label,quality:r.quality,repeat:r.repeat,frame:r.metrics.frame,sceneCPU:r.metrics.sceneCPU,renderPreparationCPU:r.metrics.renderPreparationCPU,heap:r.heap,counters:r.counters,errors:r.errors});
+}
+writeFileSync(`${root}/comparison.json`,JSON.stringify(rows,null,2));
+const cards=['menu','early','dense','build','draft','core','menu-390'].map(name=>`<h2>${name}</h2><div class="pair"><figure><figcaption>Trước</figcaption><a href="before/visual/${name}.png"><img src="before/visual/${name}.png"></a></figure><figure><figcaption>Sau · local</figcaption><a href="after/visual/${name}.png"><img src="after/visual/${name}.png"></a></figure></div>`).join('');
+writeFileSync(`${root}/comparison.html`,`<!doctype html><meta charset="utf-8"><title>EVENTIDE · before/after</title><style>body{background:#050914;color:#e8f0f4;font:14px Arial;margin:24px}h2{margin-top:40px}.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px}figure{margin:0}img{max-width:100%;max-height:720px}figcaption{padding:8px;color:#efcb83}@media(max-width:700px){.pair{grid-template-columns:1fr}}</style><h1>EVENTIDE · ảnh runtime trước/sau</h1><p>1280×720, riêng menu-390 là390×844. Fixture test giữ save riêng; HP100 triệu ở dense là fixture chịu tải, không phải gameplay cân bằng. Không mockup.</p>${cards}`);
+for(const row of rows)console.log(`${row.label} ${row.scenario} ${row.repeat} p50=${row.frame.median} p95=${row.frame.p95} stalls=${row.frame.over50}/${row.frame.samples}`);

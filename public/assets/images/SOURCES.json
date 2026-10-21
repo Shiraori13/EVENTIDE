@@ -1,226 +1,247 @@
 [
   {
     "file": "ui/power.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "0d5fc301c5cefe37f4f95050da24d94c881c7770488ef405648a2e08c7e2e5b8"
   },
   {
     "file": "ui/haste.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "0add1667d690e53a4075d73ff73c2118b3799f019f32d58393adc54f419441a2"
   },
   {
     "file": "ui/engine.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "be5dd0f28b5b45cec98e943d5c2288450b705e5ad07eb98bea45d42c76cca04e"
   },
   {
     "file": "ui/armor.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "9ab802c6117685fac3b8657ad4be36aed98406342c07ea6b088de37d5017bf6c"
   },
   {
     "file": "player/nova.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
-    "sha256": "aeb5a422503d97cddbc4a1cb58705d84321350c9c0a48e2a839e55ac163a2dfa"
+    "sha256": "0d84276901cfc752c9afb697d8463ec2dec798e256fde3bf512da1755f8eace0"
   },
   {
     "file": "beacon/beacon.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
-    "sha256": "e4236dcd210eec56b466cf69db037b6803584318f1f5f9c03f077d0607c49a82"
+    "sha256": "f999b932ba1cfb8c2b7374de3bf040a27f09231d1ee9c86d3c33d37926dbeea1"
   },
   {
     "file": "enemies/drifter.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "4d1b1a2c2dbdfac10f53ec113bfcb507f2c531ed2e0610bf12b6c00c390bac1b"
   },
   {
     "file": "enemies/elder.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "5c30573c2146e8501f3e4f937bf884fc2eb3ea40e0e569327e384444e5c9cf5a"
   },
   {
     "file": "enemies/leech.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "140bf1002bea4308fb44bb908c77a095fe8def870fc733d1f33f44fcaec8a4e4"
   },
   {
     "file": "enemies/wisp.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "2df9742376a11c608ea33df22c22da539d3facc40d5f37e7dd9b34225f4a41d1"
   },
   {
     "file": "weapons/drones.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "7630a60f1dac5e768fa8361cd141b221b2ecbe7a1c7dad8f2d4b1f7aaf1ab9f7"
   },
   {
     "file": "weapons/enemy-bolt.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "080ea4f5ec3357795c19f0945b8244e88371fdcaaa1264d8ef0564875f5eff7d"
   },
   {
     "file": "weapons/plasma.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "7c48a27324ad88547e8630cab58c22b6658d725196c1ad1e0987143ce279490d"
   },
   {
     "file": "weapons/shot-plasma.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "9538ccf688c7c574b7b43e46fc478c5429ae286f1bc56658df6cf8af78195263"
   },
   {
     "file": "weapons/shot-sun.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "7d77c4b8b7af1a7239dc196b21d8011ee9545fc0336209a2a290ccfcac8de699"
   },
   {
     "file": "weapons/shot-supernova.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "4463ffd845ee54c9fe9414609a4754a423d4d39b55dfa11d70691c7e437ab84d"
   },
   {
     "file": "weapons/well.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "ee58bc28d56f2565d91354d3b6e0776a045bc90c3964d18663193a693731f8f4"
   },
   {
     "file": "environment/ruin.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "20850a33990d101a84652aa81f2b5595e8d4687d843fff31b2a22506f9b6667b"
   },
   {
     "file": "ui/hull.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "2e1dc450ecf83ce5d841664e7f9c9a967a2d55c55a3f9508c6cdde103203d829"
   },
   {
     "file": "ui/magnet.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "2440299385c10e44166d43cdc506c19427d407d5d4cc1e36cac66b0d3cc92a37"
   },
   {
     "file": "ui/pure.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "d5479d607e90cb9889b40b6c5b3dfecbb9cfe8e15cedb6873bfb396114d88b6c"
   },
   {
     "file": "ui/stardust-cluster.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "529bbbb65a07dcde88014e1091cbe87db800ccabf5f00674fcb4b8fc55e4e826"
   },
   {
     "file": "ui/stardust.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "0acef71388f498705b5c66d64bc312217628a2b6aa1efdebaa60bb333417900c"
   },
   {
     "file": "beacon/beacon-1.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
-    "sha256": "3875ecf05bafa94392474311fef0c937014b5ae091c43441f29b4aba940b8bfe"
+    "sha256": "41cd9f14bcb700c8b6edab08cac0a9ddf912c5274e339a678eefd707ab532939"
   },
   {
     "file": "beacon/beacon-2.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
-    "sha256": "f3ed483439298cf2639ca17be28ce922db4bc7c967811f7dece5b502d04761dc"
+    "sha256": "2a9f212b147b81bbd76ea484d76a8ab18b7c8da3856300670b314cd93674d042"
   },
   {
     "file": "beacon/beacon-3.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
-    "sha256": "c5e4c57d6a7e6336c42ea0b6f43424dad9ed3764bc078835f55320b657475b2b"
+    "sha256": "c0a334c018465c2c83e6c08e708d2b6c3f7081ddd5aff8601664943d78ea407a"
   },
   {
     "file": "weapons/pulsar.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "6a3a6e493e02b7a7bde4d22700fe663f3296fdf4295664bd276d73b1f67dffc3"
   },
   {
     "file": "weapons/ion.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "22622c84580123140e03f0ee438677be20de85d1ca6aa31d98689843be56db57"
   },
   {
     "file": "ui/salvage.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "83ad35e5c66a7db2cf74ea9923afdc1fe4d2f533b414f7a88c49456a2e412652"
   },
   {
     "file": "weapons/quasar.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "c706b9b5b256e5ee5e41bb479c0f84ba257997cb1623c84cdae873ffe2f3e211"
   },
   {
     "file": "weapons/bastion.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "cf8200dad60d091d7200baa2adf838ec1681b6b95cdf1f4abe943bf61bd7aa4a"
   },
   {
     "file": "weapons/singularity.svg",
-    "source": "scripts/asset-shapes.json → scripts/generate-assets.mjs",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
     "author": "EVENTIDE original geometry",
     "license": "CC0-1.0",
     "sha256": "47863ccb30255f7a26a4054d9f5ede6cf27ded08cb0c2e33c9fe683d54400263"
+  },
+  {
+    "file": "enemies/gravemaw.svg",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
+    "author": "EVENTIDE original geometry",
+    "license": "CC0-1.0",
+    "sha256": "6ac72ebb55f7388a8a8b9665f27649d09ad6e932bad8da986073dc0f94186a11"
+  },
+  {
+    "file": "enemies/helion.svg",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
+    "author": "EVENTIDE original geometry",
+    "license": "CC0-1.0",
+    "sha256": "c3ea7aa62d267b5987db891bde0153f8a35368799366b440b8038a92fba85df3"
+  },
+  {
+    "file": "enemies/harrier.svg",
+    "source": "scripts/assets/asset-shapes.json → scripts/assets/generate-assets.mjs",
+    "author": "EVENTIDE original geometry",
+    "license": "CC0-1.0",
+    "sha256": "1cf103f4d2ac023133cae3f43f46017a6a6b5bccb2e559f2075d9fb321d0d1fe"
   }
 ]

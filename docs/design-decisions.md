@@ -1,5 +1,14 @@
 # Quyết định triển khai · 2026-10-16
 
+## Visual identity local · 2026-10-18
+
+- Giữ Phaser/DOM và beta1.0.0, không commit/push/deploy theo lệnh người dùng. Snapshot prompt riêng trong prompts, không sửa prompt MVP. Baseline nguồn/build/ảnh/đo trước nằm artifacts/visual-identity, hồ sơ phát hành trước chuyển status-deployment.md.
+- Chọn SVG/hình học procedural nguyên bản CC0 thay asset tải mạng; cải tiến năm ảnh hiện có. Nền vẫn một tile opaque vì bằng chứng hồi quy alpha-overdraw trước đó; thêm tier Vừa bake tĩnh, không thêm engine/dependency/filter. Lát cắt đầu lộ seam gradient và dải Bézier quá cứng; thay bằng base đều và cloud/ellipse wrap khi bake, đã chụp lại.
+- Menu clock hình ảnh riêng chỉ cho render, clamp khi ẩn/hiện; world FX vẫn simulation time. Tàu không smooth vị trí; bank/rotation/engine không tác động hitbox hoặc targeting. Hazard depth riêng với hai biên theo collision, cảnh báo giữ ở Low.
+- Tier Vừa là mặc định profile mới; giữ Low/High của người cũ. Không bump schema3 hoặc reset meta. Motion fallback từ reducedEffects cũ; OS chỉ mặc định profile mới, explicit saved false vẫn thắng OS. Một rail HUD và toast trong flow giải quyết chồng thông báo, không dựng DOM/timer cho từng kill.
+- Adaptive chỉ giảm decoration với hysteresis >75quái/>110đạn, hold2s và phục hồi dưới50/80; không sửa chất lượng mô phỏng hoặc dữ liệu projectiles/pickup. Thiết kế/budget và giới hạn đo ở design-system/visual-identity-report, không tự đặt mốc60FPS là pass khi headless còn chậm.
+- Số đo đầu dao động p95dense43.2/48.2ms, endgame40.2/39.7ms; giữ source/build/raw trong pre-render-batching và chạy control baseline. Giả thuyết đổi pipeline không được probe xác nhận (draw1, program switch0 ở fixture pause). Đọc đúng Phaser3.90 thấy ARC dùng iterStep.01 bất kể độ dài cung. Chọn polyline sai số dây cung0.35u/cap128 thay vì sửa engine/shader; unit chứng minh sai số/giới hạn, WebGL probe xác nhận vertex14355→4107 dense và13176→3780 endgame. Không quy mọi biến động frame-time vào một nguyên nhân; báo raw trước/sau và control riêng.
+
 ## 1.2 — Progression/Stats/Boss
 
 - Giữ repo/dependency1.1, snapshot nguồn/build tại artifacts/v12/baseline-source/baseline-benchmark/baseline-dist; prompt1.2 sao nguyên văn vào prompts, không sửa BUILD_MVP hoặc prompt1.1. Không hosting, account, nhân vật/map/module mới.
@@ -80,3 +89,21 @@ Bản D1VFNgyB dùng texture nebula768² và ba Image1700u: lượt720s có fram
 - Tái hiện trước sửa: Hull1+ôtrống vẫn draft mastery; confirm tiến hóa ở y1995 ngoài clip138–599px, focus ở Trở về. Auto-scroll rồi click thật commit thành công khi paused, nên không quy lỗi cho guard yêu cầu playing/queue. Test cũ locator.click tự cuộn đã bỏ sót khả năng tìm thấy xác nhận. Hotfix đặt/focus xác nhận đầu vùng cuộn; test geometry trước click, rồi resume bằng nút thật và kiểm tra damage nguồn Quasar.
 - Atomic phù hợp mô hình thuần: không thêm factory framework/scene riêng. Chuẩn bị record/cooldown/cleanup arrays/draft trước assign, fail giữ nguồn. Existing advancedWeaponStep là behavior output; manifest/Boot fallback sẵn. UI nhận kết quả có lý do, đọc session hiện hành, revision invalidate ảnh pause; không tick mô phỏng để cập nhật.
 - Kỳ vọng test cũ được đổi đúng phạm vi: fixture mastery phải max cả hai support; cancel sau stale commit giữ draft đã refresh; bot seed42 không còn mặc định phải thắng khi luật draft/RNG mới thay đổi. Test chiến thuật kiểm tra settled/reward/end rule, và playtest ghi thắng/thua thật thay vì retune boss/module để ép thắng. Kiểm tra720s thắng/thua ưu tiên vẫn ở rules; không thay clock/wave/win-loss.
+
+## UI / hazards / multi-boss local — 2026-10-18
+
+Các ngoại lệ spec cũ trong prompt mới chỉ thay scaling/range/hazard/boss và phân cấp ví; giữ12phút/Beacon/Corruption/slots/progression/save/economy/base /EVENTIDE/. Cung vàng được tái hiện và truy computed style tới menu h1::after và panel h2::before, bỏ đúng hai pseudo trang trí không nhãn.
+
+Chọn radiation190u, tide440u/140u/s/falloff sqrt/cap78%, khóa tâm warning theo đường tàu và cách lõi100u để chừa đường né. Environment timer riêng contact, overlap DPS mạnh nhất; không miễn damage ngẫu nhiên do vừa va chạm. Boss kháng lực35%; dash lock cả origin/path, swept relative collision.
+
+Boss state theo owner; admission trước telegraph và reserve đủ loạt thứ hai; delay khi thiếu budget, không cắt damage ở renderer. Phase2 hai burst cách0,65s lệch0,08rad, preview cùng dữ liệu và giữ giao khe. HP vòng đầu hạ quá nhanh24–34s ở fixture thiên thủ cấp5: chỉ tăng nhóm HP10000/9800/9200/9000, boss660×0,8. Số khởi đầu/final lưu riêng; báo cáo không suy bot thành thắng người thật.
+
+Gom file theo responsibility, không đổi framework. Prompt MVP canonical và snapshot nguồn lịch sử giữ bytes; root prompt trùng được chuyển vào prompts/history. Không xóa save hoặc push/deploy.
+
+## UX/stability2026-10-21
+
+Không retune hazard/range/scaling/boss lần nữa vì local đã có mức được yêu cầu. Baseline CPU p95≤0,8ms simulation/≤0,4ms render prep/≤0,3ms DOM trên SwiftShader chưa chứng minh lookup bottleneck; không thêm spatial index/dependency. Giữ pool/culling/cache/adaptive decoration/XP ledger, đo frame thật riêng. Ngưỡng HUD25/32–50/58 và40/35 là hysteresis presentation, buff Corruption50 không đổi.
+
+Tutorial mặc định bật để save cũ có thể học tính năng; profile có setting tắt và reset riêng seen. Schema3 chấp nhận trường tùy chọn, không bump/schema rewrite nếu chỉ thêm cờ. Recipe predicate thuần tách khỏi context commit, để hint thấy khi đang bay nhưng giao dịch vẫn pause/draft. Queue có trần, không mất trigger chưa hiện khi danger/modal.
+
+Damage report chỉ tổng HP thực mất sau giảm trừ và clamp overkill, môi trường tách outgoing vũ khí. Snapshot/deep-freeze trước cleanup; fatal ở đúng hit gây chết, không suy từ lastHit hoặc mục tiêu gần. Cả hai HP≤0 cùng tick là both/defeat, giữ reward guard. Một nhận xét chỉ khi phần lớn damage Beacon ở ngoài sáng; không suy build yếu hoặc tặng buff/reward mới.

@@ -62,9 +62,9 @@ it('E06: output factory/definition lỗi không consume, RNG draft lỗi cũng r
   }finally{log.mockRestore();}
 });
 it('Pause commit không tiến time/enemy/boss/event/charge/Corruption/XP, chỉ dọn nguồn và tăng revision',()=>{
-  const g=full(),s=g.state;g.pause();s.time=350;s.corruption=60;const e=makeEnemy(s,'elder',{x:900,y:0},'player');s.beam={ownerId:e.id,x:900,y:0,angle:0,fire:352,end:353,damage:27.5,locked:false};
-  const frozen=structuredClone({time:s.time,player:s.player,beacon:s.beacon,enemies:s.enemies,beam:s.beam,astronomy:s.astronomy,corruption:s.corruption,xp:s.xp,salvage:s.salvage,supports:s.supports});expect(g.fuse()).toBe(true);g.step(90);
-  expect({time:s.time,player:s.player,beacon:s.beacon,enemies:s.enemies,beam:s.beam,astronomy:s.astronomy,corruption:s.corruption,xp:s.xp,salvage:s.salvage,supports:s.supports}).toEqual(frozen);expect(s.buildRevision).toBe(1);
+  const g=full(),s=g.state;g.pause();s.time=350;s.corruption=60;const e=makeEnemy(s,'elder',{x:900,y:0},'player');e.boss!.beam={ownerId:e.id,x:900,y:0,angle:0,fire:352,end:353,damage:27.5,locked:false};
+  const frozen=structuredClone({time:s.time,player:s.player,beacon:s.beacon,enemies:s.enemies,beam:e.boss!.beam,astronomy:s.astronomy,corruption:s.corruption,xp:s.xp,salvage:s.salvage,supports:s.supports});expect(g.fuse()).toBe(true);g.step(90);
+  expect({time:s.time,player:s.player,beacon:s.beacon,enemies:s.enemies,beam:e.boss!.beam,astronomy:s.astronomy,corruption:s.corruption,xp:s.xp,salvage:s.salvage,supports:s.supports}).toEqual(frozen);expect(s.buildRevision).toBe(1);
 });
 it('E10: auto hình thái đơn có damage/radius thật và modifier một lần',()=>{
   for(const id of ['plasma','drones','well'] as const){

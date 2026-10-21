@@ -15,15 +15,15 @@ export const BALANCE = {
   gravityFirst: 120, gravityPeriod: 90, gravityLifetime: 17, gravityWarning: 2,
   gravityRadius: 310, gravityForce: 70, totalPullCap: 155, finalGravityTime: 630,
   gravitySiteRadius: 1250, gravitySiteCount: 5, finalGravityPosition: { x: 1320, y: 440 },
-  bossTime: 540, bossHP: 6900, bossRadius: 55, bossSpeed: 32,
-  bossRingCooldown: 4.5, bossBulletSpeed: 110, bossBulletDamage: 13.2, bossBulletTTL: 10,
-  bossBeamCooldown: 8, bossBeamWarning: 1.8, bossBeamDuration: 0.5, bossBeamWidth: 25,
-  bossContactDamage: 15.4, bossAttackRate: 1.05, bossBeamDamage: 27.5, bossXP: 120, bossRingCount: 15, bossRingGap: 3,
-  bossOrbitRadius: 850, bossOrbitSpeed: 0.045, bossStart: { x: 850, y: -650 },
-  bossFirstRingDelay: 3, bossFirstBeamDelay: 6, bossRingRotation: 0.3, beamLength: 4000,
+  bossHP: 10000, bossRadius: 55, bossSpeed: 32,
+  bossBulletSpeed: 110, bossBulletDamage: 13.2, bossBulletTTL: 10,
+  bossBeamWarning: 1.8, bossBeamDuration: 0.5, bossBeamWidth: 25,
+  bossContactDamage: 15.4, bossBeamDamage: 27.5, bossXP: 120,
+  bossOrbitRadius: 850, bossStart: { x: 850, y: -650 },
+  bossFirstRingDelay: 3, beamLength: 4000,
   corePrices: [10, 20, 30], coreHPBonus: 0.1,
 } as const;
 /** Tuyến tính từ base theo phút hoàn tất; không tăng speed hoặc hit frequency. */
-export const ENEMY_SCALING = { maxMinute: 11, wisp: { hp: 0.05, damage: 0.05 }, drifter: { hp: 0.08, damage: 0.07 }, leech: { hp: 0.1, damage: 0.08 } } as const;
+export const ENEMY_SCALING = { maxMinute: 11, wisp: { hp: 0.10, damage: 0.07 }, drifter: { hp: 0.14, damage: 0.09 }, leech: { hp: 0.16, damage: 0.10 } } as const;
 /** Chu kỳ phase2 không rút ngắn thời gian cảnh báo hoặc contact protection. */
-export const BOSS_PHASES = { transitionSeconds: 1.25, phase2HPRatio: 0.65, speedMultiplier: 1.18, rateMultiplier: 1.18, damageMultiplier: 1.08, beamLockSeconds: 0.25, muzzleOffset: 30, phase2RingCount: 18, phase2Gap: 4, fanCount: 5, fanSpread: 0.75, fanDelay: 0.65, friendlyReserve: 12 } as const;
+export const BOSS_PHASES = { transitionSeconds: 1.25, phase2HPRatio: 0.65, speedMultiplier: 1.18, damageMultiplier: 1.08, muzzleOffset: 30, friendlyReserve: 12 } as const;

@@ -7,12 +7,14 @@ import { refreshDraftAfterFusion } from './ExperienceSystem';
 export interface EvolutionResult { ok: boolean; reason: string }
 export interface PreparedQuasar { id: 'quasar'; level: number; nextAttack: number }
 const busy = new WeakSet<RunState>();
+/** Recipe thuần cho gợi ý khi đang bay; quyền commit vẫn chỉ ở context pause/draft. */
+export const hasQuasarRecipe=(s:RunState):boolean=>!s.settled&&!s.modules.quasar&&s.modules.pulsar===5&&s.modules.ion===5;
 /** Recipe không phụ thuộc mastery/support; pause/draft là context quản lý build, không cần tick. */
 export function quasarEligibility(s: RunState): EvolutionResult {
   const reason = s.settled || !['paused','choosingUpgrade'].includes(s.phase) ? 'Chỉ tiến hóa trong Balo hoặc lựa chọn của lượt đang tạm dừng.'
     : busy.has(s) ? 'Đang xử lý tiến hóa.' : s.swapSelecting ? 'Hãy hủy thao tác thay vũ khí trước khi tiến hóa.'
     : s.modules.quasar ? 'Đã hợp nhất · Quasar cấp 5.'
-    : s.modules.pulsar !== 5 || s.modules.ion !== 5 ? 'Cần Pulsar Beam cấp 5 và Ion Storm cấp 5.'
+    : !hasQuasarRecipe(s) ? 'Cần Pulsar Beam cấp 5 và Ion Storm cấp 5.'
     : !UPGRADES.quasar || UPGRADES.quasar.kind !== 'module' || UPGRADES.quasar.max !== 5 || !ASSETS.quasar || typeof advancedWeaponStep !== 'function' || ![QUASAR.damage,QUASAR.cooldown,QUASAR.duration].every(n=>Number.isFinite(n)&&n>0) ? 'Vũ khí tiến hóa chưa sẵn sàng. Nguyên liệu được giữ nguyên.' : '';
   return {ok:!reason,reason};
 }

@@ -1,16 +1,13 @@
-import { getBasicBuildProgress } from '../core/buildProgress';
-import { MASTERY, masteryUsed } from '../config/mastery';
-import { canFuseQuasar } from '../systems/EvolutionSystem';
+import { buildOverview } from './BuildView';
 import { assetURL, type AssetId } from '../../assets/manifest';
-import { ACHIEVEMENTS, CHARACTERS, SUPPORTS } from '../config/progression';
+import { ACHIEVEMENTS, CHARACTERS } from '../config/progression';
 import { achievementValue } from '../config/achievements';
-import { SALVAGE, emptySalvage, type SalvageBonuses, type SalvageStat } from '../config/salvage';
+import { emptySalvage, type SalvageBonuses, type SalvageStat } from '../config/salvage';
 import { UPGRADES, MODULE_ROLES, moduleName, type ModuleId, type SupportId, type UpgradeId } from '../config/content';
 import { calculateStats, shipStats, supportBonus, type ShipStats } from '../core/stats';
 import type { RunState, SaveData } from '../core/types';
 import { moduleDescription, upgradeDescription, upgradeLevel } from '../systems/ExperienceSystem';
 import { numberText as n, percentText as pct } from './format';
-import { salvageUsed } from '../systems/SalvageSystem';
 import { BALANCE as B } from '../config/balance';
 import { coreHP, appearanceForCoreLevel } from '../config/beacon';
 const icon = (id: string): string => `<img class="content-icon" src="${assetURL(id as AssetId)}" alt="">`;
@@ -32,20 +29,14 @@ export function shipPanel(save: SaveData): string {
   return `${icon(character.icon)}<h3>${character.name}</h3><p>${character.description}</p><p>Module khởi đầu: ${UPGRADES[character.starter].name}.</p>${statTable(calculateStats(save.characterId))}<button class="secondary" data-action="read-catalog">Danh mục nâng cấp</button>`;
 }
 export function buildPanel(s: RunState): string {
-  const progress=getBasicBuildProgress(s);
-  const modules = (Object.entries(s.modules) as [ModuleId, number][]).filter(([, level]) => level > 0).map(([id, level]) => `<article class="catalog-item">${icon(id === 'drones' && level === 5 ? 'bastion' : id === 'well' && level === 5 ? 'singularity' : UPGRADES[id].icon)}<h3>${moduleName(id,level)} · cấp ${level}</h3><p class="eyebrow">${MODULE_ROLES[id]} · ${id}</p><p>${moduleDescription(id, level, shipStats(s))}</p></article>`);
-  while (modules.length < 3) modules.push('<article class="catalog-item"><h3>Ô module trống</h3></article>');
-  const supports = (Object.keys(s.supports) as SupportId[]).filter(id => (s.supports[id] ?? 0) > 0);
-  const slots = supports.map(id => `<article class="catalog-item">${icon(SUPPORTS[id].icon)}<h3>${SUPPORTS[id].name} · cấp ${s.supports[id]}</h3><p>Bonus ${pct(supportBonus(s.supports, id))} / trần ${pct(SUPPORTS[id].cap)}</p></article>`);
-  while (slots.length < 2) slots.push('<article class="catalog-item"><h3>Ô hỗ trợ trống</h3><p>Chọn một trong sáu loại khi lên cấp.</p></article>');
-  return `<p>${CHARACTERS[s.characterId].name} · Cấp ${n(s.level)} · HP ${n(Math.max(0, s.player.hp))} / ${n(s.player.maxHP)} · ${n(s.picks)} lựa chọn đã nhận</p><p>${progress.complete ? 'Đủ năm ô đạt trần: mastery +2%.' : 'Cần đủ ba vũ khí và hai hỗ trợ đạt trần. Ô trống sau hợp nhất cần hoàn thiện lại.'} Đã lắp ${progress.modules.occupied+progress.supports.occupied}/5 ô; đạt trần ${progress.modules.maxed+progress.supports.maxed}/5 ô; vũ khí ${progress.modules.maxed}/3 max; hỗ trợ ${progress.supports.maxed}/2 max. Mastery: ${n(masteryUsed(s.masteryBonus)/100)}% / ${MASTERY.budgetBP/100}%. Bonus giữ đến hết lượt.</p><h3>Tiến hóa · Pulsar 5 + Ion 5 → Quasar Cannon 5</h3><p>Hợp nhất hai nguồn thành một, giải phóng một ô; không tiêu level-up, không thể tách lại.</p>${canFuseQuasar(s) ? '<button class="primary" data-action="ask-fusion">Tiến hóa sẵn sàng · Quasar Cannon</button>' : `<p class="muted">${s.modules.quasar ? 'Đã hợp nhất · Quasar cấp 5' : `Điều kiện: Pulsar ${s.modules.pulsar ?? 0}/5 · Ion ${s.modules.ion ?? 0}/5`}</p>`}<h3>Ba ô module</h3><div class="catalog-grid">${modules.join('')}</div><h3>Hai ô hỗ trợ</h3><div class="catalog-grid">${slots.join('')}</div><section class="salvage-summary"><h3>${icon('salvage')} Trang bị thu hồi: ${n(salvageUsed(s) / 100)}% / ${n(SALVAGE.budgetBP / 100)}%</h3><progress value="${salvageUsed(s)}" max="${SALVAGE.budgetBP}" aria-label="Ngân sách trang bị"></progress><p>${(Object.keys(SALVAGE.stats) as SalvageStat[]).map(id => `${SALVAGE.stats[id].name}: +${n(s.salvage.bonuses[id] / 100)}%`).join(' · ')}</p><p class="muted">Tự lắp khi nhặt, không chiếm ô hỗ trợ; chỉ giữ trong lượt này.</p></section>${statTable(shipStats(s), s.supports, s.salvage.bonuses,s.masteryBonus)}<div class="actions"><button class="secondary" data-action="read-catalog">Danh mục nâng cấp</button><button class="secondary" data-action="read-achievements">Thành tựu</button></div>`;
+  return buildOverview(s,statTable(shipStats(s),s.supports,s.salvage.bonuses,s.masteryBonus));
 }
 export function catalogPanel(s?: RunState): string {
   const stats = s ? shipStats(s) : calculateStats();
   const groups = ['Vũ khí chính','Vũ khí phụ','Vũ khí bổ sung','Hỗ trợ chỉ số'];
   return '<p>Ba ô module, không ép mỗi vai trò một ô. Hai ô hỗ trợ là chỉ số riêng. Thay vũ khí chỉ qua nút chủ động trong draft.</p><p>Concept: Plasma → Mini Sun (3) → Supernova (5); Pulsar 5 + Ion 5 → Quasar 5. Mở rộng beta: Drones 5 → Orbital Bastion; Well 5 → Singularity Well. Giữ ID, cấp và ô.</p>' + groups.map(group => '<h3>' + group + '</h3><div class="catalog-grid">' + (Object.keys(UPGRADES) as UpgradeId[]).filter(id => UPGRADES[id].kind === 'support' ? group === 'Hỗ trợ chỉ số' : MODULE_ROLES[id as ModuleId] === group).map(id => {
     const d = UPGRADES[id], level = s ? upgradeLevel(s,id) : 0, fused = id === 'quasar';
-    return '<article class="catalog-item">' + icon(d.icon) + '<h4>' + d.name + '</h4><p>' + (fused ? 'Chỉ hợp nhất Pulsar 5 + Ion 5, tạo cấp 5 ngay.' : 'Tối đa cấp 5') + (s ? ' · đang sở hữu cấp ' + level : '') + '</p><ol>' + (fused ? [5] : [1,2,3,4,5]).map(n => '<li>' + (d.kind === 'module' ? moduleName(id as ModuleId,n) + ': ' + moduleDescription(id as ModuleId,n,stats) : upgradeDescription(id,n-1)) + '</li>').join('') + '</ol></article>';
+    return '<article class="catalog-item">' + icon(d.icon) + '<h4>' + d.name + '</h4><p>' + (fused ? 'Chỉ hợp nhất Pulsar 5 + Ion 5, tạo cấp 5 ngay.' : 'Tối đa cấp 5') + (s ? ' · đang sở hữu cấp ' + level + (level===d.max?' · Đã tối đa':level>0?' · Đang phát triển':fused?' · Chưa đủ điều kiện':' · Chưa lắp') : '') + '</p><ol>' + (fused ? [5] : [1,2,3,4,5]).map(n => '<li>' + (d.kind === 'module' ? moduleName(id as ModuleId,n) + ': ' + moduleDescription(id as ModuleId,n,stats) : upgradeDescription(id,n-1)) + '</li>').join('') + '</ol></article>';
   }).join('') + '</div>').join('');
 }
 export type AchievementFilter = 'all' | 'unlocked' | 'locked';

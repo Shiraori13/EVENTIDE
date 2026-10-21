@@ -3,7 +3,7 @@ import { GameSession, createRun, finishRun } from '../../src/game/core/GameSessi
 import { GameClock } from '../../src/game/core/GameClock';
 import { prepareChoices, availableChoices, availableUpgrades, availableReplacements, addXP, choiceDescription, upgradeDescription } from '../../src/game/systems/ExperienceSystem';
 import { fuseQuasar } from '../../src/game/systems/EvolutionSystem';
-import { astronomyStep, radiationStep, tideStrength } from '../../src/game/systems/AstronomySystem';
+import { astronomyStep, radiationStep, tideStrength } from '../../src/game/systems/hazards/AstronomySystem';
 import { makeEnemy, eventStep } from '../../src/game/systems/SpawnSystem';
 import { shipStats, attackInterval } from '../../src/game/core/stats';
 import { weaponStep } from '../../src/game/systems/WeaponSystem';
@@ -55,7 +55,7 @@ describe('Evolution ownership',()=>{
   it('Quasar visited dùng chung beam/chain, modifier một lần, cleanup đúng owner',()=>{
     const s=createRun(0);s.modules={quasar:5};s.supports={power:5,haste:5};s.salvage.bonuses.damage=1000;s.masteryBonus.damage=200;s.corruption=50;s.player.angle=0;
     const es=[100,180,260,340,420].map(x=>{const e=makeEnemy(s,'drifter',{x,y:110},'player');e.hp=e.maxHP=10000;return e;});
-    weaponStep(s);s.time=QUASAR.duration;weaponStep(s);const damages=es.map(e=>10000-e.hp),multiplier=1.52*1.2;expect(damages.every(d=>d<=QUASAR.damage*multiplier+1e-7)).toBe(true);expect(damages.filter(d=>d>0)).toHaveLength(5);expect(damages.filter(d=>Math.abs(d-QUASAR.damage*multiplier)<1e-7)).toHaveLength(2);expect(s.metrics.ionHits).toBe(0);expect(s.metrics.pulsarHits).toBe(0);
+    weaponStep(s);s.time=QUASAR.duration;weaponStep(s);const damages=es.map(e=>10000-e.hp),multiplier=1.52*1.2;expect(damages.every(d=>d<=QUASAR.damage*multiplier+1e-7)).toBe(true);expect(damages.filter(d=>d>0)).toHaveLength(4);expect(damages.filter(d=>Math.abs(d-QUASAR.damage*multiplier)<1e-7)).toHaveLength(1);expect(s.metrics.ionHits).toBe(0);expect(s.metrics.pulsarHits).toBe(0);
     clearModuleAttacks(s,'quasar');expect(s.pulses).toHaveLength(0);expect(s.ionTraces).toHaveLength(0);
   });
   it('damage 30/60/144 render FPS bằng nhau qua clock; một boss không bị chain quay lại',()=>{
@@ -69,18 +69,18 @@ describe('Astronomy clock/source/arbitration',()=>{
   });
   it('chaos × minute giữ HP ratio trên enemy sống/mới, boss miễn buff và không drift',()=>{
     const s=createRun(0);s.time=329;eventStep(s,()=>0);const e=makeEnemy(s,'drifter',{x:900,y:0},'player');e.hp=e.maxHP/2;const boss=makeEnemy(s,'elder',{x:900,y:0},'player'),baseBoss=boss.hp;
-    for(const time of [330,331,359,360,419,420]){s.time=time;eventStep(s,()=>0);const factor=time<420?1.5:1;expect(e.maxHP).toBeCloseTo(140*(1+0.08*Math.floor(time/60))*factor);expect(e.hp/e.maxHP).toBeCloseTo(0.5);expect(e.damage).toBeCloseTo(11*(1+0.07*Math.floor(time/60))*factor);expect(shipStats(s).eventOutgoing).toBe(time<420?1.15:1);expect(boss.hp).toBe(baseBoss);}
-    s.time=350;eventStep(s,()=>0);const fresh=makeEnemy(s,'drifter',{x:1000,y:0},'player');expect(fresh.maxHP).toBeCloseTo(140*1.4*1.5);
+    for(const time of [330,331,359,360,419,420]){s.time=time;eventStep(s,()=>0);const factor=time<420?1.5:1;expect(e.maxHP).toBeCloseTo(140*(1+0.14*Math.floor(time/60))*factor);expect(e.hp/e.maxHP).toBeCloseTo(0.5);expect(e.damage).toBeCloseTo(11*(1+0.09*Math.floor(time/60))*factor);expect(shipStats(s).eventOutgoing).toBe(time<420?1.15:1);expect(boss.hp).toBe(baseBoss);}
+    s.time=350;eventStep(s,()=>0);const fresh=makeEnemy(s,'drifter',{x:1000,y:0},'player');expect(fresh.maxHP).toBeCloseTo(140*1.7*1.5);
   });
   it('pause/draft đóng băng event và hết event giữa queue chỉ sau resume',()=>{
     const g=new GameSession(),s=g.state;s.time=419.99;s.nextSpawn=Infinity;eventStep(s,g.rng);g.pause();const before=structuredClone(s);g.step(10);expect(s).toEqual(before);g.resume();g.step(B.step);expect(shipStats(s).eventOutgoing).toBe(1);s.pending=2;prepareChoices(s,g.rng);const t=s.time;g.step(100);expect(s.time).toBe(t);
   });
   it('radiation tick qua armor/Corruption một lần; boss/Beacon miễn, môi trường kill/drop một lần',()=>{
-    const s=createRun(0);s.time=210;astronomyStep(s);s.player.x=900;s.player.y=300;s.supports={power:5,armor:5};s.corruption=50;s.masteryBonus.damage=2000;const e=makeEnemy(s,'wisp',s.player,'player');e.hp=0.1;const boss=makeEnemy(s,'elder',s.player,'player'),hp=boss.hp,xp=totalGroundXP(s);radiationStep(s,()=>0);expect(s.player.hp).toBeCloseTo(100-4*0.8*1.2);expect(s.kills).toBe(1);expect(s.salvage.rolls).toBe(1);expect(totalGroundXP(s)).toBe(xp+2);expect(boss.hp).toBe(hp);expect(s.beacon.hp).toBe(300);radiationStep(s,()=>0);expect(s.kills).toBe(1);expect(s.salvage.rolls).toBe(1);
+    const s=createRun(0);s.time=210;astronomyStep(s);s.player.x=s.astronomy[0].zones![0].x;s.player.y=s.astronomy[0].zones![0].y;s.supports={power:5,armor:5};s.corruption=50;s.masteryBonus.damage=2000;const e=makeEnemy(s,'wisp',s.player,'player');e.hp=0.1;const boss=makeEnemy(s,'elder',s.player,'player'),hp=boss.hp,xp=totalGroundXP(s);radiationStep(s,()=>0);expect(s.player.hp).toBeCloseTo(100-7*0.8*1.2);expect(s.kills).toBe(1);expect(s.salvage.rolls).toBe(1);expect(totalGroundXP(s)).toBe(xp+2);expect(boss.hp).toBe(hp);expect(s.beacon.hp).toBe(300);radiationStep(s,()=>0);expect(s.kills).toBe(1);expect(s.salvage.rolls).toBe(1);
   });
   it('tide hút/đẩy mượt, tâm hữu hạn, tàu cơ bản thoát, không kéo loot/đạn',()=>{
-    const s=createRun(0);s.time=466.5;astronomyStep(s);expect(tideStrength(s)).toBeCloseTo(90);s.player.x=A.tideCenter.x+100;s.player.y=0;const original=s.player.x,loot=structuredClone(s.pickups);movementStep(s,{x:0,y:0},1);expect(s.player.x).toBeLessThan(original);s.time=469.5;expect(tideStrength(s)).toBeCloseTo(-90);const x=s.player.x;movementStep(s,{x:0,y:0},1);expect(s.player.x).toBeGreaterThan(x);s.player.x=A.tideCenter.x;s.player.y=0;movementStep(s,{x:0,y:0},1);expect(Number.isFinite(s.player.x)).toBe(true);expect(s.pickups).toEqual(loot);
-    s.time=466.5;s.player.x=A.tideCenter.x+10;for(let i=0;i<180;i++){s.time+=B.step;movementStep(s,{x:1,y:0},B.step);}expect(s.player.x-A.tideCenter.x).toBeGreaterThan(A.tideRadius);
+    const s=createRun(0);s.time=466.5;astronomyStep(s);expect(tideStrength(s)).toBeCloseTo(140);s.player.x=s.astronomy.find(e=>e.id==='tide')!.center!.x+100;s.player.y=s.astronomy.find(e=>e.id==='tide')!.center!.y;const original=s.player.x,loot=structuredClone(s.pickups);movementStep(s,{x:0,y:0},.1);expect(s.player.x).toBeLessThan(original);s.time=469.5;expect(tideStrength(s)).toBeCloseTo(-140);const x=s.player.x;movementStep(s,{x:0,y:0},.1);expect(s.player.x).toBeGreaterThan(x);s.player.x=s.astronomy.find(e=>e.id==='tide')!.center!.x;s.player.y=s.astronomy.find(e=>e.id==='tide')!.center!.y;movementStep(s,{x:0,y:0},.1);expect(Number.isFinite(s.player.x)).toBe(true);expect(s.pickups).toEqual(loot);
+    s.time=466.5;s.player.x=s.astronomy.find(e=>e.id==='tide')!.center!.x+10;for(let i=0;i<180;i++){s.time+=B.step;movementStep(s,{x:1,y:0},B.step);}expect(s.player.x-s.astronomy.find(e=>e.id==='tide')!.center!.x).toBeGreaterThan(A.tideRadius);
   });
   it('result cleanup/new run không để modifier, zones/forces hay progression lây',()=>{
     const s=createRun(0);s.time=350;eventStep(s,()=>0);expect(shipStats(s).eventOutgoing).toBe(1.15);finishRun(s,'defeat','test');expect(shipStats(s).eventOutgoing).toBe(1);expect(s.astronomy.some(e=>e.phase==='active')).toBe(false);expect(createRun(0).astronomy.every(e=>e.phase==='scheduled')).toBe(true);

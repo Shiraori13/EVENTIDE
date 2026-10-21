@@ -1,3 +1,5 @@
+import { isBoss } from '../../src/game/config/bosses';
+import { bossRuntime } from '../../src/game/systems/bosses/state';
 import { describe, expect, it } from 'vitest';
 import { GameSession, createRun, resolveOutcome } from '../../src/game/core/GameSession';
 import { calculateStats, shipStats, attackInterval } from '../../src/game/core/stats';
@@ -7,7 +9,7 @@ import { availableUpgrades, addXP, prepareChoices, chooseUpgrade, rerollChoices 
 import { makeEnemy } from '../../src/game/systems/SpawnSystem';
 import { combatStep, hitEnemy, hitPlayer } from '../../src/game/systems/CombatSystem';
 import { weaponStep } from '../../src/game/systems/WeaponSystem';
-import { bossStep } from '../../src/game/systems/BossSystem';
+import { bossStep } from '../../src/game/systems/bosses/BossSystem';
 import { seededRandom } from '../../src/game/core/math';
 import { SaveService, validateSave, type StorageLike } from '../../src/game/services/SaveService';
 import { ProfileService } from '../../src/game/services/ProfileService';
@@ -77,32 +79,32 @@ describe('Stats nguồn chung và draft1.2', () => {
 describe('Boss hai phase và ownership', () => {
   it('spawn tại mốc540 không chồng tàu đứng đúng điểm boss và có grace đòn đầu', () => {
     const game = new GameSession(0, seededRandom(42)), s = game.state; s.time = 539.99; s.player.x = B.bossStart.x; s.player.y = B.bossStart.y; s.nextSpawn = Infinity; s.nextPlasma = Infinity;
-    game.step(B.step); const boss = s.enemies.find(e => e.kind === 'elder')!;
+    game.step(B.step); const boss = s.enemies.find(e => isBoss(e.kind))!;
     expect(Math.hypot(boss.x - s.player.x, boss.y - s.player.y)).toBeGreaterThan(B.spawnSafety); expect(boss.nextHit - s.time).toBeCloseTo(B.bossFirstRingDelay); expect(s.player.hp).toBe(100);
   });
   it('overkill/đòn cùng tick không xuyên transition hoặc thưởng nhiều lần', () => {
     const g = new GameSession(), s = g.state, boss = makeEnemy(s, 'elder', { x: 800, y: 0 }, 'player'), xp = totalGroundXP(s);
-    s.bossRing = 0; bossStep(s); expect(s.projectiles.length).toBeGreaterThan(0);
+    Object.assign(bossRuntime(boss),{readyAt:0,spawnUntil:0}); bossStep(s); s.time=boss.boss!.attack!.fire; bossStep(s); expect(s.projectiles.length).toBeGreaterThan(0);
     hitEnemy(s, boss, 1e9); hitEnemy(s, boss, 1e9); expect(boss.bossPhase).toBe('transition'); expect(s.kills).toBe(0); expect(totalGroundXP(s)).toBe(xp);
-    combatStep(s, 0); expect(s.enemies).toContain(boss); expect(s.projectiles).toHaveLength(0); expect(s.beam).toBeUndefined();
+    combatStep(s, 0); expect(s.enemies).toContain(boss); expect(s.projectiles).toHaveLength(0); expect(boss.boss!.beam).toBeUndefined();
     g.pause(); const snapshot = structuredClone(s); g.step(9); expect(s).toEqual(snapshot); g.resume();
-    s.time = P.transitionSeconds; bossStep(s); expect(boss.bossPhase).toBe('phase2'); expect(boss.hp).toBe(B.bossHP * P.phase2HPRatio);
+    s.time = boss.transitionEnd!; bossStep(s); expect(boss.bossPhase).toBe('phase2'); expect(boss.hp).toBe(B.bossHP * P.phase2HPRatio);
     const speed = boss.speed; bossStep(s); expect(boss.speed).toBe(speed);
     hitEnemy(s, boss, 1e9); hitEnemy(s, boss, 1e9); expect(s.kills).toBe(1); expect(s.bossDefeated).toBe(true); expect(totalGroundXP(s)).toBe(xp + B.bossXP);
     combatStep(s, 0); expect(s.enemies).not.toContain(boss);
   });
   it('nguồn đi theo boss, hướng aim thay đổi rồi khóa; collider fire khớp và recover sạch', () => {
-    const s = createRun(0), boss = makeEnemy(s, 'elder', { x: 800, y: 100 }, 'player'); s.bossBeam = 0; s.bossRing = Infinity;
-    bossStep(s); const first = s.beam!.angle; boss.x += 100; s.player.y += 200; s.time = 0.5; bossStep(s);
-    expect(s.beam!.angle).not.toBe(first); expect(s.beam!.x).toBeCloseTo(boss.x + Math.cos(s.beam!.angle) * P.muzzleOffset);
-    s.time = s.beam!.lock!; bossStep(s); const locked = s.beam!.angle; boss.y += 80; s.player.y += 300; s.time = s.beam!.fire; bossStep(s); expect(s.beam!.angle).toBe(locked);
-    const beam = s.beam!; s.player.x = beam.x + Math.cos(locked) * 400; s.player.y = beam.y + Math.sin(locked) * 400; combatStep(s, 0); expect(s.player.hp).toBe(100-B.bossBeamDamage);
-    s.time = beam.end + 0.01; bossStep(s); expect(s.beam).toBeUndefined(); s.player.protectedUntil = 0; combatStep(s, 0); expect(s.player.hp).toBe(100-B.bossBeamDamage);
+    const s = createRun(0), boss = makeEnemy(s, 'elder', { x: 800, y: 100 }, 'player'); Object.assign(bossRuntime(boss),{readyAt:0,spawnUntil:0,actionIndex:1});
+    bossStep(s); const first = boss.boss!.beam!.angle; boss.x += 100; s.player.y += 200; s.time = 0.5; bossStep(s);
+    expect(boss.boss!.beam!.angle).not.toBe(first); expect(boss.boss!.beam!.x).toBeCloseTo(boss.x + Math.cos(boss.boss!.beam!.angle) * P.muzzleOffset);
+    s.time = boss.boss!.beam!.lock!; bossStep(s); const locked = boss.boss!.beam!.angle; boss.y += 80; s.player.y += 300; s.time = boss.boss!.beam!.fire; bossStep(s); expect(boss.boss!.beam!.angle).toBe(locked);
+    const beam = boss.boss!.beam!; s.player.x = beam.x + Math.cos(locked) * 400; s.player.y = beam.y + Math.sin(locked) * 400; combatStep(s, 0); expect(s.player.hp).toBe(100-B.bossBeamDamage);
+    s.time = beam.end + 0.01; bossStep(s); expect(boss.boss!.beam).toBeUndefined(); s.player.protectedUntil = 0; combatStep(s, 0); expect(s.player.hp).toBe(100-B.bossBeamDamage);
   });
   it('đạn phát từ boss rồi độc lập, phase2 có fan hữu hạn và giữ thắng720/defeat ưu tiên', () => {
-    const s = createRun(0), boss = makeEnemy(s, 'elder', { x: 800, y: 100 }, 'player'); boss.bossPhase = 'phase2'; s.bossRing = 0; s.bossBeam = Infinity;
-    bossStep(s); const p = s.projectiles[0], old = { x: p.x, y: p.y }; boss.x += 100; expect(p.x).toBe(old.x);
-    s.time = P.fanDelay; bossStep(s); expect(s.projectiles.length).toBe(BOSS_BULLETS); expect(s.projectiles.every(p => p.ownerId === boss.id)).toBe(true);
+    const s = createRun(0), boss = makeEnemy(s, 'elder', { x: 800, y: 100 }, 'player'); boss.bossPhase = 'phase2'; Object.assign(bossRuntime(boss),{readyAt:0,spawnUntil:0});
+    bossStep(s); s.time=boss.boss!.attack!.fire; bossStep(s); const p = s.projectiles[0], old = { x: p.x, y: p.y }; boss.x += 100; expect(p.x).toBe(old.x);
+    s.time = boss.boss!.attack!.fire+.65; bossStep(s); expect(s.projectiles.length).toBe(BOSS_BULLETS); expect(s.projectiles.every(p => p.ownerId === boss.id)).toBe(true);
     s.time = 720; resolveOutcome(s); expect(s.phase).toBe('victory'); const d = createRun(0); d.time = 720; d.player.hp = 0; resolveOutcome(d); expect(d.phase).toBe('defeat');
   });
   it('snapshot scale không hồi HP/nhân stat theo frame, despawn không kill', () => {
@@ -111,10 +113,10 @@ describe('Boss hai phase và ownership', () => {
     s.enemies = []; expect(s.kills).toBe(0);
   });
   it('stress phase2/110 quái/haste40% vẫn bắn thật và không vượt budget', () => {
-    const g = new GameSession(0, seededRandom(42)), s = g.state; s.time = 635; s.player.x = 1050; s.player.y = 350; s.player.hp = s.player.maxHP = 1e8; s.beacon.hp = s.beacon.maxHP = 1e8; s.bossSpawned = true; s.nextSpawn = Infinity;
+    const g = new GameSession(0, seededRandom(42)), s = g.state; s.time = 635; s.player.x = 1050; s.player.y = 350; s.player.hp = s.player.maxHP = 1e8; s.beacon.hp = s.beacon.maxHP = 1e8; s.bossSpawned = true; s.bossEvents.forEach(e=>e.spawned=true); s.nextSpawn = Infinity;
     s.modules = { plasma: 5, drones: 5, well: 5 }; s.supports = { power: 5, haste: 5 };
     clearGroundXP(s);
-    const boss = makeEnemy(s, 'elder', { x: 1400, y: 220 }, 'player'); boss.bossPhase = 'phase2'; boss.hp = boss.maxHP = 1e8; s.bossRing = 635.1; s.bossBeam = 638;
+    const boss = makeEnemy(s, 'elder', { x: 1400, y: 220 }, 'player'); boss.bossPhase = 'phase2'; boss.hp = boss.maxHP = 1e8; Object.assign(bossRuntime(boss),{readyAt:635.1,spawnUntil:0});
     for (let i = 0; i < 110; i++) { const e = makeEnemy(s, i % 3 === 0 ? 'drifter' : 'wisp', { x: 1050 + Math.cos(i) * 280, y: 350 + Math.sin(i) * 280 }, 'player'); e.hp = e.maxHP = 1e8; e.baseHP = 1e8 / (1 + (e.kind === 'drifter' ? 0.08 : 0.05) * 10); }
     let peakProjectiles = 0, peakWells = 0, shots = 0;
     for (let frame = 0; frame < 60 * 60; frame++) { g.step(1 / 60, { x: Math.sin(s.time), y: Math.cos(s.time) }); peakProjectiles = Math.max(peakProjectiles, s.projectiles.length); peakWells = Math.max(peakWells, s.wells.length); shots += s.cues.filter(c => c === 'shot').length; s.cues.length = 0; }
@@ -122,7 +124,7 @@ describe('Boss hai phase và ownership', () => {
     writeFileSync('artifacts/v13/regression-stress.json', JSON.stringify({ seconds: 60, fixture: 'HP1e8,110 thường+boss phase2, power5/haste5', shots, peakProjectiles, peakWells, enemies: s.enemies.length, effects: s.effects.length }, null, 2));
   });
 });
-const BOSS_BULLETS = P.phase2RingCount - P.phase2Gap + P.fanCount;
+const BOSS_BULLETS = 28;
 describe('Profile/migration và retry', () => {
   it('migrate v1 giữ tiền/Core/Echo/settings, không bịa kill; v2 resolve mốc theo career', () => {
     const migrated = validateSave({ saveVersion: 1, currency: 77, coreLevel: 3, echo: true, careerKills: 9999, settings: { muted: true, quality: 'low', volume: 0.6 } });

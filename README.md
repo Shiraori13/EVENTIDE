@@ -1,12 +1,16 @@
 # EVENTIDE · Thủy Triều Hư Không
 
-**beta 1.0.0** (package1.0.0-beta.1, đổi nhãn phát hành từ hotfix1.4.1, giữ gameplay) sửa xác nhận tiến hóa bị khuất khi pause và thay điều kiện mastery bằng đủ/max ba vũ khí cùng hai hỗ trợ. Giữ nội dung beta1.4: Quasar Cannon, Orbital Bastion/Singularity Well, ba sự kiện thiên văn, nebula/Beacon feedback và boss tuning. Giữ dữ liệu schema3, 28 huy hiệu, Core, salvage, font/pool/ledger. Xem [trạng thái](docs/status.md), [playtest hotfix](docs/balance-v1.4.1.md), [hiệu năng](docs/performance-report.md).
+**beta 1.0.0** giữ concept bảo vệ Beacon12phút, progression/save và các cải tiến visual/hiệu năng. Bản hiện hành thêm wallet header, hazard khóa warning/tác động thật, scaling tuyến tính mới, Quasar398u và pool bốn boss hai phase tại09:00/11:00. [Trạng thái](docs/status.md), [báo cáo và bằng chứng](docs/ui-hazards-multiboss-report.md), [cấu hình balance](docs/balance.md).
+
+Đợt **UX/stability 2026-10-21** thêm HUD cảnh báo có hysteresis, Balo tổng quan5ô/details, draft so sánh trước/sau, tutorial theo tình huống và kết quả có build/sát thương/đòn chí mạng. [Các thay đổi lớn và kiểm chứng](docs/next-beta-ux-report.md), [CHANGELOG](CHANGELOG.md). Trong Cài đặt có bật/tắt và **Xem lại hướng dẫn** riêng, giữ tiền/Core/Echo/thành tựu. Trong Balo mở **Nguồn chỉ số chi tiết**; kết quả mở **Chi tiết lượt chơi** để xem tổng HP, không phải DPS.
 
 MVP local sinh tồn hành động 2D bằng Phaser 3 + TypeScript. Điều khiển Nova bảo vệ Beacon trong 12 phút, thu Stardust, chọn module và đánh đổi sức mạnh với Corruption. Không backend, tài khoản hoặc tài nguyên mạng khi chơi.
 
+Đợt nâng cấp **visual identity** bổ sung tinh vân/parallax, Beacon vòng đứt đoạn, pose/engine tàu, HUD và panel đồng bộ, ba mức chất lượng và Giảm chuyển động. Giữ luật/dữ liệu beta1.0.0. Thiết kế và bằng chứng ở [design system](docs/design-system.md) / [visual report](docs/visual-identity-report.md).
+
 ## Chơi trên web
 
-Repository: [Shiraori13/EVENTIDE](https://github.com/Shiraori13/EVENTIDE). Chơi ngay: **https://shiraori13.github.io/EVENTIDE/** — Pages đã deploy và smoke browser công khai2/2; bằng chứng ở [triển khai](docs/DEPLOYMENT.md). Push main tự kiểm tra/build/deploy qua Actions.
+Repository: [Shiraori13/EVENTIDE](https://github.com/Shiraori13/EVENTIDE). Chơi ngay: **https://shiraori13.github.io/EVENTIDE/**. Push main tự kiểm tra/build/deploy qua Actions. Commit, deployment và kết quả kiểm tra công khai được ghi tại [triển khai](docs/DEPLOYMENT.md) và [trạng thái](docs/status.md).
 
 ## Chạy trên Windows
 
@@ -26,7 +30,7 @@ npm run build
 npm run preview
 ```
 
-Mở URL preview in ra, mặc định http://127.0.0.1:4173/EVENTIDE/. Không mở `index.html` bằng `file://`. Sau cài đặt/build, chơi qua local server không cần Internet. Chưa triển khai hosting.
+Mở URL preview in ra, mặc định http://127.0.0.1:4173/EVENTIDE/. Không mở `index.html` bằng `file://`. Sau cài đặt/build, chơi qua local server không cần Internet.
 
 ## Điều khiển và mục tiêu
 
@@ -44,7 +48,7 @@ Beacon tự sạc sau 720 giây mô phỏng. Tàu hoặc Beacon hết HP là thu
 
 Pause, chọn nâng cấp và chuyển tab dừng mô phỏng; trở lại tab phải chủ động tiếp tục. Bỏ lượt/chơi lại giữa trận không nhận thưởng. Reload về menu, không tiếp tục lượt cũ. Tiến triển lưu bằng localStorage của origin hiện tại; đổi cổng là vùng lưu khác. Xóa tiến triển trong Cài đặt yêu cầu xác nhận.
 
-Có Nova, một map, Plasma → Mini Sun → Supernova, Orbital Drones, Gravity Well, Pulsar Beam và Ion Storm, sáu hỗ trợ (chọn hai loại/run), ba Hollowborn, Elder Star hai phase, gravity môi trường, menu/hướng dẫn/pause/kết quả, âm thanh tổng hợp, Beacon Core ba cấp và Echo. Phi thuyền/Danh mục/Thành tựu nằm ở menu; Build/B cho xem chỉ số và loadout, không nhận nâng cấp miễn phí. Sau blur/ẩn tab, đóng Build vẫn cần chủ động tiếp tục.
+Có Nova, một map, Plasma → Mini Sun → Supernova, Orbital Drones, Gravity Well, Pulsar Beam và Ion Storm, sáu hỗ trợ (chọn hai loại/run), ba Hollowborn, bốn loại boss hai phase, gravity môi trường, menu/hướng dẫn/pause/kết quả, âm thanh tổng hợp, Beacon Core ba cấp và Echo. Phi thuyền/Danh mục/Thành tựu nằm ở menu; Build/B cho xem chỉ số và loadout, không nhận nâng cấp miễn phí. Sau blur/ẩn tab, đóng Build vẫn cần chủ động tiếp tục.
 
 Bonus support cộng trên base, cấp5: damage/rate40%, HP/nhặt50%, tốc25%, giáp20%. Rate chia interval, không phải trừ cùng phần trăm cooldown; Core chỉ tăng HP Beacon. Career giữ từ1.2;28 huy hiệu không cộng tiền/stat, metrics mới bắt đầu theo dõi từ1.3; autosave5s simulation và tại lifecycle/milestone. Crash có thể mất đoạn chưa flush. Không lưu run dang dở hoặc bịa kill lịch sử từ tiền.
 
@@ -59,6 +63,8 @@ npm run test:e2e
 npm run test:production
 ```
 
+QA compiled cho đợt hiện hành: `npm run build:next-beta` rồi `npm run test:next-beta`, preview4301 và save test riêng. Artifact mới gom tại `artifacts/next-beta/`; không ghi đè build/số đo của đợt trước. Chạy `node scripts/qa/next-beta/rendered-run.mjs` khi preview4301 sẵn có để kiểm tra bot render đủ12phút (không phải chơi tay hoặc benchmark FPS). Playtest so source trước/sau cần snapshot local `artifacts/next-beta/before-source`, được lưu riêng khi bắt đầu tác vụ; bài này không là dependency của checkout sạch.
+
 Chromium chỉ cần cho kiểm thử tự động. Trong môi trường hạn chế ghi profile, cài browser vào workspace:
 
 ```powershell
@@ -68,6 +74,8 @@ npm run test:e2e
 ```
 
 E2E chạy Vite 5173 với `?e2e=1`, save key `eventide.e2e.v1` riêng. Hook chỉ có ở DEV/benchmark + query này; production loại hook. `test:production` dùng bản build gần nhất qua preview 4173; chạy build trước lệnh này. Unit gồm fixed-step 30/60/144 FPS, luật biên, kinh tế và mô phỏng đủ 720s. Các snapshot nguồn regression cần cho checkout sạch ở tests/fixtures/history; output/ảnh/build trong artifacts chỉ local, không push. Kết quả chiến thuật hiện hành: `artifacts/v141/strategies.json`; ảnh/trace: `test-results/` (smoke riêng ở `test-results-production/`); ảnh bàn giao tại `artifacts/screenshots/`. Xem [trạng thái kiểm tra](docs/status.md) cho kết quả và giới hạn thực tế.
+
+Đợt visual trước dùng `npm run build:visual` rồi `npm run test:visual` (benchmark preview4197), ảnh/clip/so sánh ở `artifacts/visual-identity/`. Chi tiết protocol và provenance bundle ở [visual report](docs/visual-identity-report.md). Nếu preview4173 đã chạy để chơi, đặt `$env:EVENTIDE_SMOKE_URL='http://127.0.0.1:4173/EVENTIDE/'` trước `npm run test:production` để smoke server hiện có; mặc định không có biến này sẽ khởi động preview riêng và cần cổng trống. Chọn chất lượng Vừa/Cao/Thấp và Giảm chuyển động trong Cài đặt; dữ liệu vẫn theo origin/cổng cũ.
 
 ## Cấu trúc và nơi chỉnh
 
@@ -83,17 +91,34 @@ src/game/ui/            GameUI: menu/HUD/modal/focus
 src/game/debug/         Hook chỉ DEV + e2e
 src/styles/             Tokens và UI CSS
 public/assets/images/  SVG local theo vai trò
-scripts/                Nguồn sinh SVG
+scripts/assets/         Nguồn sinh SVG và metadata
+scripts/performance/    Benchmark/report/history
+scripts/qa/             Capture/clip/QA theo nhóm
+config/playwright/      Cấu hình browser test
+docs/history/           Status/balance/performance phiên bản cũ
 tests/                  Vitest, Playwright
 docs/                   Tài liệu theo mã nguồn thực tế
 prompts/                Snapshot khởi tạo và mẫu sửa
 ```
 
-VNext thêm `PickupSystem` (merge/ledger/sổ loot), `presentation.ts` (budget FX/quality/compaction), `SpritePool`/`interpolation`, `FontService`, `bakeTextures`, `PerfSampler`; hình học gốc ở `scripts/asset-shapes.json`. Font Noto local có OFL và metadata/hash ở `public/assets/fonts/`. Giảm hiệu ứng/rung và quality trong Cài đặt không thay spawn/damage/hitbox/loot. Save cũ không có quality mặc định Cao.
+VNext thêm `PickupSystem` (merge/ledger/sổ loot), `presentation.ts` (budget FX/quality/compaction), `SpritePool`/`interpolation`, `FontService`, `bakeTextures`, `PerfSampler`; hình học gốc ở `scripts/assets/asset-shapes.json`. Font Noto local có OFL và metadata/hash ở `public/assets/fonts/`. Cài đặt có Cao/Vừa/Thấp, Giảm chuyển động và rung riêng; không thay spawn/damage/hitbox/loot. Save cũ không có quality mặc định Cao; profile mới Vừa. Màu/timing ở `config/design.ts`, nền ở `SpaceBackdrop`, Beacon ở `BeaconPresentation`, chi tiết ở design system.
 
 1.2 thêm `config/progression.ts` (character/support/achievement), `core/stats.ts` (selector chung), `ProfileService`, `BossLifecycle`, `ui/ProgressionView`; giữ ID hull/magnet, schema2 cùng key eventide.save.v1. Thêm mốc ở ACHIEVEMENTS, đổi cấp/cap ở SUPPORTS; stat mới cần thêm calculator/formatter có typecheck. Enemy scaling/BOSS_PHASES ở balance.ts, pattern/transform ở BossSystem. Không nâng dependency/framework.
 
-## Tái hiện hiệu năng và QA
+## QA bản local hiện hành
+
+```powershell
+$env:PLAYWRIGHT_BROWSERS_PATH="$PWD\.playwright"
+npm run build:qa
+npm run test:qa
+$env:EVENTIDE_BALANCE='1'
+npm run test:balance
+Remove-Item Env:EVENTIDE_BALANCE
+```
+
+Artifacts mới ở artifacts/multiboss; báo cáo có đường dẫn ảnh/clip/raw. [Script](scripts/README.md) và [Playwright](config/playwright/README.md) phân biệt lệnh hiện hành/lịch sử. Cấu hình: bosses.ts (HP/nhịp/zone/lịch), events.ts (hazard), balance.ts (scaling/core), content.ts (Quasar). Chơi thường cùng cổng cũ để giữ origin/save.
+
+## Tái hiện hiệu năng và QA lịch sử
 
 Mở http://127.0.0.1:5173/EVENTIDE/?perf=1&overlay=1 ở dev để xem counter, hoặc chọn window.__eventidePerf.scenario('dense') / 'endgame' trong console. Fixture có HP lớn/module tối đa để giữ workload, không là playtest cân bằng. Hook dùng save test riêng; production thường không hook kể cả query. longRun(seed, fusion) dùng stats chuẩn/draft thật, bot Hull+Armor/Plasma+Pulsar+Ion; helper beta chọn seed7 và hợp nhất chủ động. Không tăng time/HP/XP.
 
@@ -112,7 +137,7 @@ Hồ sơ1.3 ở artifacts/v13; bundle cuối BpMrDiaJ và source final-measured-
 
 Chỉnh module: sửa dòng cấp trong `PLASMA`, `DRONES`, `WELLS` ở [content.ts](src/game/config/content.ts); tooltip đọc cùng bảng. Thêm quái: thêm `EnemyId`, stats `ENEMIES`, sprite/manifest và trọng số chọn trong `SpawnSystem`; thêm behavior nếu cần trong system tương ứng. Thay Nova: thay `public/assets/images/player/nova.svg` hoặc entry `nova` trong manifest, giữ64×64; không sửa radius nếu chỉ đổi hình. Chi tiết: [kiến trúc](docs/architecture.md), [cân bằng](docs/balance.md), [asset](docs/asset-guide.md).
 
-[GAME_SPEC.md](GAME_SPEC.md) là luật hiện hành; [AGENTS.md](AGENTS.md) hướng dẫn làm việc. `BUILD_MVP.md` root được giữ nguyên; [prompts/BUILD_MVP.md](prompts/BUILD_MVP.md) sao nguyên văn để khôi phục cấu trúc thiếu ban đầu. Khi sửa game dùng [prompts/MODIFY_GAME.md](prompts/MODIFY_GAME.md). Concept gốc ở `concept/EVENTIDE_Concept_Web.docx`.
+[GAME_SPEC.md](GAME_SPEC.md) là luật hiện hành; [AGENTS.md](AGENTS.md) hướng dẫn làm việc. Prompt tạo mới canonical ở [prompts/BUILD_MVP.md](prompts/BUILD_MVP.md); bản root trùng đã chuyển nguyên byte vào prompts/history/BUILD_MVP-root-copy.md để gom tài liệu. Khi sửa game dùng [prompts/MODIFY_GAME.md](prompts/MODIFY_GAME.md). Concept gốc ở `concept/EVENTIDE_Concept_Web.docx`.
 
 Dependency thực tế: Phaser3.90.0, Vite7.3.7, TS5.9.3, Vitest4.1.12, Playwright1.64.1. [Phaser3.90](https://phaser.io/download/release/v3.90.0) và [yêu cầu Node của Vite](https://vite.dev/guide/) là nguồn chính thức; lockfile ghi chính xác bản đã cài.
 

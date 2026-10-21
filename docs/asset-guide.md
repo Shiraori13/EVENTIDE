@@ -1,6 +1,6 @@
 # Asset local
 
-Phiên bản1.3 có29 SVG hình học nguyên bản, viewBox64×64/tâm32×32, dữ liệu duy nhất ở `scripts/asset-shapes.json`, generator `scripts/generate-assets.mjs`, cấp phép CC0-1.0. Manifest typed `src/assets/manifest.ts` có ID/path/type/size/origin/hitbox-reference/source/license. `node scripts/generate-assets.mjs` ghi đè SVG cùng tên, chỉ chạy khi muốn tái tạo từ nguồn JSON. Font Noto là asset bên thứ ba có SIL OFL, không gán CC0 cho font.
+Phiên bản1.3 có29 SVG hình học nguyên bản, viewBox64×64/tâm32×32, dữ liệu duy nhất ở `scripts/assets/asset-shapes.json`, generator `scripts/assets/generate-assets.mjs`, cấp phép CC0-1.0. Manifest typed `src/assets/manifest.ts` có ID/path/type/size/origin/hitbox-reference/source/license. `node scripts/assets/generate-assets.mjs` ghi đè SVG cùng tên, chỉ chạy khi muốn tái tạo từ nguồn JSON. Font Noto là asset bên thứ ba có SIL OFL, không gán CC0 cho font.
 
 | ID | File dưới public/assets/images/ | Vai trò |
 |---|---|---|
@@ -20,7 +20,7 @@ Thay Nova: thay file player/nova.svg, giữ64×64/mũi phải rồi refresh. Đ�
 
 Boot có loading; file thiếu dùng `proceduralTextures.ts` tạo fallback khung gạch chéo, game tiếp tục chạy. Playwright cố tình chặn Nova để thử đường này. Production có đủ file, không fetch ngoài local origin.
 
-Nova, Wisp, Drifter, Leech và Elder đã có hình mới (thân/cánh/lõi/giáp gãy/đuôi/cong/rạn sao). Art không đổi HP/radius. SVG vẫn source64; Elder raster128×128 khi boot để hiển thị143u không bị phóng64 quá mức. Atlas1024×512 gồm cell128, frame thực64/128 theo manifest. Atlas/starfield512×512/light1024×1024 bake một lần, không sinh lại khi đổi quality. SpritePool≤640 và pickup visuals≤220; Graphics còn dùng cho thông tin động như telegraph/streak/range/blast. High/Low budget ở presentation.ts, không đổi luật.
+Nova, Wisp, Drifter, Leech và Elder có hình riêng (thân/cánh/lõi/giáp gãy/đuôi/cong/rạn sao). Art không đổi HP/radius. SVG source64; Elder và Beacon raster128×128 khi boot để preview rõ. Atlas1024×512 gồm cell128, frame thực64/128 theo manifest. Starfield1024×1024/light1024×1024 bake một lần, không sinh lại khi đổi quality. SpritePool≤640 và pickup visuals≤220; Graphics còn dùng cho telegraph/streak/range/blast. Cao/Vừa/Thấp budget ở presentation.ts, không đổi luật.
 
 Font: `public/assets/fonts/NotoSans-Variable.ttf` và `NotoSerif-Variable.ttf`, weights100–900; nguồn chính thức Google Fonts, copyright Noto Project Authors, SIL Open Font License1.1. Bản license đầy đủ nằm cùng thư mục, URL/hash/byte size/ngày lấy ở `SOURCES.json`. Không sửa/subset file font, không gọi CDN runtime. Tổng font khoảng3.94MB nên cold load có chi phí; FontService timeout2.5s rồi fallback an toàn, CSS swap nếu font đến muộn. Body/HUD dùng Sans400/600, title dùng Serif400/500. Gameplay hiện không có Phaser Text; Canvas style factory và bảng glyph QA dùng cùng face sau bước load, không monkey-patch engine.
 
@@ -54,3 +54,15 @@ Bản D1VFNgyB dùng texture nebula768² và ba Image1700u: lượt720s có fram
 ## Đường dẫn khi phát hành Pages
 
 Vite base /EVENTIDE/ áp cả dev/preview/production. HTMLfavicon dùng %BASE_URL%, manifest assetURL và BootScene loader dùng import.meta.env.BASE_URL đúng một lần. CSS publicfont /assets/fonts do Vite transform thành /EVENTIDE/assets/fonts khi build; giữ một bản font public, không copy thêm filehash. Không hardcode prefix vào manifest hoặc loader. WebAudio tổng hợp không có file audio ngoài; vẫn unlock từ thao tác Khởi hành. Network smoke kiểm tra HTTP assets cùngorigin/dướiprefix, phân biệt blob SVG nội bộ Phaser với request mạng.
+
+## Visual identity local · 2026-10-18
+
+Sửa năm SVG từ nguồn hình học CC0 của dự án: player/nova và beacon/beacon, beacon-1/2/3. Nova có silhouette cyan/lõi/động cơ vàng; Beacon có lõi radial/vòng đứt đoạn/cánh theo cấp. Nguồn chỉnh `scripts/assets/asset-shapes.json`, tái sinh `node scripts/assets/generate-assets.mjs`; SOURCES.json ghi SHA256 thật. Không tải asset mới; 27SVG khác và hai font giữ bytes. SVG nguồn64/viewBox±32; Beacon/Elder được raster128 qua manifest để preview rõ, frame vẫn cell128/atlas1024×512. Display size/hitbox giữ tách riêng.
+
+Nền thủy triều code-native ở bakeTextures.ts: radial ellipse nối đường cong, cloud wrap9bản ở biên bake, galaxy lệch tâm, base opaque liền mạch. Không ảnh rỗng/placeholder/gradient mỗi frame. Ba tile Cao/Vừa/Thấp1024² (12MiB RGBA thô, thêm4MiB từ baseline), một TileSprite backing theo viewport; SpaceBackdrop accent hữu hạn và không texture tạm. Bảng mật độ/layer/timing tại design system. Metadata nguồn procedural là mã dự án trong file này; không có giấy phép bên ngoài mới. Beacon nhịp0,2Hz/hit120ms hiện thay giá trị beta1.4 lịch sử ở trên.
+
+## Boss local bổ sung
+
+Thêm enemies/gravemaw.svg, helion.svg, harrier.svg từ hình học nguyên bản CC0 trong scripts/assets/asset-shapes.json. Tái sinh bằng npm run assets:generate, metadata SHA256 trong images/SOURCES.json. Manifest35 entry, atlas1024×640 (thêm một hàng128px≈0,5MiB RGBA); Beacon và cả bốn boss raster128, còn lại64. Hitbox riêng trong config, không suy collision từ SVG. Không file mạng/audio giả hoặc dependency mới. Những số32frame/1024×512 phía trên là lịch sử trước đợt này.
+
+Harrier SVG mũi hướng trục+x, renderer quay theo locked dash path; Gravemaw có thêm nét hàm mở/khép theo state Maw bằng Graphics dùng geometry tối ưu. Đây là trình bày, không scale collider.

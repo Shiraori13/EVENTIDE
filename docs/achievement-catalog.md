@@ -23,8 +23,8 @@ Có đúng 28 mục, badge-only. Giữ năm stable ID từ 1.2. Cột metric là
 |A17|supernova|Bùng nổ siêu tân tinh|supernova / 1|Đạt Plasma cấp 5: Supernova.|
 |A18|pulsar-hit|Nhịp đập Pulsar|pulsarHits / 1|Gây sát thương bằng Pulsar Beam.|
 |A19|ion-hit|Sấm giữa hư không|ionHits / 1|Gây sát thương bằng Ion Storm.|
-|A20|elder-final|Kẻ hạ sao chết|bossKills / 1|Hạ Elder Star sau giai đoạn 2.|
-|A21|elder-phase2|Đối mặt cơn thịnh nộ|bossPhase2 / 1|Đưa Elder Star vào giai đoạn 2.|
+|A20|elder-final|Kẻ hạ sao chết|bossKills / 1|Hạ một boss sau giai đoạn 2.|
+|A21|elder-phase2|Đối mặt cơn thịnh nộ|bossPhase2 / 1|Đưa một boss vào giai đoạn 2.|
 |A22|core-1|Gia cố nguồn sáng|coreLevel / 1|Nâng Beacon Core lên cấp 1.|
 |A23|core-max|Lõi sáng hoàn thiện|coreLevel / 3|Hoàn thiện Beacon Core.|
 |A24|salvage-1|Công nghệ nhặt lại|salvageCollected / 1|Nhặt một mảnh trang bị và nhận bonus.|

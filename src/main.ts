@@ -1,5 +1,7 @@
 import './styles/tokens.css';
 import './styles/ui.css';
+import './styles/identity.css';
+import './styles/next-beta.css';
 import { createGame } from './game/createGame';
 import { loadFonts } from './game/services/FontService';
 let game: ReturnType<typeof createGame> | undefined;

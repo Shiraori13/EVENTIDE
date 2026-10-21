@@ -1,39 +1,20 @@
-import { astronomyStep, currentAstronomy } from './AstronomySystem';
-import { ASTRONOMY } from '../config/events';
-import { BALANCE as B, ENEMY_SCALING } from '../config/balance';
-import { ENEMIES, WAVES, type EnemyId } from '../config/content';
-import { distance, unit } from '../core/math';
-import type { Enemy, RunState, Vec } from '../core/types';
-export const minuteAt = (seconds: number): number => Math.max(0, Math.min(ENEMY_SCALING.maxMinute, Math.floor((seconds + 1e-7) / 60)));
-/** Event một lần khi đổi phút, tính từ base và giữ HP ratio/cooldown/target; dead không hồi sinh. */
-export function minuteScalingStep(s: RunState): void {
-  const minute = minuteAt(s.time), eventFactor = s.astronomy.some(e => e.id === 'chaos' && e.phase === 'active') ? ASTRONOMY.chaosEnemy : 1; if (minute === s.minuteIndex && eventFactor === s.enemyEventFactor) return;
-  const minuteChanged = minute !== s.minuteIndex; s.enemyEventFactor = eventFactor;
-  s.minuteIndex = minute;
-  for (const e of s.enemies) {
-    if (e.kind === 'elder' || e.hp <= 0) continue;
-    const rate = ENEMY_SCALING[e.kind], ratio = e.hp / e.maxHP;
-    e.maxHP = (e.baseHP ?? ENEMIES[e.kind].hp) * (1 + rate.hp * minute) * eventFactor; e.hp = e.maxHP * ratio;
-    e.damage = (e.baseDamage ?? ENEMIES[e.kind].damage) * (1 + rate.damage * minute) * eventFactor;
-  }
-  if (!minuteChanged) return;
-  s.notice = `Phút ${minute + 1} — Hollowborn mạnh hơn`; s.noticeUntil = s.time + 3;
-}
-/** Boss giữ bảng phase riêng; quái mới dùng cùng minute curve của event. */
-export function makeEnemy(s: RunState, kind: EnemyId, p: Vec, target: 'player' | 'beacon'): Enemy {
-  const data = ENEMIES[kind];
-  const minute = minuteAt(s.time), rate = kind === 'elder' ? { hp: 0, damage: 0 } : ENEMY_SCALING[kind];
-  const eventFactor = kind !== 'elder' && s.astronomy.some(e => e.id === 'chaos' && e.phase === 'active') ? ASTRONOMY.chaosEnemy : 1;
-  const hp = data.hp * (1 + rate.hp * minute) * eventFactor;
-  const e: Enemy = { x: p.x, y: p.y, id: s.nextId++, kind, hp, maxHP: hp, baseHP: data.hp, baseDamage: data.damage, radius: data.radius, target, nextHit: s.time + (kind === 'elder' ? B.bossFirstRingDelay : 0), nextDroneHit: s.time, spawnedAt: s.time, speed: data.speed, damage: data.damage * (1 + rate.damage * minute) * eventFactor, ...(kind === 'elder' ? { bossPhase: 'phase1' as const } : {}) };
-  s.enemies.push(e); return e;
-}
+import { astronomyStep, currentAstronomy } from './hazards/AstronomySystem';
+import { BALANCE as B } from '../config/balance';
+import { WAVES } from '../config/content';
+import { distance } from '../core/math';
+import type { RunState } from '../core/types';
+import { isBoss } from '../config/bosses';
+import { makeEnemy } from './enemies/EnemyFactory';
+import { minuteScalingStep } from './enemies/ScalingSystem';
+import { bossScheduleStep } from './bosses/BossScheduler';
+export { makeEnemy } from './enemies/EnemyFactory';
+export { minuteAt, minuteScalingStep } from './enemies/ScalingSystem';
 /** Spawn có số lần thử hữu hạn; thất bại hoãn sang nhịp kế tiếp. */
 export function spawnStep(s: RunState, rng: () => number): void {
   if (s.time + 1e-9 < s.nextSpawn) return;
   const wave = [...WAVES].reverse().find(w => s.time >= w.at) ?? WAVES[0];
   s.nextSpawn = s.time + wave.interval;
-  for (let i = 0; i < wave.count && s.enemies.filter(e => e.kind !== 'elder').length < B.enemyCap; i++) {
+  for (let i = 0; i < wave.count && s.enemies.filter(e => !isBoss(e.kind)).length < B.enemyCap; i++) {
     const r = rng(); const kind = r < wave.leech ? 'leech' : r < wave.leech + wave.drifter ? 'drifter' : 'wisp';
     for (let attempt = 0; attempt < B.spawnAttempts; attempt++) {
       const a = rng() * Math.PI * 2, radius = B.spawnCoreSafety + rng() * (B.arenaRadius - B.spawnCoreSafety - B.spawnEdgeMargin);
@@ -47,19 +28,11 @@ export function spawnStep(s: RunState, rng: () => number): void {
 }
 /** Các event dùng cờ và >=: không bỏ mốc khi bước mô phỏng vượt qua thời điểm. */
 export function eventStep(s: RunState, rng: () => number): void {
+  if(s.phase!=='playing')return;
   astronomyStep(s); minuteScalingStep(s);
   // Dọn field đã hết trước nhánh skip/return khi test nhảy qua nhiều mốc lịch.
   if (s.gravity && s.time >= s.gravity.end) s.gravity = undefined;
-  if (!s.bossSpawned && s.time >= B.bossTime) {
-    s.bossSpawned = true;
-    // Boss có slot riêng ngoài cap quái thường.
-    // Điểm mặc định có thể đang có tàu: dùng phía đối diện, vẫn ngoài vùng sáng và trong map.
-    const opposite = unit(-s.player.x || 1, -s.player.y);
-    const position = distance(B.bossStart, s.player) >= B.spawnSafety ? B.bossStart : { x: opposite.x * B.bossOrbitRadius, y: opposite.y * B.bossOrbitRadius };
-    makeEnemy(s, 'elder', position, 'player');
-    s.bossRing = s.time + B.bossFirstRingDelay; s.bossBeam = s.time + B.bossFirstBeamDelay;
-    s.notice = 'CẢNH BÁO · ELDER STAR ĐANG ĐẾN'; s.noticeUntil = s.time + 6; s.cues.push('boss');
-  }
+  bossScheduleStep(s,rng);
   if (!s.finalGravity && s.time >= B.finalGravityTime) {
     s.finalGravity = true; s.gravity = { ...B.finalGravityPosition, start: B.finalGravityTime + B.gravityWarning, end: B.duration + 1, final: true };
     s.notice = 'Hố đen cuối màn · Rời khỏi vòng cảnh báo'; s.noticeUntil = s.time + 5;

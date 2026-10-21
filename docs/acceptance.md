@@ -1,4 +1,38 @@
+# Nghiệm thu hiện hành — Next beta UX/UI/stability local
+
+Checklist bổ sung2026-10-21, giữ mọi tiêu chí gameplay bên dưới. Kết quả thực và bundle ở [status](status.md), không coi bảng này là log pass tự động.
+
+| Nhóm | Điều kiện |
+|---|---|
+| HUD | HP normal/warning/critical hysteresis25/32–50/58; Corruption warning40/35/buff thật50; chữ/icon khi tắt rung; Beacon hit2s/hướng nguy cấp; ARIA không đọc số mỗi frame |
+| Balo/draft | 5slot/progress thật; recipe thiếu/rõ/CTA đủ trong viewport đầu; confirm/cancel/stale/double/resume hoạt động; details nguồn và preview2–3giá trị khớp calculator, rate không giả CDR; giữ XP/reroll/pause/focus |
+| Tutorial | Ba trigger thật, deferred danger/boss/modal, seen sau display, skip/tắt/reload/replay không mất meta; ≤3dòng ở viewport mục tiêu |
+| Kết quả | Actual incoming sau giáp/invuln/clamp, outgoing đúng nguồn, fatal/owner/channel/cùng chết; snapshot trước cleanup/freeze/reward một lần; final build/goal thật/details không phải DPS; tối đa một nhận xét có bằng chứng |
+| Stability | ≥5restart/≥20panel, listener/texture/timer/owner không tăng vô hạn; viewport1280/1366/1920/1024×576/menu390; productionprefix/font/ảnh/nohooks |
+| Chạy thực | Full720s render bằng clock thường nếu môi trường cho phép, nhãn bot; same-seed3build±fusion; dense+duo+hazard Low/Medium/reduced; đo frame riêng, >50/100ms và không dùng bot để chứng nhận FPS |
+
+Các mục lịch sử bên dưới được giữ để tra regression, không ghi đè luật mới. Kết quả chạy cụ thể, môi trường và giới hạn ở [status](status.md), số đo ở [báo cáo](ui-hazards-multiboss-report.md).
+
+- UI: menu/achievements/Balo/draft không còn hai cung pseudo không nhãn; focus và vòng Beacon/charge còn. Wallet click/Enter, mua/reload/quay lại khớp save, desktop720/768/1080 và390px không tràn.
+- Hazard: warning khóa vùng, không lực/damage; biên/tâm, hút/đẩy/quỹ đạo/thoát, overlap cap, timer radiation độc lập contact, miễn nhiễm thật, boss miễn %HP, pause/reset. Low/reduced giữ cue.
+- Scaling:59,99/60/60,01/540/660; linear, ratio/cooldown/target/dead, Chaos vào/ra, spawn cùng factor.
+- Quasar398u cùng envelope beam+chain, moving origin thống nhất, Ion không đổi; fusion click pause/mastery đủ năm ô giữ.
+- Boss: seeded hai mốc/no-repeat/overlap/cap; per-owner beam/zone/timer; admission trước warning, hai loạt và khe, dash swept/lock/second warning; transition/reward một lần, cleanup/resume/result.
+- Playtest: A/B ba build ±fusion, bốn boss/hai phase, ba cặp, phút3/6/9/11, đủ720s tăng tốc; clip keyboard thật trong fixture riêng, không gọi là chơi tay. Hiệu năng frame đo browser riêng.
+
 # Nghiệm thu local và Pages
+
+## Visual identity local · 2026-10-18
+
+Scope: hình ảnh/UI/motion/settings, giữ gameplay beta1.0.0 và profile schema3. Không push/deploy. Bảng bằng chứng, kết quả và giới hạn mới ở [visual report](visual-identity-report.md) / [status](status.md), art contract tại [design system](design-system.md). Các mục phát hành và phiên bản dưới đây là lịch sử.
+
+- Menu/gameplay đầu/đông/Balo/draft/Core: ảnh trước/sau cùng1280×720; thêm390×844. Không mockup, fixture chịu tải dùng HP lớn và save test riêng.
+- Menu/Core/Balo/HUD kiểm tra1280×720/1366×768/1920×1080/390×844; keyboard/focus/scroll và font Việt local; hẹp không thêm touch controls. Giữ regression zoom125%/DPR2/fallback font/ảnh.
+- Di chuyển thật/đảo hướng/dừng/chéo, vị trí camera/actor cùng alpha; không smoothing vị trí. Pause/Balo/draft/blur đóng băng state. Tiến hóa click thật từ pause, resume xác nhận damage Quasar/cleanup nguồn; XP/reroll/bonus/mastery5ô không đổi.
+- Low/reduced motion giữ hazard, state Nguy cấp và giới hạn hút thật; OS default và saved explicit false; quality/audio/profile qua reload. Token contrast≥4.5:1 cho chữ trên surface; không coi đây là audit toàn bộ ảnh.
+- Restart7lượt, kiểm tra pool/listener/texture/timer/tween/audio/DOM sau warmup. Build/production smoke không debug hooks, đúngbase/không404/offline; đo trước/sau bundle benchmark riêng, không lấy runtime dev/HMR hoặc mô phỏng tăng tốc làm FPS.
+
+Số đo headless không cam kết60FPS/GPU thật. Chưa chơi tay12phút/nghe audio trực tiếp hoặc nghiệm thu cảm ứng. Các giới hạn này là giới hạn kiểm chứng, không phải feature backlog.
 
 ## Phát hành beta1.0.0
 
@@ -81,7 +115,7 @@ Lệnh/kết quả cuối và giới hạn thật ở status/performance-report;
 | XP-01 / UPG-01..03 | Giữ dư, pending nhiều cấp, lựa chọn không trùng/trần/ô, pool ít/rỗng, HP tăng cùng lượng; unit và modal e2e. |
 | WPN-01..04 | Ba module, Plasma3/5 cùng ID/slot, hit/nổ không trùng, drone cooldown/FPS, well hút/nổ, tâm0 an toàn; unit và bot. |
 | ENEMY-01..03 | Ba silhouette, fixed target marker, Leech trừ XP hiện tại, cooldown per-enemy/player; unit và chiến thuật. |
-| WAVE/BOSS | Wave theo mốc, boss một lần có slot riêng, vòng đạn/khe và tia khóa hướng, death không tự thắng; unit events/beam và full-run. |
+| WAVE/BOSS lịch sử | Wave theo mốc, boss một lần có slot riêng, vòng đạn/khe và tia khóa hướng, death không tự thắng; unit events/beam và full-run. |
 | GRAV-01..03 | Một môi trường optional, báo2s, không phủ Beacon, cap lực/tâm, final630 thay vùng cũ; unit sự kiện/tâm và bot đủ lượt. |
 | META-01..03 | Reward một lần, core10/20/30 và300/330/360/390, Echo đầu thắng; unit và e2e reload/mua. |
 | SAVE-01/02 | Validate version/type/range, JSON hỏng/storage chặn vẫn chơi, reset có xác nhận, key test riêng; unit và e2e. |

@@ -1,3 +1,5 @@
+import { isBoss } from '../../src/game/config/bosses';
+import { bossRuntime } from '../../src/game/systems/bosses/state';
 import { describe, expect, it } from 'vitest';
 import { GameSession, beaconHP, createRun, finishRun, resolveOutcome } from '../../src/game/core/GameSession';
 import { GameClock } from '../../src/game/core/GameClock';
@@ -9,7 +11,7 @@ import { addXP, availableUpgrades, chooseUpgrade, drainXP, prepareChoices, xpReq
 import { combatStep, damageMultiplier, dropXP, hitEnemy } from '../../src/game/systems/CombatSystem';
 import { dronePositions, weaponStep } from '../../src/game/systems/WeaponSystem';
 import { eventStep, makeEnemy } from '../../src/game/systems/SpawnSystem';
-import { bossStep } from '../../src/game/systems/BossSystem';
+import { bossStep } from '../../src/game/systems/bosses/BossSystem';
 import { totalGroundXP } from '../../src/game/systems/PickupSystem';
 import { SaveService, defaultSave, validateSave, type StorageLike } from '../../src/game/services/SaveService';
 describe('Vùng sáng và Corruption', () => {
@@ -91,14 +93,14 @@ describe('Clock, cooldown, sự kiện và kết quả', () => {
   });
   it('boss/hố đen vượt mốc vẫn một lần, không sinh vùng khác sau 630', () => {
     const s = createRun(0); s.time = 541; eventStep(s, Math.random); eventStep(s, Math.random);
-    expect(s.enemies.filter(e => e.kind === 'elder')).toHaveLength(1);
+    expect(s.enemies.filter(e => isBoss(e.kind))).toHaveLength(1);
     s.time = 631; eventStep(s, Math.random); const final = s.gravity; expect(final?.final).toBe(true);
     s.time = 700; eventStep(s, Math.random); expect(s.gravity).toBe(final);
     expect(pull({ x: 0, y: 0 }, { x: 0, y: 0 }, 100, 70)).toEqual({ x: 0, y: 0 });
   });
   it('boss có slot ngoài cap, chết không tự thắng', () => {
     const s = createRun(0); for (let i = 0; i < B.enemyCap; i++) makeEnemy(s, 'wisp', { x: 1000, y: 0 }, 'player');
-    s.time = 540; eventStep(s, Math.random); const boss = s.enemies.find(e => e.kind === 'elder')!;
+    s.time = 540; eventStep(s, Math.random); const boss = s.enemies.find(e => isBoss(e.kind))!;
     hitEnemy(s, boss, 10000); expect(s.phase).toBe('playing'); expect(s.bossDefeated).toBe(false); expect(boss.bossPhase).toBe('transition');
   });
   it('hit cuối ưu tiên defeat; đủ sạc thắng dù boss còn sống; trả thưởng 17 một lần', () => {
@@ -117,14 +119,14 @@ describe('Clock, cooldown, sự kiện và kết quả', () => {
     expect(s.phase).toBe('defeat'); expect(s.reward).toBe(12);
   });
   it('tia boss giữ hướng báo trước, không damage trước giờ bắn', () => {
-    const s = createRun(0); s.time = 550; s.bossRing = Infinity; s.bossBeam = 550;
-    const boss = makeEnemy(s, 'elder', { x: 800, y: 0 }, 'player'); s.player.x = 0; s.player.y = 0;
-    bossStep(s); const angle = s.beam!.angle; combatStep(s, 0); expect(s.player.hp).toBe(100);
-    s.player.y = 100; s.time = 551; bossStep(s); expect(s.beam!.angle).not.toBe(angle);
-    s.time = s.beam!.lock!; bossStep(s); const locked = s.beam!.angle;
-    s.player.y = 0; s.time += 0.05; bossStep(s); expect(s.beam!.angle).toBe(locked);
-    s.player.x = s.beam!.x + Math.cos(locked) * 500; s.player.y = s.beam!.y + Math.sin(locked) * 500;
-    s.time = s.beam!.fire; combatStep(s, 0); expect(s.player.hp).toBe(100-B.bossBeamDamage); expect(boss.hp).toBe(B.bossHP);
+    const s = createRun(0); s.time = 550;
+    const boss = makeEnemy(s, 'elder', { x: 800, y: 0 }, 'player'); s.player.x = 0; s.player.y = 0; Object.assign(bossRuntime(boss), {readyAt:s.time,spawnUntil:0,actionIndex:1});
+    bossStep(s); const angle = boss.boss!.beam!.angle; combatStep(s, 0); expect(s.player.hp).toBe(100);
+    s.player.y = 100; s.time = 551; bossStep(s); expect(boss.boss!.beam!.angle).not.toBe(angle);
+    s.time = boss.boss!.beam!.lock!; bossStep(s); const locked = boss.boss!.beam!.angle;
+    s.player.y = 0; s.time += 0.05; bossStep(s); expect(boss.boss!.beam!.angle).toBe(locked);
+    s.player.x = boss.boss!.beam!.x + Math.cos(locked) * 500; s.player.y = boss.boss!.beam!.y + Math.sin(locked) * 500;
+    s.time = boss.boss!.beam!.fire; combatStep(s, 0); expect(s.player.hp).toBe(100-B.bossBeamDamage); expect(boss.hp).toBe(B.bossHP);
   });
   it('HP bằng 0 đầu tick không được hồi sinh bởi vùng sáng', () => {
     const game = new GameSession(); game.state.player.hp = 0; game.step(B.step); expect(game.state.phase).toBe('defeat');

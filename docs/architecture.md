@@ -1,5 +1,15 @@
 # Kiến trúc thực thi
 
+## UX/stability local · 2026-10-21
+
+Giữ Phaser/TS/framework, dependency và hệ thống gameplay/render hiện hành. `core/runReport.ts` sở hữu counters run-only, actual HP loss/fatal và deep-frozen snapshot; `GameSession` gọi sample bằng clock mô phỏng và snapshot trước cleanup. `CombatSystem`/`AstronomySystem` truyền nguồn/owner đúng chỗ trừ HP, UI chỉ định dạng. Không ghi report vào profile/localStorage mỗi hit. Bảng nguồn incoming tối đa32key+other, outgoing là tập ID hữu hạn.
+
+`core/upgradePreview.ts` đọc cùng content/stats/attackInterval với luật; không giả lập pick hoặc thay RNG để preview. `ui/BuildView.ts`, `DraftView.ts`, `ResultView.ts` tách template khỏi GameUI. `presentation/HudWarnings.ts` giữ hysteresis trình bày theo owner run; không đổi buff threshold. GameUI vẫn diff HUD80ms, time/charge có độ phân giải1s/1%, mở rộng source bằng details/scroll. Không thêm pipeline DOM mỗi frame hoặc spatial index khi CPU baseline chưa là bottleneck.
+
+`services/TutorialService.ts` queue tối đa3trigger/run, simulation TTL/spacing, profile seen chỉ commit sau hiển thị; `ui/NotificationQueue.ts` tối đa4nhóm toast/gộp trùng, wall time chỉ UI. Các owner reset khi đổi run/menu/dispose; không timer/listener/tween cho mỗi hint/toast. Modal trap tính summary đang hiển thị, input/select không chạy phím tắt phía sau; focus phục hồi cả khi fusion làm thẻ draft cũ không còn hợp lệ. ARIA vùng trạng thái chỉ thông báo đổi mức nguy hiểm, không đọc số liên tục.
+
+Save schema3/key giữ, thêm optional-default tutorialSeen/settings.tutorial. Đường kiểm tra mới: `config/playwright/playwright.next-beta.config.ts`, `scripts/qa/next-beta`, artifact `artifacts/next-beta`. Các build/số đo lịch sử giữ riêng, không dùng số cũ chứng nhận bundle mới. Báo cáo hiện hành ở [next beta](next-beta-ux-report.md).
+
 Phaser3 hiển thị thế giới; HTML/CSS đảm nhiệm menu/HUD/dialog. Không React hoặc physics timer riêng. Hai scene: `BootScene` load/fallback và `GameScene` sở hữu phiên chơi/input/services/UI/renderer. Menu/kết quả theo phase trong GameUI, thay vì tạo scene chỉ để hiển thị DOM.
 
 `RunState` trong `core/types.ts` chứa trạng thái một lượt, `SaveData` là meta độc lập. `GameSession` nhận RNG và vector input, điều phối systems thuần không import Phaser/DOM. Vitest dùng đúng simulation code chạy trên browser.
@@ -65,7 +75,15 @@ AstronomySystem resolve lịch theo current simulation time trước minuteScali
 
 AdvancedWeapons dùng Pulse.source quasar và cùng hitIds cho beam/chain, một cadence/sweep, source cũ được ModuleLifecycle dọn. Tia phụ resolved cùng tick, Vec copy VFX, cap4trace; không để nguồn Pulsar/Ion tiếp tục. Supports/gear/mastery cộng từ base, Corruption/event tại hit; damage môi trường phân biệt source.
 
-BakeTextures gộp tinh vân/galaxy/sao vào hai texture opaque1024² High/Low, dùng một TileSprite;256/112sao,8/3cloud, không RNG/frame/Tween star. Atlas32entry vẫn1024×512, texture tăng tĩnh lên37. BeaconFeedback thuần đọc lastHit/simtime; tint đỏ0,2s ưu tiên rồi trả palette Core, không timer/tween. UI eventindicator cadence80ms, toast trong trận chuyển xuống tránh che event.
+BakeTextures gộp tinh vân/galaxy/sao vào ba texture opaque1024² Cao/Vừa/Thấp, dùng một TileSprite;256/176/112sao,8/5/3cloud, không RNG/frame/Tween star. Atlas32entry vẫn1024×512. BeaconFeedback thuần đọc lastHit/simtime; tint đỏ0,12s ưu tiên rồi trả palette Core, không timer/tween. UI eventindicator cadence80ms, toast trong trận cùng rail thông báo, menu/panel ở flow.
+
+## Visual identity local · 2026-10-18
+
+`config/design.ts` cấp palette/timing và budget accent; `SpaceBackdrop` sở hữu tile+Graphics, `BeaconPresentation` vẽ vòng/nạp thật, `ShipPresentation` thêm bank hữu hạn không offset vị trí. `WorldRenderer` điều phối culling/quality, hazards Graphics depth5 và một record dư ảnh beam; không đụng systems. Nền opaque wrap cả hai trục khi bake; ba tile tĩnh tăng4MiB RGBA thô. Beacon raster128 trong cell128 sẵn có, không tăng kích thước atlas/hitbox.
+
+GameScene có presentationSeconds clamp100ms/ẩn tab chỉ cho menu, tách khỏi GameClock mô phỏng; world/Balo/draft vẫn simulation time. Không loop/timer mới. Renderer reset pose/hysteresis/hit/dư ảnh khi state identity đổi, dispose cả light/ruins/background/hazards/pool. Adaptive chỉ giảm decoration, phục hồi sau2s và ngưỡng thấp hơn. GameUI vẫn listener AbortController/cache ID/cadence; root data-motion/data-quality có guard, không gán DOM attribute mỗi frame. Motion CSS trong identity.css, override OS theo lựa chọn đã lưu. Chi tiết và layer/budgets ở [design system](design-system.md).
+
+`presentation/geometry.ts` tính số đoạn theo sai số dây cung0.35u/cap128; thay các ARC ngắn Beacon/Gravity/Pulsar vốn bị GraphicsWebGLRenderer Phaser3.90 chia100đoạn mỗi cung. Hình học được trình bày bằng moveTo/lineTo, giữ endpoints/radius. Probe automation WebGL ghi vertex/draw/program, không đưa instrumentation vào production. Bằng chứng bác bỏ giả thuyết đổi pipeline và xác nhận giảm vertex ở visual report. Phế tích dense về28, tilePosition guard tránh dirty khi pause/Canvas; không thay batch size/engine hoặc simulation.
 
 Snapshot1.3 ở artifacts/v14/baseline-source/baseline-benchmark. Tests TTK/playtest1.3 import snapshot đó để không ghi sốbeta vào báo cáo1.3. New fixtures và raw ở artifacts/v14, previews4193/4194, config playwright.v14. Không thay dependency.
 
@@ -88,3 +106,12 @@ Snapshot trước hotfix: artifacts/v141/baseline-source. Build hiện hành ở
 Giữ Phaser/TS/Vite và gameplay hotfix1.4.1; chỉ đổi nhãn, base /EVENTIDE/, favicon %BASE_URL%. CSS publicfont được Vite rewrite base, JS/Phaser loader dùng BASE_URL một lần. Không router/service worker/backend. Workflow deploy.yml pushmain/dispatch: checkoutSHA, Node24.21.0/npmci, strict/unit/build/productionbrowser, uploaddist, deploy needsbuild với environment github-pages/quyền pageswrite/idtokenwrite.
 
 Test lịch sử trước phụ thuộc artifacts local; bản checkout dùng tests/fixtures/history có SOURCES.json/hash/giữ byte qua gitattributes. tsconfig exclude enumeration snapshot để không nhập global debug ambient của nhiều bản, các file được tests import vẫn typecheck. Vitest2worker và setup tạo outputroots để checkout sạch tự chạy. Các artifacts/build/screenshots/cache/browser, .env và VSCode không công khai; nguồn/asset/lock/docs/workflow/fixture nguồn cần thiết được track. Xem DEPLOYMENT.md.
+
+## UI / hazards / multi-boss local
+
+- systems/bosses: BossScheduler chọn pool seeded/no-repeat hai mốc độc lập; BossSystem duyệt mọi instance, state.ts giữ ready/attack/beam/phase/owned reservation; attacks.ts primitive ring/fan/beam/Maw/Scar/dash; BossLifecycle thu hồi đúng owner. RunState không còn beam/ring/fan/phase timer dùng chung. DebugController có adapter alias QA cũ trong snapshot, production không có adapter.
+- systems/enemies: EnemyFactory và ScalingSystem tách spawn, linear base×minute×event giữ HP ratio. SpawnSystem vẫn façade tương thích các import cũ; eventStep gọi scheduler, không gate theo bossDefeated.
+- systems/hazards: AstronomySystem chốt vùng/tâm ở warning, placement bảo vệ lõi, forces tính vector/cap duy nhất. Radiation/solar dùng environmentHits theo nguồn thay vì contactProtection; invulnerableUntil là miễn nhiễm thật. BossZone có owner/lifetime, tối đa6.
+- presentation/HazardPresentation và BossPresentation chỉ đọc state, exact radius/path/angles; beam tail Map theo owner, không sinh timer/damage. Tide flow dùng tích phân sin để đảo hướng liên tục, không đảo time gây nhảy.
+- UI wallet đọc SaveService trực tiếp, chỉ flag feedback ngắn sau giao dịch/award; hai hàng HUD boss đọc danh sách sống/transition. Save schema/key không đổi vì nội dung mới chỉ thuộc run.
+- Scripts gom assets/performance/qa; Playwright configs ở config/playwright với cwd root/testDir đã chỉnh. docs/history giữ số đo cũ, prompts giữ snapshot. Root BUILD_MVP bản trùng được giữ tại prompts/history, canonical prompts/BUILD_MVP.md không sửa. Tests/fixtures/history byte cũ giữ nguyên; thêm frozen ui-hazards-before kèm SHA256 để A/B tái lập.

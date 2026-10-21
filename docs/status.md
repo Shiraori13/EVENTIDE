@@ -1,33 +1,44 @@
-# EVENTIDE beta1.0.0 · phát hành GitHub Pages
+# EVENTIDE beta1.0.0 · UX/UI/stability · 2026-10-21
 
-Đổi nhãn public/package từ hotfix1.4.1 thành beta1.0.0/1.0.0-beta.1 theo yêu cầu; giữ nguyên gameplay, mastery đủ/max5ô, evolution, XP, reroll, bonus, events, boss và schema3. Bằng chứng gameplay hotfix ở [status-v1.4.1](status-v1.4.1.md). Không dùng số phiên bản mới để ghi lại lịch sử các bản cũ.
+Thực hiện [prompt Next beta](../prompts/EVENTIDE_Next_Beta_UX_UI_Stability_Prompt.md) trên source hiện có. Chuẩn bị phát hành theo yêu cầu push của người dùng ngày2026-10-21; đã fetch và đối chiếu origin/main tại5fbac8a, không có lịch sử remote mới cần gộp. Kết quả push/deployment sẽ ghi tại [triển khai](DEPLOYMENT.md). Giữ mọi thay đổi trước và tiến triển người chơi. [Báo cáo thay đổi lớn](next-beta-ux-report.md), [CHANGELOG](../CHANGELOG.md), [status đợt trước](history/status/status-ui-hazards-multiboss.md).
 
-## Đã chuẩn bị và kiểm tra local
+## Đã triển khai
 
-- Vite base /EVENTIDE/, favicon %BASE_URL%, Phaser/manifest BASE_URL một lần; CSS font public được Vite rewrite, không tạo bản sao font. WebAudio vẫn unlock sau click, không file audio ngoài. Dev/preview dùng /EVENTIDE/.
-- Workflow chính thức pin SHA checkout7/setupnode7/configurepages6/uploadpages5/deploypages5 đã đối chiếu Git refs/tài liệu. Node24.21.0, npmci/strict/unit/build/productionbrowser; chỉ uploaddist, deploy needsbuild với quyền pageswrite/idtokenwrite ở jobdeploy và concurrency pages.
-- Test lịch sử chuyển import sang tests/fixtures/history từ snapshotnguồn cũ; SOURCES.json/hash và gitattributes giữ byte. tsconfig exclude enumeration fixture để tránh global ambient khác phiên bản, imported code vẫn typecheck. Setup tạo outputroot khi checkout sạch,2worker.
-- Workspace ban đầu khôngGit; remote Shiraori13/EVENTIDE refs rỗng qua ls-remote/fetch. Tạo main/origin đúng repo, identitynoreply repo-local. Không force/reset/clean hoặc sửa globalconfig. Audit357file/5,4MiB không có mẫu secret/privatekey hoặc file lớn bất thường; source/asset/lock/config/docs/fixture nguồn cần thiết được chuẩn bị. Ignore output/cache/browser/.env/VSCode, giữ file local.
+- HUD normal/warning/critical có hysteresis, chữ/icon HP thấp và Corruption, hướng Beacon nguy cấp; cue Beacon rate-limit. Toast có queue/gộp trùng/nhường nguy hiểm, ARIA không đọc số mỗi frame.
+- Balo tổng quan5ô → recipe/CTA → chỉ số gọn → nguồn chi tiết có scroll. Draft2–3so sánh từ calculator thật/details, giữ XP/reroll/mastery/fusion cùng slot; focus trap/restore và Esc đúng khi select có focus.
+- Ba tutorial theo tình huống có deferred queue/skip/tắt/xem lại riêng, seen sau display; không chỉ CTA recipe cũ. Save schema3/key/meta cũ giữ, thêm optional-default tutorialSeen/settings.tutorial.
+- Kết quả snapshot/freeze trước cleanup: final build, achievement/goal thật, damage actual sau giảm trừ/clamp, owner/channel/fatal/cùng chết, thời gian nguy hiểm và tối đa một nhận xét có bằng chứng. Reward một lần và luật720s giữ.
+- Giữ cấu hình hazard/scaling/Quasar/boss và các tối ưu có sẵn. Audit31file luật/render/lockfile,42file public,249fixture lịch sử giữ hash; không thêm asset/dependency hoặc triển khai cứu hộ.
 
-| Kiểm tra thực tế | Kết quả |
+## Kiểm tra thực tế
+
+Windows/Node24.21.0/npm11.19.0; Chromium156.0.8078.4, WebGL SwiftShader. QA cuối **index-D3jAI-Sl.js**, production **index-sBaUOfj7.js**, CSS **index-C3KVvyY1.css**, base /EVENTIDE/.
+
+Kiểm tra lại trước push2026-10-21: `npm run typecheck` pass; `npm run test` **149pass/4opt-in skip** trong63,38s; `npm run build` pass, đúng bundle production trên; `npm run test:production` **2/2pass** trong26,7s. Smoke kiểm tra asset/font/offline/nohooks và input/XP/draft/Balo/pause/WebAudio/save qua refresh; raw riêng ở `artifacts/deployment/2026-10-21-local/`. Audit/report chạy lại xác nhận31file luật/render/lockfile,42asset public và249fixture giữ hash như bằng chứng UX; không chạy lại lượt720s vì không đổi source gameplay. Cảnh báo chunk Phaser>500kB vẫn còn.
+
+| Lệnh / luồng | Kết quả |
 |---|---|
-| npm ci |Pass50package/0vulnerability. Lần đầu esbuild.exe bị Vite workspace giữ khóa Windows; xác định/dừng đúng process rồi cài lại thành công. Có warning npm về esbuild install script, build thực tế pass |
-| npm run typecheck |Pass strict sau cập nhật config/fixture/smoke |
-| npm run test |Pass117/117,13file,48,55s,2worker; giữ toàn bộ regression/playtest lịch sử |
-| npm run build |Pass; app index-DlFaRyTM.js110,73KB/gzip38,95, CSS14,97KB/gzip4,13, Phaser1208,06KB/gzip332,17 giữ warning>500KB |
-| npm run test:production |Pass2/2,28,5s dưới /EVENTIDE/: menu/version/font/SVG/refresh/nohooks/offline, move/XP/choose/B/pause/resume/shotWebAudio/mute/save |
-| Audit đường dẫn |RelativeTSimports không lệch hoa/thường; HTTP assets cùngorigin/dướiprefix, không404. Blob SVG Phaser là dữ liệu nội bộ, không request HTTP ra root/domainkhác |
+| npm run typecheck | Pass, kể cả sau cập nhật assertion/config QA cuối |
+| EVENTIDE_BALANCE=1 npm run test | 153/153pass trong17file, gồm4bài opt-in |
+| npm run build:next-beta; npm run build | Pass; cảnh báo chunk Phaser>500kB còn |
+| npm run test:next-beta | Lượt66case:63pass,3assertion chờ text layout Quasar cũ; cập nhật assertion theo slot/cấp mới rồi --last-failed:3/3pass. Tổng66case đã xác minh, cùng app bundle; không gọi lần đầu là66pass sạch |
+| npm run test:production | 2/2pass trên4173: prefix/font/ảnh/nohooks/offline, input/XP/Build/pause/save và WebAudio API |
+| rendered-run.mjs | **720s render clock thường, victory**,725,061s wall, seed42/defense/fusion, HP72,6172/Beacon289,8/level31/1001kills/reward17; pageerror0 |
+| playtest.mjs | 24natural fixed60Hz tăng tốc:12cặp trước/sau bằng nhau ở hai seed/3build±fusion; mỗi phía7thắng/5thua |
+| Lifecycle | 28panel,7vòng start/menu; sau warmup texture/listener ổn định, timer/tween/boss owner0 ởmenu; raw GC/CDP |
 
-Raw local tại artifacts/deployment/local,publication-audit.json (không push). Smoke lần đầu nhận nhầm blob URL nội bộ là lỗi prefix; đã tách protocol và chạy lại pass. Không sửa gameplay để vượt kiểm tra. Môi trường Windows/Node24.21/npm11.19/Chromium156headlessSwiftShader; audio probe thấy context running/shot420Hz nhưng chưa nghe đánh giá bằng tai. Không chạy lại lượt render720s/FPS vì gameplay/clock không đổi; bằng chứng trước hotfix giữ trong hồ sơ lịch sử.
+Lượt720s còn Harrier phase2/827,73HP sát cuối vẫn thắng theo luật, snapshot rồi cleanup owner/attack0. Có chạy cùng hồi quy UI; **không dùng lượt này để chứng nhận FPS hoặc chơi tay**. TTK lab thiên thủ cấp5 mới chạy lại: boss540 khoảng43,43–48,37s;660 khoảng35,43–39,33s, giữ các giới hạn của đợt trước.
 
-## Deployment
+Ba test lỗi trung gian là text assertion theo layout cũ, không lỗi consume/fusion. Một lỗi bàn phím thực sự (Esc trên select bị chặn) đã sửa và hồi quy qua filter/settings. Reporter ban đầu lưu theo configDir nên JSON lượt đầy đủ bị rerun ghi đè; kết quả63/3 ghi đúng từ output terminal, giữ trace3ca và JSON3rerun. Đã sửa reporter sang absolute workspace path, một ca HUD pass xác minh writer; không dựng JSON reporter giả cho log mất.
 
-Đã push main commit [fb6d9be](https://github.com/Shiraori13/EVENTIDE/commit/fb6d9be5b109b0da33e1c09e9447adfc1443c025); [run39035972224](https://github.com/Shiraori13/EVENTIDE/actions/runs/39035972224) success cảbuild/deploy trênLinux. Bật Pages qua API201 với build_type workflow, HTTPS enforced. Deployment7140126306 status success/envURL **https://shiraori13.github.io/EVENTIDE/**; HTTP200 và entry index-DlFaRyTM.js khớp local.
+## Hiệu năng và bằng chứng
 
-Browser công khai: **2/2 pass,31,8s**, gồm reload/font/ảnh/khôngHTTP404/nohooks/offline/movement/XPthật/choose/B/pause/resume/shotWebAudio/mute/save. Đã xem ảnh menu/nhãn beta1.0.0. Raw ở artifacts/deployment/public. Không có bước Settings Pages thủ công còn thiếu. Audit committedGitobjects378file/192fixtureHash không phát hiện secret/output hoặc mấtbyte. Scan Gitobjects đầu bị sandbox chặn spawn, đã thực thi lại pass; historical whitespace/license/snapshot được giữ nguyên.
+Baseline trước sửa unit136pass/4opt-in skip/typecheck/build pass; bundle index-CtKeK4qU.js. Đã đo AB/BA tuần tự cùng seed/viewport/build, kèm Low/reduced và >50/100ms. Dense p95 trước33,7–33,8ms → sau34,5–35,4ms (cao hơn0,8–1,6ms trong hai cặp); duo sau29,2–30,0ms, Low29,4/reduced29,7ms. Tất cả14lượt đo30s không có frame>50ms hoặc rAF>100ms. CPU sau p95 simulation≤0,8/render prep≤0,4/DOM≤0,3ms. **Chưa đạt p95≤20ms/60FPS**; chưa định lượng nguyên nhân phần tăng tail của dense riêng GPU/driver/DOM. [Performance report](performance-report.md) giữ mọi raw và provenance; không dùng số lịch sử chứng nhận bản mới.
 
-Commit tài liệu xác nhận này vẫn kích hoạt workflow main mới với cùng source/bundle; đối chiếu latestHEAD/Actions khi cập nhật. Chi tiết và cách cập nhật ở [DEPLOYMENT](DEPLOYMENT.md).
+Artifact hiện hành: `artifacts/next-beta/`, gồm before-source/before-build/after-build, before/after UI, regression, rendered-run, playtest, balance-regression, audit, provenance, e2e-verification. Clip cuối `interaction/keyboard-local.webm` cùng34mẫu/0pageerror: đoạn đầu tự nhiên, đoạn hai boss+gravity là fixture đã dọn pending draft, input/render/clock bình thường. Không gọi clip là người chơi điều khiển.
 
-## Chạy và dữ liệu
+## Chạy local và giới hạn
 
-npm run dev → http://127.0.0.1:5173/EVENTIDE/ ; npm run build rồi npm run preview →4173/EVENTIDE/. GitHub Pages là origin kháclocalhost nên profile không tự chuyển; schema/key cũ giữ. Thaypath trên cùnglocalhost/port giữ dữ liệu. Reload trở về menu, chưa có resume-run. Bản production không hooktest/perf kể cả query.
+Game production hiện chạy **http://127.0.0.1:4173/EVENTIDE/**. Tự chạy: `npm run dev` →5173/EVENTIDE/; hoặc `npm run build` rồi `npm run preview` →4173/EVENTIDE/. Giữ origin/cổng cũ để thấy save; không file://. QA4301/keyeventide.e2e.v1 riêng, không dùng bundle QA để phát hành.
+
+Cân bằng người thật, GPU vật lý, input-to-photon/native zoom, nghe âm thanh bằng tai, Firefox/Safari và soak20–30phút chưa kiểm chứng. Viewport/DPR/clip/logic tự động không thay thế các việc đó. Bot cơ động có ca thua; không đổi luật để ép thắng. Không có bug sản phẩm đã biết bị chuyển thành ý tưởng backlog.

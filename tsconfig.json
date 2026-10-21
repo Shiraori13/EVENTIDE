@@ -1,10 +1,31 @@
 {
   "compilerOptions": {
-    "target": "ES2022", "module": "ESNext", "moduleResolution": "Bundler",
-    "lib": ["ES2022", "DOM"], "strict": true, "noEmit": true,
-    "skipLibCheck": true, "esModuleInterop": true, "resolveJsonModule": true,
-    "noUnusedLocals": true, "noUnusedParameters": true, "types": ["vite/client", "node"]
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "types": [
+      "vite/client",
+      "node"
+    ]
   },
-  "include": ["src", "tests", "*.ts"],
-  "exclude": ["tests/fixtures/history"]
+  "include": [
+    "src",
+    "tests",
+    "*.ts",
+    "config"
+  ],
+  "exclude": [
+    "tests/fixtures/history"
+  ]
 }

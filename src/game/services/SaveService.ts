@@ -4,12 +4,14 @@ import { BALANCE as B } from '../config/balance';
 import { ACHIEVEMENTS, CHARACTERS, type CharacterId } from '../config/progression';
 import { emptyCareerMetrics, unlockAchievements, type CareerMetrics } from '../config/achievements';
 export interface StorageLike { getItem(key: string): string | null; setItem(key: string, value: string): void }
-export const defaultSave = (): SaveData => ({ saveVersion: 3, currency: 0, coreLevel: 0, echo: false, characterId: 'nova', careerKills: 0, unlockedAchievements: [], metrics: emptyCareerMetrics(), settings: { muted: false, volume: 0.35, reducedEffects: false, shake: true, quality: 'high' } });
+export const defaultSave = (): SaveData => ({ saveVersion: 3, currency: 0, coreLevel: 0, echo: false, characterId: 'nova', careerKills: 0, unlockedAchievements: [], tutorialSeen: [], metrics: emptyCareerMetrics(), settings: { muted: false, volume: 0.35, reducedEffects: false, reducedMotion: false, shake: true, quality: 'medium', tutorial:true } });
 const finite = (n: unknown, fallback: number): number => typeof n === 'number' && Number.isFinite(n) ? n : fallback;
 /** Dữ liệu ngoài app không đáng tin: kiểm tra type/version rồi clamp từng trường. */
 export function validateSave(raw: unknown): SaveData {
   const d = defaultSave(); if (!raw || typeof raw !== 'object') return d;
   const r = raw as Record<string, unknown>; if (r.saveVersion !== 1 && r.saveVersion !== 2 && r.saveVersion !== 3) return d;
+  // Trường tùy chọn schema3: save cũ giữ meta; chỉ nhận ID tutorial ổn định.
+  d.tutorialSeen = Array.isArray(r.tutorialSeen) ? [...new Set(r.tutorialSeen.filter((id): id is import('../core/types').TutorialId => typeof id==='string'&&['outside','beacon-hit','evolution'].includes(id)))] : [];
   if (typeof r.characterId === 'string' && Object.hasOwn(CHARACTERS, r.characterId)) d.characterId = r.characterId as CharacterId;
   // V1 không có career total: bắt đầu từ0, không suy kill từ tiền/Echo. Key storage giữ nguyên.
   if (r.saveVersion !== 1) d.careerKills = Math.floor(clamp(finite(r.careerKills, 0), 0, 1_000_000_000));
@@ -25,8 +27,10 @@ export function validateSave(raw: unknown): SaveData {
   d.coreLevel = Math.floor(clamp(finite(r.coreLevel, 0), 0, B.corePrices.length)); d.echo = r.echo === true;
   if (r.settings && typeof r.settings === 'object') {
     const v = r.settings as Record<string, unknown>;
-    d.settings = { muted: v.muted === true, volume: clamp(finite(v.volume, 0.35), 0, 1), reducedEffects: v.reducedEffects === true, shake: typeof v.shake === 'boolean' ? v.shake : true, quality: v.quality === 'low' ? 'low' : 'high' };
+    // Giữ lựa chọn cũ: reducedEffects là fallback cho motion, quality thiếu ở save cũ vẫn Cao như trước.
+    d.settings = { muted: v.muted === true, volume: clamp(finite(v.volume, 0.35), 0, 1), reducedEffects: v.reducedEffects === true, reducedMotion: typeof v.reducedMotion==='boolean'?v.reducedMotion:v.reducedEffects===true, shake: typeof v.shake === 'boolean' ? v.shake : true, quality: v.quality === 'low' ? 'low' : v.quality === 'medium' ? 'medium' : 'high', tutorial:v.tutorial !== false };
   }
+  if (r.settings && typeof r.settings === 'object') d.settings.tutorial = Reflect.get(r.settings,'tutorial') !== false;
   unlockAchievements(d); return d;
 }
 /** Chỉ lưu meta; không có checkpoint hoặc trả thưởng khi reload. Lỗi storage giữ dữ liệu RAM. */
@@ -34,7 +38,9 @@ export class SaveService {
   data = defaultSave(); warning = '';
   constructor(private storage: StorageLike | undefined, readonly key = 'eventide.save.v1') {
     if (!storage) this.warning = 'Trình duyệt chặn lưu dữ liệu. Tiến triển hiện chỉ giữ trong phiên này.';
-    try { const raw: unknown = JSON.parse(storage?.getItem(key) ?? 'null'); this.data = validateSave(raw); if (raw && typeof raw === 'object' && [1, 2].includes(Reflect.get(raw, 'saveVersion') as number)) this.write(); }
+    try { const raw: unknown = JSON.parse(storage?.getItem(key) ?? 'null'); this.data = validateSave(raw);
+      if (!raw && typeof matchMedia==='function') this.data.settings.reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (raw && typeof raw === 'object' && [1, 2].includes(Reflect.get(raw, 'saveVersion') as number)) this.write(); }
     catch { this.warning = 'Không đọc được dữ liệu lưu; đang dùng dữ liệu an toàn trong bộ nhớ.'; }
   }
   write(): boolean {

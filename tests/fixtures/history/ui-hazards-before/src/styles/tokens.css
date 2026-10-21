@@ -1,0 +1,21 @@
+/* URL public trong CSS được Vite viết lại theo base; không thêm /EVENTIDE/ lần hai. */
+@font-face { font-family: 'Eventide Sans'; src: url('/assets/fonts/NotoSans-Variable.ttf') format('truetype'); font-style: normal; font-weight: 100 900; font-display: swap; }
+@font-face { font-family: 'Eventide Serif'; src: url('/assets/fonts/NotoSerif-Variable.ttf') format('truetype'); font-style: normal; font-weight: 100 900; font-display: swap; }
+:root {
+  color-scheme: dark;
+  --bg:#060c1b; --panel:#0c1728; --panel-raised:#142439; --line:#304256;
+  --muted:#a7b7c8; --ink:#edf3ef; --gold:#f1d397; --cyan:#87dfe8; --pink:#f0a6c8; --danger:#ffb0ac;
+  --font-body:'Eventide Sans',Arial,sans-serif; --font-title:'Eventide Serif',Georgia,serif;
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-6:24px; --space-8:32px;
+  --radius:6px; --text-sm:12px; --text-body:14px; --text-title:clamp(26px,3vw,36px);
+  --z-world:0; --z-ui:10; --z-modal:20;
+  font-family:var(--font-body); font-size:14px; font-weight:400; font-synthesis:none;
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); overflow:hidden; }
+button,input,select { font:inherit; }
+button { cursor:pointer; color:var(--ink); touch-action:manipulation; }
+button:disabled { cursor:default; opacity:.48; }
+button:focus-visible,input:focus-visible,select:focus-visible { outline:2px solid var(--gold); outline-offset:4px; }
+button:active:not(:disabled) { filter:brightness(.9); }
+[hidden] { display:none!important; }
